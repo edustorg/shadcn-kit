@@ -19,7 +19,7 @@ npx shadcn@latest add edustorg/shadcn-kit/button
 ## Add as a namespace
 
 ```bash
-npx shadcn@latest registry add @shadcn-kit=edustorg/shadcn-kit
+npx shadcn@latest registry add @shadcn-kit=https://raw.githubusercontent.com/edustorg/shadcn-kit/main/r/{name}.json
 ```
 
 Or add it manually under the `registries` field in your `components.json`:
@@ -27,7 +27,7 @@ Or add it manually under the `registries` field in your `components.json`:
 ```json
 {
   "registries": {
-    "@shadcn-kit": "https://github.com/edustorg/shadcn-kit/r/{name}.json"
+    "@shadcn-kit": "https://raw.githubusercontent.com/edustorg/shadcn-kit/main/r/{name}.json"
   }
 }
 ```

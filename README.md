@@ -25,15 +25,16 @@ npx shadcn@latest add edustorg/shadcn-kit/button
 npx shadcn@latest add edustorg/shadcn-kit/badge
 ```
 
-The CLI installs the components into your project's `ui` directory, installs their
+The CLI installs the components into your project's `ui` directory under a `shadcn-kit/`
+subfolder (so they never collide with your existing UI components), installs their
 dependencies (`class-variance-authority`, `@base-ui/react`), pulls the `utils` helper, and
 adds any custom CSS variables to your theme.
 
 ## Usage
 
 ```tsx
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/shadcn-kit/button";
+import { Badge } from "@/components/ui/shadcn-kit/badge";
 
 export function App() {
   return (

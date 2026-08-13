@@ -14,6 +14,7 @@ export type RegistryItem = {
   dependencies: string[];
   registryDependencies: string[];
   cssVars?: Record<string, Record<string, string>>;
+  target: string;
   sourcePath: string;
   hasPreview: boolean;
   usage: string;

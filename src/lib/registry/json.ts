@@ -38,6 +38,7 @@ export function getRegistryCatalogJson(): RegistryCatalogJson {
         {
           path: item.sourcePath,
           type: item.type,
+          target: item.target,
         },
       ],
     })),
@@ -72,6 +73,7 @@ export function getRegistryItemJson(name: string) {
         path: item.sourcePath,
         content,
         type: item.type,
+        target: item.target,
       },
     ],
   };

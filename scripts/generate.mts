@@ -23,6 +23,7 @@ type ItemFrontmatter = {
   registryDependencies?: string[];
   files?: RegistryFile[];
   cssVars?: Record<string, Record<string, string>>;
+  target?: string;
 };
 
 type RegistryItem = ItemFrontmatter & {
@@ -31,6 +32,7 @@ type RegistryItem = ItemFrontmatter & {
   usage: string;
   dependencies: string[];
   registryDependencies: string[];
+  target: string;
 };
 
 function findRegistryMdxFiles(dir: string): string[] {
@@ -56,6 +58,7 @@ const items: RegistryItem[] = findRegistryMdxFiles(ITEMS_DIR).map((mdxPath) => {
   const sourceName = meta.files?.[0]?.path ?? `${name}.tsx`;
   const sourcePath = toRepoPath(resolve(itemDir, sourceName));
   const hasPreview = readdirSync(itemDir, { encoding: "utf8" }).includes("_preview.tsx");
+  const target = meta.target ?? `@ui/shadcn-kit/${name}.tsx`;
 
   return {
     name,
@@ -66,6 +69,7 @@ const items: RegistryItem[] = findRegistryMdxFiles(ITEMS_DIR).map((mdxPath) => {
     registryDependencies: meta.registryDependencies ?? [],
     files: meta.files,
     cssVars: meta.cssVars,
+    target,
     sourcePath,
     hasPreview,
     usage: content.trim(),
@@ -86,6 +90,7 @@ const catalog = items.map((item) => ({
   dependencies: item.dependencies,
   registryDependencies: item.registryDependencies,
   cssVars: item.cssVars,
+  target: item.target,
   sourcePath: item.sourcePath,
   hasPreview: item.hasPreview,
   usage: item.usage,
@@ -153,6 +158,7 @@ const registryJson = {
       {
         path: item.sourcePath,
         type: item.type,
+        target: item.target,
       },
     ],
   })),
@@ -163,6 +169,41 @@ writeFileSync(
   `${JSON.stringify(registryJson, null, 2)}\n`,
 );
 
+const R_DIR = resolve(ROOT, "r");
+mkdirSync(R_DIR, { recursive: true });
+
+writeFileSync(
+  resolve(R_DIR, "registry.json"),
+  `${JSON.stringify(registryJson, null, 2)}\n`,
+);
+
+for (const item of items) {
+  const content = readFileSync(resolve(ROOT, item.sourcePath), "utf8");
+  const itemJson = {
+    $schema: "https://ui.shadcn.com/schema/registry-item.json",
+    name: item.name,
+    type: item.type,
+    title: item.title,
+    description: item.description,
+    ...(item.dependencies.length ? { dependencies: item.dependencies } : {}),
+    ...(item.registryDependencies.length
+      ? { registryDependencies: item.registryDependencies }
+      : {}),
+    ...(item.cssVars ? { cssVars: item.cssVars } : {}),
+    files: [
+      {
+        path: item.sourcePath,
+        content,
+        type: item.type,
+        target: item.target,
+      },
+    ],
+  };
+  writeFileSync(resolve(R_DIR, `${item.name}.json`), `${JSON.stringify(itemJson, null, 2)}\n`);
+}
+
 console.log(`Generated catalog: ${items.length} item(s)`);
 console.log(`Generated previews: ${previews.length} preview(s)`);
-console.log("Written registry.json, src/lib/registry/generated/catalog.ts, src/lib/registry/generated/previews.ts");
+console.log(
+  "Written registry.json, r/registry.json, r/{name}.json, src/lib/registry/generated/catalog.ts, src/lib/registry/generated/previews.ts",
+);
