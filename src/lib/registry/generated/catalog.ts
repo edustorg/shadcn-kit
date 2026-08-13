@@ -26,7 +26,7 @@ export const registryItems: RegistryItem[] = [
         "info": "oklch(0.716 0.199 252.4)"
       }
     },
-    "sourcePath": "registry/items/components/badge/badge.tsx",
+    "sourcePath": "registry/items/badge/badge.tsx",
     "hasPreview": true,
     "usage": "Use the Badge to label or categorize content. It ships with the shadcn variants plus custom\n`success`, `warning`, and `info` variants.\n\n```tsx\nimport { Badge } from \"@/components/ui/badge\";\n\n<Badge>Default</Badge>\n<Badge variant=\"success\">Active</Badge>\n<Badge variant=\"warning\">Pending</Badge>\n<Badge variant=\"info\">New</Badge>\n```"
   },
@@ -42,7 +42,7 @@ export const registryItems: RegistryItem[] = [
     "registryDependencies": [
       "utils"
     ],
-    "sourcePath": "registry/items/components/button/button.tsx",
+    "sourcePath": "registry/items/button/button.tsx",
     "hasPreview": true,
     "usage": "Use the Button anywhere you need a clickable action element.\n\n```tsx\nimport { Button } from \"@/components/ui/button\";\n\n<Button>Default</Button>\n<Button variant=\"destructive\">Delete</Button>\n<Button size=\"sm\">Small</Button>\n```"
   }

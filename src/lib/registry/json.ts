@@ -69,7 +69,7 @@ export function getRegistryItemJson(name: string) {
     ...(item.cssVars ? { cssVars: item.cssVars } : {}),
     files: [
       {
-        path: `components/ui/${item.name}.tsx`,
+        path: item.sourcePath,
         content,
         type: item.type,
       },
