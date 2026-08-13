@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CopyButton } from "@/components/registry/copy-button";
+import { InstallCommand } from "@/components/registry/install-command";
 import { MdxContent } from "@/components/registry/mdx-content";
 import { SourceBlock } from "@/components/registry/source-block";
 import { Badge } from "@/components/ui/badge";
-import { getRegistryItem, registry } from "@/lib/registry/site";
+import { registry, getRegistryItem } from "@/lib/registry/site";
 import { registryPreviews } from "@/lib/registry/generated/previews";
 
 type ComponentPageProps = {
@@ -37,7 +37,11 @@ export default async function ComponentPage({ params }: ComponentPageProps) {
   }
 
   const Preview = item.hasPreview ? registryPreviews[item.name] : undefined;
-  const installCommand = `npx shadcn@latest add edustorg/shadcn-kit/${item.name}`;
+  const source = `edustorg/shadcn-kit/${item.name}`;
+  const cssVarCount = Object.values(item.cssVars ?? {}).reduce(
+    (total, values) => total + Object.keys(values).length,
+    0,
+  );
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-12">
@@ -49,12 +53,60 @@ export default async function ComponentPage({ params }: ComponentPageProps) {
         <p className="max-w-2xl text-muted-foreground">{item.description}</p>
       </div>
 
-      <div className="mt-8 grid items-start gap-2 sm:grid-cols-[1fr_auto]">
-        <pre className="overflow-x-auto rounded-lg border bg-muted/50 p-4 text-sm leading-6">
-          <code>{installCommand}</code>
-        </pre>
-        <CopyButton text={installCommand} />
-      </div>
+      <section className="mt-8 grid gap-6">
+        <div className="grid gap-2">
+          <h2 className="text-sm font-semibold tracking-tight text-foreground">Install</h2>
+          <InstallCommand source={source} />
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="rounded-lg border p-4">
+            <p className="text-xs font-medium text-muted-foreground">Dependencies</p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {item.dependencies.length > 0 ? (
+                item.dependencies.map((dependency) => (
+                  <Badge key={dependency} variant="secondary">
+                    {dependency}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-sm text-muted-foreground">None</span>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-lg border p-4">
+            <p className="text-xs font-medium text-muted-foreground">
+              Registry dependencies
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {item.registryDependencies.length > 0 ? (
+                item.registryDependencies.map((dependency) => (
+                  <Badge key={dependency} variant="secondary">
+                    {dependency}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-sm text-muted-foreground">None</span>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-lg border p-4">
+            <p className="text-xs font-medium text-muted-foreground">CSS variables</p>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <Badge variant="secondary">{cssVarCount} added</Badge>
+              {item.cssVars ? (
+                <span className="text-sm text-muted-foreground">
+                  automatically merged into your theme
+                </span>
+              ) : (
+                <span className="text-sm text-muted-foreground">None</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {Preview ? (
         <section className="mt-10">

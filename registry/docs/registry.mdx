@@ -1,41 +1,77 @@
 ---
 title: Registry
-description: How this registry is structured and how to add new items.
+description: How the edust-kit registry is structured and how to add new items.
 order: 3
 group: docs
 ---
 
 # Registry
 
-This project is both a Next.js site and the source for a shadcn-compatible registry.
+This project is both a Next.js docs site and the source for a shadcn-compatible registry.
+Items are written once in Markdown + TypeScript, then compiled into the JSON catalog the
+shadcn CLI consumes.
+
+## How it works
+
+- `registry/items/**` is the source of truth. Each item is a folder with a component source
+  file, a `_registry.mdx` metadata file, and an optional `_preview.tsx`.
+- `pnpm generate` compiles the items into:
+  - `registry.json` — the catalog served from GitHub (used by `edustorg/shadcn-kit/<item>`).
+  - `r/registry.json` and `r/<name>.json` — the same catalog plus embedded item payloads,
+    served over `raw.githubusercontent.com` (used by the `@edust-kit` namespace).
+- Every item installs under your project's `ui` directory in an `edust-kit/` subfolder via
+  the `target` metadata, so installs never clash with existing components.
 
 ## Structure
 
 ```txt
 registry
-├── config.ts                          # registry metadata (name, namespace, homepage)
-├── docs/                              # public documentation pages (/docs)
+├── config.ts              # registry metadata (name, namespace, homepage)
+├── docs/                  # public documentation pages (/docs)
 └── items/
-    └── components/
-        └── <name>/
-            ├── <name>.tsx             # published component source
-            ├── _registry.mdx          # item metadata + usage docs
-            └── _preview.tsx           # interactive preview
+    ├── button/
+    │   ├── button.tsx     # published component source
+    │   ├── _registry.mdx  # item metadata + usage docs
+    │   └── _preview.tsx   # interactive preview
+    └── badge/
+        ├── badge.tsx
+        ├── _registry.mdx
+        └── _preview.tsx
 src/
-└── components/ui/                     # shadcn core components for the app shell
+├── app/                   # Next.js site (components, docs, /registry.json)
+├── components/registry/   # docs-site building blocks (install command, code blocks)
+└── lib/registry/          # catalog loading and JSON generation
 ```
 
 ## Adding an item
 
-1. Install a core shadcn component: `pnpm dlx shadcn@latest add input`
-2. Copy its source into `registry/items/components/<name>/<name>.tsx` and customize it.
-3. Write `_registry.mdx` with the item's metadata.
-4. Write `_preview.tsx` to showcase it.
-5. Rebuild the catalog:
+1. Create a folder under `registry/items/<name>/`.
+2. Write the component source: `registry/items/<name>/<name>.tsx`.
+3. Write `_registry.mdx` with the item's metadata (name, type, dependencies, target).
+4. Write `_preview.tsx` to showcase it on the site:
+
+   ```tsx
+   "use client";
+
+   import { Button } from "./button";
+
+   export function Preview() {
+     return <Button>Default</Button>;
+   }
+   ```
+
+5. Rebuild the catalog and validate:
 
    ```bash
    pnpm generate
+   pnpm validate
    ```
 
-The generator writes the root `registry.json` (used by the GitHub registry), the typed
-catalog, and the preview module map.
+The generator writes the root `registry.json`, the `r/` payloads, and the typed catalog used
+by the docs site. Run `pnpm dev` to preview your item at `/components/<name>`.
+
+## Publishing
+
+Push to `main` — that is the deployment. The GitHub catalog (`edustorg/shadcn-kit/<name>`)
+and the raw namespace (`@edust-kit/<name>`) both read straight from the repository, so the
+new item is installable immediately after the push.

@@ -1,32 +1,60 @@
 ---
 title: Getting Started
-description: Learn how to install and use components from this registry.
+description: Learn how to install and use edust-kit components in your project.
 order: 1
 group: docs
 ---
 
 # Getting Started
 
-This registry is distributed as a public GitHub repository. It contains UI components built
-from the [shadcn](https://ui.shadcn.com) core library and extended with custom variants.
+**edust-kit** is a [shadcn-compatible registry](https://ui.shadcn.com/docs/registry) of
+production-ready UI components built for the edust platform. Components are based on the
+[shadcn](https://ui.shadcn.com) core library and Base UI, and are copied into your project so
+you own and customize them.
 
 ## Requirements
 
-- A project initialized with [shadcn](https://ui.shadcn.com) (`npx shadcn@latest init`)
-- Tailwind CSS v4
-- React 18+
+Before you install anything, make sure your project is ready:
 
-## Install
+- A project initialized with the shadcn CLI — `npx shadcn@latest init`
+- Tailwind CSS v4
+- React 18 or newer
+- Node.js 20.18 or newer
+
+If you have not run `shadcn init` yet, do that first. It creates your `components.json` and
+wires up Tailwind and your import aliases, which the installer relies on.
+
+## Install a component
+
+Once initialized, install any edust-kit component by name:
+
+```bash
+npx shadcn@latest add @edust-kit/button
+```
+
+The `@edust-kit` namespace is added to your `components.json` automatically the first time
+you install from it. To skip the namespace and install straight from the repository instead:
 
 ```bash
 npx shadcn@latest add edustorg/shadcn-kit/button
 ```
 
+## What happens on install
+
+The CLI:
+
+1. Installs the component into your project's `ui` directory under an `edust-kit/`
+   subfolder — for example `src/components/ui/edust-kit/button.tsx`. Existing components are
+   never overwritten.
+2. Installs any runtime dependencies (such as `@base-ui/react`).
+3. Pulls the `utils` helper if it is missing.
+4. Adds any custom CSS variables to your theme (`globals.css`).
+
 ## Usage
 
 ```tsx
-import { Button } from "@/components/ui/shadcn-kit/button";
-import { Badge } from "@/components/ui/shadcn-kit/badge";
+import { Button } from "@/components/ui/edust-kit/button";
+import { Badge } from "@/components/ui/edust-kit/badge";
 
 export function App() {
   return (
@@ -38,3 +66,8 @@ export function App() {
   );
 }
 ```
+
+## Next steps
+
+- See [Installation](/docs/installation) for the full setup guide.
+- See [Registry](/docs/registry) to understand how the registry works or add your own items.

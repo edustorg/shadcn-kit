@@ -1,6 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "shadcn-kit",
+  "name": "edust-kit",
   "homepage": "https://github.com/edustorg/shadcn-kit",
   "items": [
     {
@@ -31,7 +31,7 @@
         {
           "path": "registry/items/badge/badge.tsx",
           "type": "registry:ui",
-          "target": "@ui/shadcn-kit/badge.tsx"
+          "target": "@ui/edust-kit/badge.tsx"
         }
       ]
     },
@@ -51,7 +51,7 @@
         {
           "path": "registry/items/button/button.tsx",
           "type": "registry:ui",
-          "target": "@ui/shadcn-kit/button.tsx"
+          "target": "@ui/edust-kit/button.tsx"
         }
       ]
     }

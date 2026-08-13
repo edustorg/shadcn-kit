@@ -1,9 +1,9 @@
 export const registryConfig = {
-  name: "shadcn-kit",
-  registryName: "shadcn-kit",
-  namespace: "@shadcn-kit",
+  name: "edust-kit",
+  registryName: "edust-kit",
+  namespace: "@edust-kit",
   description:
-    "A shadcn-compatible registry of UI components built from the shadcn core library.",
+    "Production-ready UI components built on shadcn and Base UI for the edust platform.",
   homepage: "https://github.com/edustorg/shadcn-kit",
   repositoryUrl: "https://github.com/edustorg/shadcn-kit",
 } as const;

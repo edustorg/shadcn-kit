@@ -58,7 +58,7 @@ const items: RegistryItem[] = findRegistryMdxFiles(ITEMS_DIR).map((mdxPath) => {
   const sourceName = meta.files?.[0]?.path ?? `${name}.tsx`;
   const sourcePath = toRepoPath(resolve(itemDir, sourceName));
   const hasPreview = readdirSync(itemDir, { encoding: "utf8" }).includes("_preview.tsx");
-  const target = meta.target ?? `@ui/shadcn-kit/${name}.tsx`;
+  const target = meta.target ?? `@ui/edust-kit/${name}.tsx`;
 
   return {
     name,

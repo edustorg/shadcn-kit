@@ -13,7 +13,7 @@ export default function ComponentsPage() {
     <main className="mx-auto w-full max-w-5xl px-4 py-12">
       <h1 className="text-3xl font-semibold tracking-tight">Components</h1>
       <p className="mt-2 text-muted-foreground">
-        Installable items built from the shadcn core library.
+        Installable components from the edust-kit registry.
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">

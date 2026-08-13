@@ -1,25 +1,29 @@
 ---
 title: Installation
-description: Add this registry as a namespace in your project.
+description: Add the edust-kit registry to your project and install components.
 order: 2
 group: docs
 ---
 
 # Installation
 
-You can install components by item URL, or add this registry as a namespace so items install
-with a short name.
+There are two ways to install edust-kit components. Both do the same thing — the namespace
+just gives you a shorter command.
 
-## Install an item directly
+## Prerequisites
+
+Your project must already be initialized with shadcn:
 
 ```bash
-npx shadcn@latest add edustorg/shadcn-kit/button
+npx shadcn@latest init
 ```
 
-## Add as a namespace
+## Option 1: Add the namespace (recommended)
+
+The namespace gives you short install commands like `@edust-kit/button`. Add it with the CLI:
 
 ```bash
-npx shadcn@latest registry add @shadcn-kit=https://raw.githubusercontent.com/edustorg/shadcn-kit/main/r/{name}.json
+npx shadcn@latest registry add @edust-kit=https://raw.githubusercontent.com/edustorg/shadcn-kit/main/r/{name}.json
 ```
 
 Or add it manually under the `registries` field in your `components.json`:
@@ -27,7 +31,7 @@ Or add it manually under the `registries` field in your `components.json`:
 ```json
 {
   "registries": {
-    "@shadcn-kit": "https://raw.githubusercontent.com/edustorg/shadcn-kit/main/r/{name}.json"
+    "@edust-kit": "https://raw.githubusercontent.com/edustorg/shadcn-kit/main/r/{name}.json"
   }
 }
 ```
@@ -35,11 +39,63 @@ Or add it manually under the `registries` field in your `components.json`:
 Then install by name:
 
 ```bash
-npx shadcn@latest add @shadcn-kit/button
+# npm
+npx shadcn@latest add @edust-kit/button
+
+# pnpm
+pnpm dlx shadcn@latest add @edust-kit/button
+
+# yarn
+yarn dlx shadcn@latest add @edust-kit/button
+
+# bun
+bunx --bun shadcn@latest add @edust-kit/button
 ```
 
-## Verify
+## Option 2: Install from the repository directly
+
+No configuration needed. The CLI reads the registry catalog from GitHub:
+
+```bash
+npx shadcn@latest add edustorg/shadcn-kit/button
+```
+
+## What the CLI does
+
+When you install a component, the CLI:
+
+1. Installs it under an `edust-kit/` folder inside your configured `ui` directory, so it
+   never collides with your existing components:
+
+   ```txt
+   src/components/ui/edust-kit/
+     button.tsx
+     badge.tsx
+   ```
+
+   Your `ui` alias comes from `components.json`, so this works with standard aliases
+   (`@/components/ui`), custom aliases, and workspace packages.
+
+2. Installs the component's runtime dependencies.
+3. Creates `lib/utils.ts` (with the `cn` helper) if it does not exist.
+4. Merges any custom CSS variables into your `globals.css`.
+
+## Verify the registry works
+
+List everything available in the catalog:
 
 ```bash
 npx shadcn@latest list edustorg/shadcn-kit
 ```
+
+## Uninstall
+
+Because components are copied into your project, removing one is just deleting the file and
+dropping its entry from your theme:
+
+```bash
+rm src/components/ui/edust-kit/badge.tsx
+```
+
+The `@edust-kit` registry entry in `components.json` can stay — it does not affect your
+bundle.
