@@ -1,0 +1,59 @@
+---
+name: date-picker
+type: registry:ui
+title: Date Picker
+description: >-
+  A calendar date picker built on react-hook-form. Returns the selected date as
+  an ISO string and renders the month and year as dropdowns by default.
+dependencies:
+  - date-fns
+  - react-hook-form
+registryDependencies:
+  - utils
+  - button
+  - calendar
+  - popover
+  - field
+target: "@ui/edust-kit/date-picker.tsx"
+---
+
+Wrap the date picker in a react-hook-form `Controller` to bind it to a form field. The picker writes a UTC ISO string (e.g. `"2026-08-13T00:00:00.000Z"`) via `field.onChange`.
+
+```tsx
+import { Controller, useForm } from "react-hook-form"
+import { DatePicker } from "@/components/ui/edust-kit/date-picker"
+
+type FormValues = {
+  startDate: string
+}
+
+export function EventForm() {
+  const form = useForm<FormValues>()
+
+  return (
+    <Controller
+      name="startDate"
+      control={form.control}
+      render={({ field, fieldState }) => (
+        <DatePicker
+          field={field}
+          fieldState={fieldState}
+          label="Start date"
+          required
+        />
+      )}
+    />
+  )
+}
+```
+
+`captionLayout` defaults to `"dropdown"` — pass `"label"` or `"popup"` to switch:
+
+```tsx
+<DatePicker
+  field={field}
+  fieldState={fieldState}
+  label="Start date"
+  captionLayout="label"
+/>
+```

@@ -54,6 +54,30 @@
           "target": "@ui/edust-kit/button.tsx"
         }
       ]
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "Date Picker",
+      "description": "A calendar date picker built on react-hook-form. Returns the selected date as an ISO string and renders the month and year as dropdowns by default.",
+      "dependencies": [
+        "date-fns",
+        "react-hook-form"
+      ],
+      "registryDependencies": [
+        "utils",
+        "button",
+        "calendar",
+        "popover",
+        "field"
+      ],
+      "files": [
+        {
+          "path": "registry/items/date-picker/date-picker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/date-picker.tsx"
+        }
+      ]
     }
   ]
 }
