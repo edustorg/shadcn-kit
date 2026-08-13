@@ -1,0 +1,21 @@
+---
+name: button
+type: registry:ui
+title: Button
+description: A button component with variants, sizes, and icons.
+dependencies:
+  - class-variance-authority
+  - "@base-ui/react"
+registryDependencies:
+  - utils
+---
+
+Use the Button anywhere you need a clickable action element.
+
+```tsx
+import { Button } from "@/components/ui/button";
+
+<Button>Default</Button>
+<Button variant="destructive">Delete</Button>
+<Button size="sm">Small</Button>
+```

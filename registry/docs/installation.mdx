@@ -1,0 +1,45 @@
+---
+title: Installation
+description: Add this registry as a namespace in your project.
+order: 2
+group: docs
+---
+
+# Installation
+
+You can install components by item URL, or add this registry as a namespace so items install
+with a short name.
+
+## Install an item directly
+
+```bash
+npx shadcn@latest add edustorg/shadcn-kit/button
+```
+
+## Add as a namespace
+
+```bash
+npx shadcn@latest registry add @shadcn-kit=edustorg/shadcn-kit
+```
+
+Or add it manually under the `registries` field in your `components.json`:
+
+```json
+{
+  "registries": {
+    "@shadcn-kit": "https://github.com/edustorg/shadcn-kit/r/{name}.json"
+  }
+}
+```
+
+Then install by name:
+
+```bash
+npx shadcn@latest add @shadcn-kit/button
+```
+
+## Verify
+
+```bash
+npx shadcn@latest list edustorg/shadcn-kit
+```

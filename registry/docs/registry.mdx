@@ -1,0 +1,41 @@
+---
+title: Registry
+description: How this registry is structured and how to add new items.
+order: 3
+group: docs
+---
+
+# Registry
+
+This project is both a Next.js site and the source for a shadcn-compatible registry.
+
+## Structure
+
+```txt
+registry
+├── config.ts                          # registry metadata (name, namespace, homepage)
+├── docs/                              # public documentation pages (/docs)
+└── items/
+    └── components/
+        └── <name>/
+            ├── <name>.tsx             # published component source
+            ├── _registry.mdx          # item metadata + usage docs
+            └── _preview.tsx           # interactive preview
+src/
+└── components/ui/                     # shadcn core components for the app shell
+```
+
+## Adding an item
+
+1. Install a core shadcn component: `pnpm dlx shadcn@latest add input`
+2. Copy its source into `registry/items/components/<name>/<name>.tsx` and customize it.
+3. Write `_registry.mdx` with the item's metadata.
+4. Write `_preview.tsx` to showcase it.
+5. Rebuild the catalog:
+
+   ```bash
+   pnpm generate
+   ```
+
+The generator writes the root `registry.json` (used by the GitHub registry), the typed
+catalog, and the preview module map.
