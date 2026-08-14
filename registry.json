@@ -7,7 +7,7 @@
       "name": "date-picker",
       "type": "registry:ui",
       "title": "Date Picker",
-      "description": "A calendar date picker built on react-hook-form. Returns the selected date as an ISO string and renders the month and year as dropdowns by default.",
+      "description": "A calendar date picker built on react-hook-form. Writes a UTC ISO string via field.onChange, combining the selected calendar day with the current time at the moment of selection (e.g. \"2026-08-13T14:32:05.123Z\"). Supports min/max dates, disabled days, custom placeholder, locale and display format.",
       "dependencies": [
         "date-fns",
         "react-hook-form"

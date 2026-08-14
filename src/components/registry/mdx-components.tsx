@@ -2,8 +2,43 @@ import type { MDXComponents } from "mdx/types";
 
 import { CodeBlock } from "./code-block";
 
+type CodeElementProps = {
+  children?: React.ReactNode;
+  className?: string;
+};
+
+function asCodeElement(node: React.ReactNode): React.ReactElement<CodeElementProps> | null {
+  return typeof node === "object" && node !== null && "props" in node
+    ? (node as React.ReactElement<CodeElementProps>)
+    : null;
+}
+
+function extractCode(children: React.ReactNode): { code: string; language: string } {
+  const outer = asCodeElement(children);
+  if (!outer) return { code: "", language: "" };
+
+  const codeElement = asCodeElement(outer.props.children) ?? outer;
+  const code = extractText(codeElement.props.children);
+  const language = (codeElement.props.className ?? "").replace(/^language-/, "");
+
+  return { code, language };
+}
+
+function extractText(node: React.ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  const element = asCodeElement(node);
+  if (element) return extractText(element.props.children);
+  return "";
+}
+
+async function PreBlock({ children }: { children: React.ReactNode }) {
+  const { code, language } = extractCode(children);
+  return <CodeBlock code={code} language={language} />;
+}
+
 export const mdxComponents: MDXComponents = {
-  pre: (props) => <CodeBlock {...props} />,
+  pre: (props) => <PreBlock {...props} />,
   h1: (props) => <h1 className="mb-4 mt-8 text-3xl font-semibold tracking-tight" {...props} />,
   h2: (props) => <h2 className="mb-3 mt-8 text-xl font-semibold tracking-tight" {...props} />,
   h3: (props) => <h3 className="mb-2 mt-6 text-lg font-semibold tracking-tight" {...props} />,
