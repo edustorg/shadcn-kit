@@ -3,8 +3,10 @@ name: date-picker
 type: registry:ui
 title: Date Picker
 description: >-
-  A calendar date picker built on react-hook-form. Returns the selected date as
-  an ISO string and renders the month and year as dropdowns by default.
+  A calendar date picker built on react-hook-form. Writes a UTC ISO string via
+  field.onChange, combining the selected calendar day with the current time at
+  the moment of selection (e.g. "2026-08-13T14:32:05.123Z"). Supports min/max
+  dates, disabled days, custom placeholder, locale and display format.
 dependencies:
   - date-fns
   - react-hook-form
@@ -17,7 +19,66 @@ registryDependencies:
 target: "@ui/edust-kit/date-picker.tsx"
 ---
 
-Wrap the date picker in a react-hook-form `Controller` to bind it to a form field. The picker writes a UTC ISO string (e.g. `"2026-08-13T00:00:00.000Z"`) via `field.onChange`.
+Wrap the date picker in a react-hook-form `Controller` to bind it to a form field. The picker writes a UTC ISO string via `field.onChange`.
+
+## Typing dates
+
+The type-to-enter UX is opt-in via the `variant` prop. The default `"button"`
+keeps the original label-style trigger that opens the calendar; pass
+`variant="input"` to render a field where users can type a date directly
+instead of clicking the calendar. Both variants open the same calendar popover.
+
+Accepted typed formats (day/month/year, with or without leading zeros and
+optional separators):
+
+- `1482026` → 14 Aug 2026 (DDMMYYYY, unpadded month)
+- `14082026` → 14 Aug 2026 (DDMMYYYY)
+- `14/08/2026`, `14-8-2026` → 14 Aug 2026
+- `2026-08-14` → 14 Aug 2026 (YYYY-MM-DD)
+- `140825` → 14 Aug 2025 (DDMMYY)
+
+The value is committed as soon as the input forms a valid date; invalid or
+partial input is ignored until complete.
+
+```tsx
+<DatePicker
+  field={field}
+  fieldState={fieldState}
+  label="Start date"
+  variant="input"
+/>
+```
+
+## Value shape
+
+The stored value is always a full ISO timestamp: the selected day with the
+current local time of day stamped on it.
+
+```json
+{
+  "startDate": "2026-08-13T14:32:05.123Z"
+}
+```
+
+## Validation (Zod)
+
+Validate the field with `z.iso.datetime` (Zod v4). Use `.optional()` when the
+field is not required, and `.refine()` to enforce a minimum date.
+
+```tsx
+import { z } from "zod"
+
+const formSchema = z.object({
+  startDate: z
+    .iso.datetime("Please select a valid date")
+    .refine((value) => new Date(value) >= new Date("2026-01-01"), {
+      message: "Date must be in 2026 or later",
+    }),
+  endDate: z.iso.datetime().optional(),
+})
+```
+
+## Basic usage
 
 ```tsx
 import { Controller, useForm } from "react-hook-form"
@@ -47,7 +108,61 @@ export function EventForm() {
 }
 ```
 
-`captionLayout` defaults to `"dropdown"` — pass `"label"` or `"popup"` to switch:
+## Constrained usage (min/max, disabled days, placeholder)
+
+`startMonth` / `endMonth` bound the navigable range, `disabledDates` disables
+specific days, and `placeholder` overrides the empty text.
+
+```tsx
+import { Controller, useForm } from "react-hook-form"
+import { DatePicker } from "@/components/ui/edust-kit/date-picker"
+
+export function BookingForm() {
+  const form = useForm<{ startDate: string }>()
+
+  return (
+    <Controller
+      name="startDate"
+      control={form.control}
+      render={({ field, fieldState }) => (
+        <DatePicker
+          field={field}
+          fieldState={fieldState}
+          label="Booking date"
+          required
+          placeholder="Choose a booking date"
+          startMonth={new Date(2026, 0, 1)}
+          endMonth={new Date(2026, 11, 31)}
+          disabledDates={(date) => date.getDay() === 0}
+        />
+      )}
+    />
+  )
+}
+```
+
+## Props
+
+`DatePicker` is generic over your form values and field name
+(`<TFieldValues, TName>`). Beyond the `field` / `fieldState` from a
+`Controller`, it accepts:
+
+| Prop            | Type                                              | Default       | Description                                          |
+| --------------- | ------------------------------------------------- | ------------- | ---------------------------------------------------- |
+| `label`         | `string`                                          | —             | Field label (required).                              |
+| `variant`       | `"button" \| "input"`                             | `"button"`    | `"button"` = label trigger; `"input"` = type-to-enter field. |
+| `required`      | `boolean`                                         | `true`        | Shows a required marker and marks the trigger.       |
+| `disabled`      | `boolean`                                         | `false`       | Disables the whole control.                          |
+| `placeholder`   | `string`                                          | `"Pick a date"` | Empty-state text on the trigger.                   |
+| `startMonth`    | `Date`                                            | —             | Earliest selectable month (inclusive). Also bounds the dropdown range. |
+| `endMonth`      | `Date`                                            | —             | Latest selectable month (inclusive). Also bounds the dropdown range. |
+| `disabledDates` | `Matcher \| Matcher[]` (react-day-picker)         | —             | Disables specific days.                              |
+| `captionLayout` | `"label" \| "dropdown" \| "dropdown-months" \| "dropdown-years"` | `"dropdown"` | Calendar caption layout.                |
+| `locale`        | `Locale` (date-fns)                               | —             | Locale for formatting and the calendar.              |
+| `displayFormat` | `string`                                          | `"PPP"`       | date-fns format string for the trigger label.        |
+
+`captionLayout` defaults to `"dropdown"` — pass `"label"` to switch to a
+simple label:
 
 ```tsx
 <DatePicker
@@ -55,5 +170,25 @@ export function EventForm() {
   fieldState={fieldState}
   label="Start date"
   captionLayout="label"
+/>
+```
+
+## Dropdown navigation range
+
+With `captionLayout="dropdown"`, the year/month dropdowns only span the range
+set by `startMonth` / `endMonth`. If you omit them, the year dropdown defaults
+to **[current year − 100, current year]** — so future years like 2030 will not
+appear unless you extend `endMonth`. `startMonth` / `endMonth` also disable
+dates outside that range.
+
+```tsx
+<DatePicker
+  field={field}
+  fieldState={fieldState}
+  label="Event date"
+  variant="input"
+  captionLayout="dropdown"
+  startMonth={new Date(2020, 0, 1)}
+  endMonth={new Date(2030, 11, 31)}
 />
 ```
