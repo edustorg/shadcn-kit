@@ -51,14 +51,30 @@ partial input is ignored until complete.
 
 ## Value shape
 
-The stored value is always a full ISO timestamp: the selected day with the
-current local time of day stamped on it.
+The stored value is always a full ISO 8601 UTC timestamp: the selected calendar
+day with the **current local time of day** stamped on it, serialized in UTC.
+
+**Format:** `YYYY-MM-DDTHH:mm:ss.sssZ`
+
+```text
+2026-08-14T07:23:41.123Z
+└──┬───┘ └─┬─┘ └─┬─┘ └┬┘ └┬┘
+  date   month  time  ms  Z = UTC
+```
 
 ```json
 {
-  "startDate": "2026-08-13T14:32:05.123Z"
+  "startDate": "2026-08-14T07:23:41.123Z"
 }
 ```
+
+- The **date** is the day the user picked in the calendar or typed.
+- The **time** is the current local time at the moment of selection (not
+  midnight), so two picks on the same day still differ by their time.
+- It is always `...Z` (UTC), regardless of the viewer's timezone.
+
+If you only need the date and not the time, strip it after parsing, or use a
+`z` transform in your schema (see below).
 
 ## Validation (Zod)
 
@@ -76,6 +92,13 @@ const formSchema = z.object({
     }),
   endDate: z.iso.datetime().optional(),
 })
+```
+
+To read it back as a `Date` (e.g. for an API or another component):
+
+```ts
+const date: Date = new Date(form.getValues("startDate"))
+// → Date object for 2026-08-14T07:23:41.123Z
 ```
 
 ## Basic usage
@@ -107,6 +130,22 @@ export function EventForm() {
   )
 }
 ```
+
+## Default value
+
+The field expects a UTC ISO string, so seed it with `new Date().toISOString()`
+to preselect the current date and time:
+
+```tsx
+const form = useForm<FormValues>({
+  defaultValues: {
+    startDate: new Date().toISOString(), // e.g. "2026-08-14T07:23:41.123Z"
+  },
+})
+```
+
+Any value parseable by `Date` (or a `Date` object) also works, since the picker
+accepts both string and `Date` values.
 
 ## Constrained usage (min/max, disabled days, placeholder)
 
