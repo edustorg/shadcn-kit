@@ -59,15 +59,19 @@ function parseTypedDate(raw: string): Date | undefined {
   if (/[/\-.]/.test(raw)) {
     const parts = raw.split(/[/\-.,\s]+/).filter(Boolean)
     if (parts.length !== 3) return undefined
+    const p0 = parts[0]
+    const p1 = parts[1]
+    const p2 = parts[2]
+    if (!p0 || !p1 || !p2) return undefined
     let day: number, month: number, year: number
-    if (parts[0].length === 4) {
-      year = Number(parts[0])
-      month = Number(parts[1])
-      day = Number(parts[2])
+    if (p0.length === 4) {
+      year = Number(p0)
+      month = Number(p1)
+      day = Number(p2)
     } else {
-      day = Number(parts[0])
-      month = Number(parts[1])
-      year = Number(parts[2])
+      day = Number(p0)
+      month = Number(p1)
+      year = Number(p2)
       if (year < 100) year += 2000
     }
     return buildDate(day, month, year)
