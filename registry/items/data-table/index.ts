@@ -1,5 +1,6 @@
 export { DataTable } from "./data-table";
 export { DataTableAdvancedToolbar } from "./data-table-advanced-toolbar";
+export { DataTableAsyncFacetedFilter } from "./data-table-async-faceted-filter";
 export { DataTableColumnHeader } from "./data-table-column-header";
 export { DataTableDateFilter } from "./data-table-date-filter";
 export { DataTableFacetedFilter } from "./data-table-faceted-filter";

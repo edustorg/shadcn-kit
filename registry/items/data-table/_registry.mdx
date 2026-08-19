@@ -41,6 +41,9 @@ files:
   - path: data-table-date-filter.tsx
     type: registry:ui
     target: "@/components/data-table/data-table-date-filter.tsx"
+  - path: data-table-async-faceted-filter.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-async-faceted-filter.tsx"
   - path: data-table-faceted-filter.tsx
     type: registry:ui
     target: "@/components/data-table/data-table-faceted-filter.tsx"
@@ -124,6 +127,64 @@ sub-components from `@/components/data-table/*`.
 ```tsx
 import { DataTable, DataTableToolbar } from "@/components/data-table";
 import { useDataTable } from "@/hooks/use-data-table";
+```
+
+## Async Faceted Filter
+
+The `DataTableAsyncFacetedFilter` component provides a faceted filter that
+fetches options asynchronously from an API. It supports debounced search,
+loading states, error handling, and displaying selected items that are not
+currently in the fetched results.
+
+### Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `column` | `Column<TData, TValue>` | The TanStack Table column to filter |
+| `title` | `string` | Display label for the filter button |
+| `asyncOptions` | `AsyncColumnOptions` | Configuration for async data fetching |
+
+### AsyncColumnOptions
+
+```typescript
+interface AsyncColumnOptions {
+  useDataHook: (params: Record<string, unknown>) => {
+    data?: { data?: { items?: unknown[] } };
+    isFetching: boolean;
+    error: unknown;
+  };
+  searchParamKey?: string;       // Default: "search"
+  getItemLabel: (item: unknown) => string;
+  getItemValue?: (item: unknown) => string;  // Default: item.id
+  additionalParams?: Record<string, unknown>;
+  debounceDelay?: number;        // Default: 300
+}
+```
+
+### Usage
+
+```tsx
+import { DataTableAsyncFacetedFilter } from "@/components/data-table";
+import { useQuery } from "@tanstack/react-query";
+
+function useUsers(params: Record<string, unknown>) {
+  return useQuery({
+    queryKey: ["users", params],
+    queryFn: () => fetchUsers(params),
+  });
+}
+
+<DataTableAsyncFacetedFilter
+  column={table.getColumn("userId")}
+  title="User"
+  asyncOptions={{
+    useDataHook: useUsers,
+    getItemLabel: (item) => item.name,
+    getItemValue: (item) => item.id,
+    searchParamKey: "search",
+    debounceDelay: 300,
+  }}
+/>
 ```
 
 ## Entity
