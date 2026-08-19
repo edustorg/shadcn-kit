@@ -33,6 +33,19 @@ export interface Option {
   icon?: React.ComponentType<React.ComponentProps<"svg">>;
 }
 
+export interface AsyncColumnOptions {
+  useDataHook: (params: Record<string, unknown>) => {
+    data?: { data?: { items?: unknown[] } };
+    isFetching: boolean;
+    error: unknown;
+  };
+  searchParamKey?: string;
+  getItemLabel: (item: unknown) => string;
+  getItemValue?: (item: unknown) => string;
+  additionalParams?: Record<string, unknown>;
+  debounceDelay?: number;
+}
+
 export type FilterOperator = DataTableConfig["operators"][number];
 export type FilterVariant = DataTableConfig["filterVariants"][number];
 export type JoinOperator = DataTableConfig["joinOperators"][number];
