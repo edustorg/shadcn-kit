@@ -28,6 +28,7 @@ type ItemFrontmatter = {
 
 type RegistryItem = ItemFrontmatter & {
   sourcePath: string;
+  files: RegistryFile[];
   hasPreview: boolean;
   usage: string;
   dependencies: string[];
@@ -55,10 +56,20 @@ const items: RegistryItem[] = findRegistryMdxFiles(ITEMS_DIR).map((mdxPath) => {
   const itemDir = dirname(mdxPath);
   const name = meta.name ?? dirname(mdxPath).split("/").pop()!;
   const type = meta.type ?? "registry:ui";
-  const sourceName = meta.files?.[0]?.path ?? `${name}.tsx`;
-  const sourcePath = toRepoPath(resolve(itemDir, sourceName));
   const hasPreview = readdirSync(itemDir, { encoding: "utf8" }).includes("_preview.tsx");
-  const target = meta.target ?? `@ui/edust-kit/${name}.tsx`;
+
+  let files: RegistryFile[];
+  if (meta.files && meta.files.length > 0) {
+    files = meta.files.map((file) => ({
+      path: toRepoPath(resolve(itemDir, file.path)),
+      type: file.type,
+      target: file.target,
+    }));
+  } else {
+    const sourcePath = toRepoPath(resolve(itemDir, `${name}.tsx`));
+    const target = meta.target ?? `@ui/edust-kit/${name}.tsx`;
+    files = [{ path: sourcePath, type, target }];
+  }
 
   return {
     name,
@@ -67,10 +78,10 @@ const items: RegistryItem[] = findRegistryMdxFiles(ITEMS_DIR).map((mdxPath) => {
     description: meta.description ?? "",
     dependencies: meta.dependencies ?? [],
     registryDependencies: meta.registryDependencies ?? [],
-    files: meta.files,
+    files,
     cssVars: meta.cssVars,
-    target,
-    sourcePath,
+    target: files[0]?.target ?? `@ui/edust-kit/${name}.tsx`,
+    sourcePath: files[0]?.path ?? `${name}.tsx`,
     hasPreview,
     usage: content.trim(),
   };
@@ -92,6 +103,7 @@ const catalog = items.map((item) => ({
   cssVars: item.cssVars,
   target: item.target,
   sourcePath: item.sourcePath,
+  files: item.files,
   hasPreview: item.hasPreview,
   usage: item.usage,
 }));
@@ -154,13 +166,7 @@ const registryJson = {
       ? { registryDependencies: item.registryDependencies }
       : {}),
     ...(item.cssVars ? { cssVars: item.cssVars } : {}),
-    files: [
-      {
-        path: item.sourcePath,
-        type: item.type,
-        target: item.target,
-      },
-    ],
+    files: item.files.map((f) => ({ path: f.path, type: f.type, target: f.target })),
   })),
 };
 
@@ -178,7 +184,13 @@ writeFileSync(
 );
 
 for (const item of items) {
-  const content = readFileSync(resolve(ROOT, item.sourcePath), "utf8");
+  const itemFiles = item.files.map((file) => ({
+    path: file.path,
+    content: readFileSync(resolve(ROOT, file.path), "utf8"),
+    type: file.type,
+    target: file.target,
+  }));
+
   const itemJson = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: item.name,
@@ -190,14 +202,7 @@ for (const item of items) {
       ? { registryDependencies: item.registryDependencies }
       : {}),
     ...(item.cssVars ? { cssVars: item.cssVars } : {}),
-    files: [
-      {
-        path: item.sourcePath,
-        content,
-        type: item.type,
-        target: item.target,
-      },
-    ],
+    files: itemFiles,
   };
   writeFileSync(resolve(R_DIR, `${item.name}.json`), `${JSON.stringify(itemJson, null, 2)}\n`);
 }

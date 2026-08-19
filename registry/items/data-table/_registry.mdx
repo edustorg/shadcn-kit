@@ -1,0 +1,132 @@
+---
+name: data-table
+type: registry:ui
+title: Data Table
+description: >-
+  A feature-rich data table with advanced filtering, sorting, pagination, and
+  URL state management using TanStack Table and nuqs.
+dependencies:
+  - "@dnd-kit/core"
+  - "@dnd-kit/modifiers"
+  - "@dnd-kit/sortable"
+  - "@dnd-kit/utilities"
+  - "@tanstack/react-table"
+  - nuqs
+  - zod
+registryDependencies:
+  - utils
+  - button
+  - badge
+  - input
+  - textarea
+  - select
+  - dialog
+  - popover
+  - command
+  - separator
+  - skeleton
+  - table
+  - sortable
+  - input-group
+files:
+  - path: data-table.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table.tsx"
+  - path: data-table-advanced-toolbar.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-advanced-toolbar.tsx"
+  - path: data-table-column-header.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-column-header.tsx"
+  - path: data-table-date-filter.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-date-filter.tsx"
+  - path: data-table-faceted-filter.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-faceted-filter.tsx"
+  - path: data-table-filter-list.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-filter-list.tsx"
+  - path: data-table-filter-menu.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-filter-menu.tsx"
+  - path: data-table-pagination.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-pagination.tsx"
+  - path: data-table-range-filter.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-range-filter.tsx"
+  - path: data-table-skeleton.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-skeleton.tsx"
+  - path: data-table-slider-filter.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-slider-filter.tsx"
+  - path: data-table-sort-list.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-sort-list.tsx"
+  - path: data-table-toolbar.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-toolbar.tsx"
+  - path: data-table-view-options.tsx
+    type: registry:ui
+    target: "@/components/data-table/data-table-view-options.tsx"
+  - path: ui/faceted.tsx
+    type: registry:ui
+    target: "@/components/ui/faceted.tsx"
+  - path: index.ts
+    type: registry:ui
+    target: "@/components/data-table/index.ts"
+  - path: entity/entity-test.tsx
+    type: registry:ui
+    target: "@/components/data-table/entity/entity-test.tsx"
+  - path: entity/index.ts
+    type: registry:ui
+    target: "@/components/data-table/entity/index.ts"
+  - path: lib/data-table.ts
+    type: registry:ui
+    target: "@/lib/data-table.ts"
+  - path: lib/parsers.ts
+    type: registry:ui
+    target: "@/lib/parsers.ts"
+  - path: lib/format.ts
+    type: registry:ui
+    target: "@/lib/format.ts"
+  - path: lib/id.ts
+    type: registry:ui
+    target: "@/lib/id.ts"
+  - path: lib/compose-refs.ts
+    type: registry:ui
+    target: "@/lib/compose-refs.ts"
+  - path: hooks/use-data-table.ts
+    type: registry:ui
+    target: "@/hooks/use-data-table.ts"
+  - path: hooks/use-callback-ref.ts
+    type: registry:ui
+    target: "@/hooks/use-callback-ref.ts"
+  - path: hooks/use-debounced-callback.ts
+    type: registry:ui
+    target: "@/hooks/use-debounced-callback.ts"
+  - path: config/data-table.ts
+    type: registry:ui
+    target: "@/config/data-table.ts"
+  - path: types/data-table.ts
+    type: registry:ui
+    target: "@/types/data-table.ts"
+---
+
+A complete data table solution with advanced filtering, sorting, pagination, and
+URL state management. This is a barrel export that re-exports all data-table
+sub-components from `@/components/data-table/*`.
+
+## Usage
+
+```tsx
+import { DataTable, DataTableToolbar } from "@/components/data-table";
+import { useDataTable } from "@/hooks/use-data-table";
+```
+
+## Entity
+
+The `entity` subdirectory includes an `EntityTest` component that renders
+"Hello Entity Text".

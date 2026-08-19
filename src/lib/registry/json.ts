@@ -34,13 +34,10 @@ export function getRegistryCatalogJson(): RegistryCatalogJson {
         ? { registryDependencies: item.registryDependencies }
         : {}),
       ...(item.cssVars ? { cssVars: item.cssVars } : {}),
-      files: [
-        {
-          path: item.sourcePath,
-          type: item.type,
-          target: item.target,
-        },
-      ],
+      files:
+        item.files?.length
+          ? item.files.map((f) => ({ path: f.path, type: f.type }))
+          : [{ path: item.sourcePath, type: item.type }],
     })),
   };
 }
@@ -54,8 +51,28 @@ export function getRegistryItemJson(name: string) {
     return null;
   }
 
-  const sourcePath = item.sourcePath.replace(/^registry\//, "");
-  const content = readFileSync(join(process.cwd(), "registry", sourcePath), "utf8");
+  const files =
+    item.files?.length
+      ? item.files.map((file) => {
+          const sourcePath = file.path.replace(/^registry\//, "");
+          return {
+            path: file.path,
+            content: readFileSync(join(process.cwd(), "registry", sourcePath), "utf8"),
+            type: file.type,
+            target: file.target,
+          };
+        })
+      : [
+          {
+            path: item.sourcePath,
+            content: readFileSync(
+              join(process.cwd(), "registry", item.sourcePath.replace(/^registry\//, "")),
+              "utf8",
+            ),
+            type: item.type,
+            target: item.target,
+          },
+        ];
 
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
@@ -68,13 +85,6 @@ export function getRegistryItemJson(name: string) {
       ? { registryDependencies: item.registryDependencies }
       : {}),
     ...(item.cssVars ? { cssVars: item.cssVars } : {}),
-    files: [
-      {
-        path: item.sourcePath,
-        content,
-        type: item.type,
-        target: item.target,
-      },
-    ],
+    files,
   };
 }

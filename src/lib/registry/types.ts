@@ -16,6 +16,7 @@ export type RegistryItem = {
   cssVars?: Record<string, Record<string, string>>;
   target: string;
   sourcePath: string;
+  files?: RegistryFile[];
   hasPreview: boolean;
   usage: string;
 };
