@@ -4,6 +4,179 @@
   "homepage": "https://github.com/edustorg/shadcn-kit",
   "items": [
     {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "Data Table",
+      "description": "A feature-rich data table with advanced filtering, sorting, pagination, and URL state management using TanStack Table and nuqs.",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "@tanstack/react-table",
+        "nuqs",
+        "zod"
+      ],
+      "registryDependencies": [
+        "utils",
+        "button",
+        "badge",
+        "input",
+        "textarea",
+        "select",
+        "dialog",
+        "popover",
+        "command",
+        "separator",
+        "skeleton",
+        "table",
+        "sortable",
+        "input-group"
+      ],
+      "files": [
+        {
+          "path": "registry/items/data-table/data-table.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-advanced-toolbar.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-advanced-toolbar.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-column-header.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-column-header.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-date-filter.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-date-filter.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-faceted-filter.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-faceted-filter.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-filter-list.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-filter-list.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-filter-menu.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-filter-menu.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-pagination.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-pagination.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-range-filter.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-range-filter.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-skeleton.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-skeleton.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-slider-filter.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-slider-filter.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-sort-list.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-sort-list.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-toolbar.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-toolbar.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-view-options.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-view-options.tsx"
+        },
+        {
+          "path": "registry/items/data-table/ui/faceted.tsx",
+          "type": "registry:ui",
+          "target": "@/components/ui/faceted.tsx"
+        },
+        {
+          "path": "registry/items/data-table/index.ts",
+          "type": "registry:ui",
+          "target": "@/components/data-table/index.ts"
+        },
+        {
+          "path": "registry/items/data-table/entity/entity-test.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/entity/entity-test.tsx"
+        },
+        {
+          "path": "registry/items/data-table/entity/index.ts",
+          "type": "registry:ui",
+          "target": "@/components/data-table/entity/index.ts"
+        },
+        {
+          "path": "registry/items/data-table/lib/data-table.ts",
+          "type": "registry:ui",
+          "target": "@/lib/data-table.ts"
+        },
+        {
+          "path": "registry/items/data-table/lib/parsers.ts",
+          "type": "registry:ui",
+          "target": "@/lib/parsers.ts"
+        },
+        {
+          "path": "registry/items/data-table/lib/format.ts",
+          "type": "registry:ui",
+          "target": "@/lib/format.ts"
+        },
+        {
+          "path": "registry/items/data-table/lib/id.ts",
+          "type": "registry:ui",
+          "target": "@/lib/id.ts"
+        },
+        {
+          "path": "registry/items/data-table/lib/compose-refs.ts",
+          "type": "registry:ui",
+          "target": "@/lib/compose-refs.ts"
+        },
+        {
+          "path": "registry/items/data-table/hooks/use-data-table.ts",
+          "type": "registry:ui",
+          "target": "@/hooks/use-data-table.ts"
+        },
+        {
+          "path": "registry/items/data-table/hooks/use-callback-ref.ts",
+          "type": "registry:ui",
+          "target": "@/hooks/use-callback-ref.ts"
+        },
+        {
+          "path": "registry/items/data-table/hooks/use-debounced-callback.ts",
+          "type": "registry:ui",
+          "target": "@/hooks/use-debounced-callback.ts"
+        },
+        {
+          "path": "registry/items/data-table/config/data-table.ts",
+          "type": "registry:ui",
+          "target": "@/config/data-table.ts"
+        },
+        {
+          "path": "registry/items/data-table/types/data-table.ts",
+          "type": "registry:ui",
+          "target": "@/types/data-table.ts"
+        }
+      ]
+    },
+    {
       "name": "date-picker",
       "type": "registry:ui",
       "title": "Date Picker",

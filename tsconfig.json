@@ -21,7 +21,19 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/components/data-table/*": ["./registry/items/data-table/*"],
+      "@/components/ui/faceted": ["./registry/items/data-table/ui/faceted"],
+      "@/lib/data-table": ["./registry/items/data-table/lib/data-table"],
+      "@/lib/parsers": ["./registry/items/data-table/lib/parsers"],
+      "@/lib/format": ["./registry/items/data-table/lib/format"],
+      "@/lib/id": ["./registry/items/data-table/lib/id"],
+      "@/lib/compose-refs": ["./registry/items/data-table/lib/compose-refs"],
+      "@/hooks/use-data-table": ["./registry/items/data-table/hooks/use-data-table"],
+      "@/hooks/use-callback-ref": ["./registry/items/data-table/hooks/use-callback-ref"],
+      "@/hooks/use-debounced-callback": ["./registry/items/data-table/hooks/use-debounced-callback"],
+      "@/config/data-table": ["./registry/items/data-table/config/data-table"],
+      "@/types/data-table": ["./registry/items/data-table/types/data-table"]
     }
   },
   "include": [
