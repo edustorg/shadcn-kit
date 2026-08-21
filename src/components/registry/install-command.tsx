@@ -7,8 +7,8 @@ import { CopyButton } from "./copy-button";
 type PackageManager = "npm" | "pnpm" | "yarn" | "bun";
 
 const PACKAGE_MANAGERS: { value: PackageManager; label: string }[] = [
-  { value: "npm", label: "npm" },
   { value: "pnpm", label: "pnpm" },
+  { value: "npm", label: "npm" },
   { value: "yarn", label: "yarn" },
   { value: "bun", label: "bun" },
 ];
@@ -27,7 +27,7 @@ function getInstallCommand(source: string, packageManager: PackageManager): stri
 }
 
 export function InstallCommand({ source }: { source: string }) {
-  const [packageManager, setPackageManager] = useState<PackageManager>("npm");
+  const [packageManager, setPackageManager] = useState<PackageManager>("pnpm");
   const selectId = useId();
   const command = getInstallCommand(source, packageManager);
 
