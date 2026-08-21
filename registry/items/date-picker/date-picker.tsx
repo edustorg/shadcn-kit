@@ -11,9 +11,11 @@ import {
   Path,
 } from "react-hook-form"
 
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
 import {
   Popover,
   PopoverContent,
@@ -225,7 +227,7 @@ export const DatePicker = <
       {variant === "input" ? (
         <Popover open={open} onOpenChange={setOpen}>
           <div className="relative w-70">
-            <input
+            <Input
               id={id}
               type="text"
               inputMode="numeric"
@@ -244,7 +246,7 @@ export const DatePicker = <
               onChange={handleInputChange}
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
-              className="h-9 w-full rounded-lg border border-input bg-background px-3 pr-10 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
+              className="pr-10"
             />
             <PopoverTrigger asChild>
               <Button
@@ -253,7 +255,7 @@ export const DatePicker = <
                 size="icon"
                 disabled={disabled}
                 aria-label={`Open calendar for ${label}`}
-                className="absolute right-1 top-1/2 size-7 -translate-y-1/2"
+                className="absolute right-0.5 top-1/2 size-7 -translate-y-1/2"
               >
                 <CalendarIcon />
               </Button>
@@ -276,7 +278,10 @@ export const DatePicker = <
               aria-label={
                 selected ? `${label}: ${formattedValue}` : `${label}: ${placeholder}`
               }
-              className="w-70 justify-start text-left font-normal"
+              className={cn(
+                "w-70 justify-start text-left font-normal",
+                !selected && "text-muted-foreground"
+              )}
             >
               {formattedValue}
             </Button>

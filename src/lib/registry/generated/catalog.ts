@@ -56,6 +56,11 @@ export const registryItems: RegistryItem[] = [
         "target": "@/components/data-table/data-table-date-filter.tsx"
       },
       {
+        "path": "registry/items/data-table/data-table-async-faceted-filter.tsx",
+        "type": "registry:ui",
+        "target": "@/components/data-table/data-table-async-faceted-filter.tsx"
+      },
+      {
         "path": "registry/items/data-table/data-table-faceted-filter.tsx",
         "type": "registry:ui",
         "target": "@/components/data-table/data-table-faceted-filter.tsx"
@@ -177,7 +182,7 @@ export const registryItems: RegistryItem[] = [
       }
     ],
     "hasPreview": true,
-    "usage": "A complete data table solution with advanced filtering, sorting, pagination, and\nURL state management. This is a barrel export that re-exports all data-table\nsub-components from `@/components/data-table/*`.\n\n## Usage\n\n```tsx\nimport { DataTable, DataTableToolbar } from \"@/components/data-table\";\nimport { useDataTable } from \"@/hooks/use-data-table\";\n```\n\n## Entity\n\nThe `entity` subdirectory includes an `EntityTest` component that renders\n\"Hello Entity Text\"."
+    "usage": "A complete data table solution with advanced filtering, sorting, pagination, and\nURL state management. This is a barrel export that re-exports all data-table\nsub-components from `@/components/data-table/*`.\n\n## Usage\n\n```tsx\nimport { DataTable, DataTableToolbar } from \"@/components/data-table\";\nimport { useDataTable } from \"@/hooks/use-data-table\";\n```\n\n## Async Faceted Filter\n\nThe `DataTableAsyncFacetedFilter` component provides a faceted filter that\nfetches options asynchronously from an API. It supports debounced search,\nloading states, error handling, and displaying selected items that are not\ncurrently in the fetched results.\n\n### Props\n\n| Prop | Type | Description |\n|------|------|-------------|\n| `column` | `Column<TData, TValue>` | The TanStack Table column to filter |\n| `title` | `string` | Display label for the filter button |\n| `asyncOptions` | `AsyncColumnOptions` | Configuration for async data fetching |\n\n### AsyncColumnOptions\n\n```typescript\ninterface AsyncColumnOptions {\n  useDataHook: (params: Record<string, unknown>) => {\n    data?: { data?: { items?: unknown[] } };\n    isFetching: boolean;\n    error: unknown;\n  };\n  searchParamKey?: string;       // Default: \"search\"\n  getItemLabel: (item: unknown) => string;\n  getItemValue?: (item: unknown) => string;  // Default: item.id\n  additionalParams?: Record<string, unknown>;\n  debounceDelay?: number;        // Default: 300\n}\n```\n\n### Usage\n\n```tsx\nimport { DataTableAsyncFacetedFilter } from \"@/components/data-table\";\nimport { useQuery } from \"@tanstack/react-query\";\n\nfunction useUsers(params: Record<string, unknown>) {\n  return useQuery({\n    queryKey: [\"users\", params],\n    queryFn: () => fetchUsers(params),\n  });\n}\n\n<DataTableAsyncFacetedFilter\n  column={table.getColumn(\"userId\")}\n  title=\"User\"\n  asyncOptions={{\n    useDataHook: useUsers,\n    getItemLabel: (item) => item.name,\n    getItemValue: (item) => item.id,\n    searchParamKey: \"search\",\n    debounceDelay: 300,\n  }}\n/>\n```\n\n## Entity\n\nThe `entity` subdirectory includes an `EntityTest` component that renders\n\"Hello Entity Text\"."
   },
   {
     "name": "date-picker",
@@ -193,7 +198,8 @@ export const registryItems: RegistryItem[] = [
       "button",
       "calendar",
       "popover",
-      "field"
+      "field",
+      "input"
     ],
     "target": "@ui/edust-kit/date-picker.tsx",
     "sourcePath": "registry/items/date-picker/date-picker.tsx",
