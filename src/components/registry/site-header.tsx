@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ModeToggle } from "@/components/registry/mode-toggle";
 import { registry } from "@/lib/registry/site";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -22,7 +23,8 @@ export function SiteHeader() {
             Docs
           </Link>
         </nav>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          <ModeToggle />
           <Link
             href={registry.repositoryUrl}
             target="_blank"

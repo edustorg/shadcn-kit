@@ -4,6 +4,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
 
 import { SiteHeader } from "@/components/registry/site-header";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { registry } from "@/lib/registry/site";
 
 const geistSans = Geist({
@@ -28,12 +29,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <NuqsAdapter>
-          <SiteHeader />
-          <div className="flex-1">{children}</div>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SiteHeader />
+            <div className="flex-1">{children}</div>
+          </ThemeProvider>
         </NuqsAdapter>
       </body>
     </html>

@@ -55,6 +55,11 @@
           "target": "@/components/data-table/data-table-date-filter.tsx"
         },
         {
+          "path": "registry/items/data-table/data-table-async-faceted-filter.tsx",
+          "type": "registry:ui",
+          "target": "@/components/data-table/data-table-async-faceted-filter.tsx"
+        },
+        {
           "path": "registry/items/data-table/data-table-faceted-filter.tsx",
           "type": "registry:ui",
           "target": "@/components/data-table/data-table-faceted-filter.tsx"
@@ -190,7 +195,8 @@
         "button",
         "calendar",
         "popover",
-        "field"
+        "field",
+        "input"
       ],
       "files": [
         {
