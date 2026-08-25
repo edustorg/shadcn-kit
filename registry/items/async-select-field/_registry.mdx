@@ -12,7 +12,7 @@ registryDependencies:
   - button
   - command
   - popover
-target: "@/components/async-select-field/async-select-field.tsx"
+target: "@ui/edust-kit/async-select-field.tsx"
 ---
 
 A generic async select field for single-value selection from remotely fetched data. Ideal for dropdowns backed by API endpoints with search support.
@@ -20,7 +20,7 @@ A generic async select field for single-value selection from remotely fetched da
 ## Usage
 
 ```tsx
-import { AsyncSelectField } from "@/components/async-select-field"
+import { AsyncSelectField } from "@/components/edust-kit/async-select-field"
 
 <AsyncSelectField
   value={selectedId}
@@ -52,12 +52,13 @@ import { AsyncSelectField } from "@/components/async-select-field"
 | `getItemValue` | `(item: T) => string` | `item.id` | Returns the value (ID) of an item. |
 | `additionalParams` | `Partial<Omit<TParams, keyof BaseSelectParams>>` | `{}` | Extra params merged into every request. |
 | `disabled` | `boolean` | `false` | Disables the select field. |
+| `showSearchIcon` | `boolean` | `false` | Show a search icon inside the search input. |
 
 ## With react-hook-form
 
 ```tsx
 import { Controller, useForm } from "react-hook-form"
-import { AsyncSelectField } from "@/components/async-select-field"
+import { AsyncSelectField } from "@/components/edust-kit/async-select-field"
 
 type FormValues = {
   currencyId: string

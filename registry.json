@@ -18,7 +18,7 @@
         {
           "path": "registry/items/async-select-field/async-select-field.tsx",
           "type": "registry:ui",
-          "target": "@/components/async-select-field/async-select-field.tsx"
+          "target": "@ui/edust-kit/async-select-field.tsx"
         }
       ]
     },

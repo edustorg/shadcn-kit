@@ -11,6 +11,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
+import { Input } from "@/components/ui/input"
 import {
   Popover,
   PopoverContent,
@@ -56,6 +57,7 @@ interface AsyncSelectFieldProps<
   additionalParams?: Partial<Omit<TParams, keyof BaseSelectParams>>
   disabled?: boolean
   className?: string
+  showSearchIcon?: boolean
 }
 
 export function AsyncSelectField<
@@ -77,6 +79,7 @@ export function AsyncSelectField<
   additionalParams = {},
   disabled = false,
   className,
+  showSearchIcon = false,
 }: AsyncSelectFieldProps<T, TParams>) {
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState("")
@@ -168,14 +171,29 @@ export function AsyncSelectField<
         align="start"
       >
         <Command shouldFilter={false}>
-          <CommandInput
-            placeholder={searchPlaceholder}
-            value={search}
-            onValueChange={(value) => {
-              setSearch(value)
-              debouncedSetSearch(value)
-            }}
-          />
+          {showSearchIcon ? (
+            <CommandInput
+              placeholder={searchPlaceholder}
+              value={search}
+              onValueChange={(value) => {
+                setSearch(value)
+                debouncedSetSearch(value)
+              }}
+            />
+          ) : (
+            <div className="px-1 pt-1">
+              <Input
+                data-slot="command-input"
+                placeholder={searchPlaceholder}
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value)
+                  debouncedSetSearch(e.target.value)
+                }}
+                className="h-8 w-full border-0 bg-transparent text-sm shadow-none focus-visible:ring-0"
+              />
+            </div>
+          )}
           <CommandList>
             {isFetching ? (
               <div className="flex items-center justify-center py-6 text-sm text-muted-foreground">
