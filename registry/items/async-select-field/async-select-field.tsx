@@ -1,7 +1,5 @@
 "use client"
 
-import * as React from "react"
-
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -18,6 +16,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+
+import * as React from "react"
 
 import { useDebouncedCallback } from "./hooks/use-debounced-callback"
 
@@ -196,7 +196,7 @@ export function AsyncSelectField<
           )}
           <CommandList>
             {isFetching ? (
-              <div className="flex items-center justify-center py-6 text-sm text-muted-foreground">
+              <div className="text-muted-foreground flex items-center justify-center py-6 text-sm">
                 Loading...
               </div>
             ) : error ? (
@@ -206,7 +206,7 @@ export function AsyncSelectField<
                 {debouncedSearch ? "No items found." : "No items available."}
               </CommandEmpty>
             ) : (
-              <CommandGroup className="max-h-[300px] overflow-y-auto">
+              <CommandGroup className="max-h-75 overflow-y-auto">
                 {items.map((item) => {
                   const itemValue = getValue(item)
                   return (
