@@ -4,6 +4,25 @@
   "homepage": "https://github.com/edustorg/shadcn-kit",
   "items": [
     {
+      "name": "async-select-field",
+      "type": "registry:ui",
+      "title": "Async Select Field",
+      "description": "A searchable async select field built on Popover and Command (cmdk). Fetches options from an API with debounced search, loading/error states, and support for pre-fetching the selected item's display value.",
+      "registryDependencies": [
+        "utils",
+        "button",
+        "command",
+        "popover"
+      ],
+      "files": [
+        {
+          "path": "registry/items/async-select-field/async-select-field.tsx",
+          "type": "registry:ui",
+          "target": "@/components/async-select-field/async-select-field.tsx"
+        }
+      ]
+    },
+    {
       "name": "data-table",
       "type": "registry:ui",
       "title": "Data Table",

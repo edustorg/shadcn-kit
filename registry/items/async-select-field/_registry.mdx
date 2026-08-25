@@ -1,0 +1,135 @@
+---
+name: async-select-field
+type: registry:ui
+title: Async Select Field
+description: >-
+  A searchable async select field built on Popover and Command (cmdk). Fetches
+  options from an API with debounced search, loading/error states, and support
+  for pre-fetching the selected item's display value.
+dependencies: []
+registryDependencies:
+  - utils
+  - button
+  - command
+  - popover
+target: "@/components/async-select-field/async-select-field.tsx"
+---
+
+A generic async select field for single-value selection from remotely fetched data. Ideal for dropdowns backed by API endpoints with search support.
+
+## Usage
+
+```tsx
+import { AsyncSelectField } from "@/components/async-select-field"
+
+<AsyncSelectField
+  value={selectedId}
+  onChange={setSelectedId}
+  useDataHook={useItemsHook}
+  getItemDisplayValue={(item) => item.name}
+  placeholder="Select an item..."
+/>
+```
+
+## Props
+
+`AsyncSelectField` is generic over `<T, TParams>` where `T` is the item type and `TParams` is the params type passed to `useDataHook`.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | — | Currently selected item ID. |
+| `onChange` | `(id: string) => void` | — | Called when the user selects an item. |
+| `placeholder` | `string` | `"Select..."` | Text shown when no item is selected. |
+| `className` | `string` | — | Additional CSS classes for the trigger button. |
+| `debounceDelay` | `number` | `500` | Debounce delay in ms for search input. |
+| `searchPlaceholder` | `string` | `"Search..."` | Placeholder for the search input. |
+| `searchParamKey` | `keyof TParams` | `"search_by_name"` | The param key used for the search term. |
+| `useDataHook` | `(params: TParams) => { data?, isFetching, error }` | — | Hook that fetches items given params. |
+| `selectedItemData` | `{ data?: { items?: T[] } }` | — | Pre-fetched data for the selected item (used when the item is not in the current page). |
+| `getItemDisplayValue` | `(item: T) => string` | — | Returns the plain-text display label (used in trigger and as fallback). |
+| `renderItemLabel` | `(item: T) => React.ReactNode` | — | Custom render for dropdown option content. Overrides `getItemDisplayValue` in the list. |
+| `getItemKey` | `(item: T) => string` | `item.id` | Returns a unique key for React rendering. |
+| `getItemValue` | `(item: T) => string` | `item.id` | Returns the value (ID) of an item. |
+| `additionalParams` | `Partial<Omit<TParams, keyof BaseSelectParams>>` | `{}` | Extra params merged into every request. |
+| `disabled` | `boolean` | `false` | Disables the select field. |
+
+## With react-hook-form
+
+```tsx
+import { Controller, useForm } from "react-hook-form"
+import { AsyncSelectField } from "@/components/async-select-field"
+
+type FormValues = {
+  currencyId: string
+}
+
+export function CurrencyForm() {
+  const form = useForm<FormValues>()
+
+  return (
+    <Controller
+      name="currencyId"
+      control={form.control}
+      render={({ field }) => (
+        <AsyncSelectField
+          value={field.value}
+          onChange={field.onChange}
+          useDataHook={useCurrenciesHook}
+          getItemDisplayValue={(item) => `${item.code} — ${item.name}`}
+          placeholder="Select currency..."
+        />
+      )}
+    />
+  )
+}
+```
+
+## Pre-fetching selected item
+
+When the selected item may not be in the initial fetch (e.g. paginated results), pass `selectedItemData` so the trigger button can display the correct label:
+
+```tsx
+const { data: selectedItemData } = useGetItem(selectedId ? { ids: [selectedId] } : undefined)
+
+<AsyncSelectField
+  value={selectedId}
+  onChange={setSelectedId}
+  useDataHook={useItemsHook}
+  selectedItemData={selectedItemData}
+  getItemDisplayValue={(item) => item.name}
+/>
+```
+
+## Custom option labels
+
+Use `renderItemLabel` to render arbitrary JSX in the dropdown (icons, multi-line, badges, etc.). The trigger always uses `getItemDisplayValue` for plain text.
+
+```tsx
+<AsyncSelectField
+  value={selectedId}
+  onChange={setSelectedId}
+  useDataHook={useItemsHook}
+  getItemDisplayValue={(item) => item.code}
+  renderItemLabel={(item) => (
+    <div className="flex items-center gap-2">
+      <span className="font-medium">{item.symbol}</span>
+      <span>{item.code}</span>
+      <span className="text-muted-foreground text-xs">{item.name}</span>
+    </div>
+  )}
+/>
+```
+
+## Custom styling
+
+Pass `className` to customize the trigger button (height, width, font size, etc.):
+
+```tsx
+<AsyncSelectField
+  className="h-7 text-[0.8rem] max-w-xs"
+  value={selectedId}
+  onChange={setSelectedId}
+  useDataHook={useItemsHook}
+  getItemDisplayValue={(item) => item.name}
+/>
+```
