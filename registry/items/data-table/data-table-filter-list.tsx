@@ -55,7 +55,7 @@ import {
   SortableItem,
   SortableItemHandle,
   SortableOverlay,
-} from "@/components/ui/sortable";
+} from "@/components/data-table/ui/sortable";
 import { dataTableConfig } from "./config/data-table";
 import { useDebouncedCallback } from "./hooks/use-debounced-callback";
 import { getDefaultFilterOperator, getFilterOperators } from "./lib/data-table";

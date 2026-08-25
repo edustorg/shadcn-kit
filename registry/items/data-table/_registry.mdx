@@ -10,6 +10,7 @@ dependencies:
   - "@dnd-kit/modifiers"
   - "@dnd-kit/sortable"
   - "@dnd-kit/utilities"
+  - "@radix-ui/react-slot"
   - "@tanstack/react-table"
   - nuqs
   - zod
@@ -26,7 +27,6 @@ registryDependencies:
   - separator
   - skeleton
   - table
-  - sortable
   - input-group
 files:
   - path: data-table.tsx
@@ -77,6 +77,9 @@ files:
   - path: ui/faceted.tsx
     type: registry:ui
     target: "@/components/ui/faceted.tsx"
+  - path: ui/sortable.tsx
+    type: registry:ui
+    target: "@/components/ui/sortable.tsx"
   - path: index.ts
     type: registry:ui
     target: "@/components/data-table/index.ts"

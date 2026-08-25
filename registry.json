@@ -32,6 +32,7 @@
         "@dnd-kit/modifiers",
         "@dnd-kit/sortable",
         "@dnd-kit/utilities",
+        "@radix-ui/react-slot",
         "@tanstack/react-table",
         "nuqs",
         "zod"
@@ -49,7 +50,6 @@
         "separator",
         "skeleton",
         "table",
-        "sortable",
         "input-group"
       ],
       "files": [
@@ -132,6 +132,11 @@
           "path": "registry/items/data-table/ui/faceted.tsx",
           "type": "registry:ui",
           "target": "@/components/ui/faceted.tsx"
+        },
+        {
+          "path": "registry/items/data-table/ui/sortable.tsx",
+          "type": "registry:ui",
+          "target": "@/components/ui/sortable.tsx"
         },
         {
           "path": "registry/items/data-table/index.ts",
