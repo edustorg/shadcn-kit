@@ -34,7 +34,7 @@ import {
   FacetedItem,
   FacetedList,
   FacetedTrigger,
-} from "@/components/ui/faceted";
+} from "./ui/faceted";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -55,7 +55,7 @@ import {
   SortableItem,
   SortableItemHandle,
   SortableOverlay,
-} from "@/components/data-table/ui/sortable";
+} from "./ui/sortable";
 import { dataTableConfig } from "./config/data-table";
 import { useDebouncedCallback } from "./hooks/use-debounced-callback";
 import { getDefaultFilterOperator, getFilterOperators } from "./lib/data-table";

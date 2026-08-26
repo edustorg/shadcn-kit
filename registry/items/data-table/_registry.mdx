@@ -31,105 +31,105 @@ registryDependencies:
 files:
   - path: data-table.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table.tsx"
+    target: "@ui/edust-kit/data-table.tsx"
   - path: data-table-advanced-toolbar.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-advanced-toolbar.tsx"
+    target: "@ui/edust-kit/data-table-advanced-toolbar.tsx"
   - path: data-table-column-header.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-column-header.tsx"
+    target: "@ui/edust-kit/data-table-column-header.tsx"
   - path: data-table-date-filter.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-date-filter.tsx"
+    target: "@ui/edust-kit/data-table-date-filter.tsx"
   - path: data-table-async-faceted-filter.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-async-faceted-filter.tsx"
+    target: "@ui/edust-kit/data-table-async-faceted-filter.tsx"
   - path: data-table-faceted-filter.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-faceted-filter.tsx"
+    target: "@ui/edust-kit/data-table-faceted-filter.tsx"
   - path: data-table-filter-list.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-filter-list.tsx"
+    target: "@ui/edust-kit/data-table-filter-list.tsx"
   - path: data-table-filter-menu.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-filter-menu.tsx"
+    target: "@ui/edust-kit/data-table-filter-menu.tsx"
   - path: data-table-pagination.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-pagination.tsx"
+    target: "@ui/edust-kit/data-table-pagination.tsx"
   - path: data-table-range-filter.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-range-filter.tsx"
+    target: "@ui/edust-kit/data-table-range-filter.tsx"
   - path: data-table-skeleton.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-skeleton.tsx"
+    target: "@ui/edust-kit/data-table-skeleton.tsx"
   - path: data-table-slider-filter.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-slider-filter.tsx"
+    target: "@ui/edust-kit/data-table-slider-filter.tsx"
   - path: data-table-sort-list.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-sort-list.tsx"
+    target: "@ui/edust-kit/data-table-sort-list.tsx"
   - path: data-table-toolbar.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-toolbar.tsx"
+    target: "@ui/edust-kit/data-table-toolbar.tsx"
   - path: data-table-view-options.tsx
     type: registry:ui
-    target: "@/components/data-table/data-table-view-options.tsx"
+    target: "@ui/edust-kit/data-table-view-options.tsx"
   - path: ui/faceted.tsx
     type: registry:ui
-    target: "@/components/ui/faceted.tsx"
+    target: "@ui/edust-kit/faceted.tsx"
   - path: ui/sortable.tsx
     type: registry:ui
-    target: "@/components/ui/sortable.tsx"
+    target: "@ui/edust-kit/sortable.tsx"
   - path: index.ts
     type: registry:ui
-    target: "@/components/data-table/index.ts"
+    target: "@ui/edust-kit/index.ts"
   - path: entity/entity-test.tsx
     type: registry:ui
-    target: "@/components/data-table/entity/entity-test.tsx"
+    target: "@ui/edust-kit/entity-test.tsx"
   - path: entity/index.ts
     type: registry:ui
-    target: "@/components/data-table/entity/index.ts"
+    target: "@ui/edust-kit/entity-index.ts"
   - path: lib/data-table.ts
     type: registry:ui
-    target: "@/lib/data-table.ts"
+    target: "@ui/edust-kit/data-table-lib.ts"
   - path: lib/parsers.ts
     type: registry:ui
-    target: "@/lib/parsers.ts"
+    target: "@ui/edust-kit/parsers.ts"
   - path: lib/format.ts
     type: registry:ui
-    target: "@/lib/format.ts"
+    target: "@ui/edust-kit/format.ts"
   - path: lib/id.ts
     type: registry:ui
-    target: "@/lib/id.ts"
+    target: "@ui/edust-kit/id.ts"
   - path: lib/compose-refs.ts
     type: registry:ui
-    target: "@/lib/compose-refs.ts"
+    target: "@ui/edust-kit/compose-refs.ts"
   - path: hooks/use-data-table.ts
     type: registry:ui
-    target: "@/hooks/use-data-table.ts"
+    target: "@ui/edust-kit/use-data-table.ts"
   - path: hooks/use-callback-ref.ts
     type: registry:ui
-    target: "@/hooks/use-callback-ref.ts"
+    target: "@ui/edust-kit/use-callback-ref.ts"
   - path: hooks/use-debounced-callback.ts
     type: registry:ui
-    target: "@/hooks/use-debounced-callback.ts"
+    target: "@ui/edust-kit/use-debounced-callback.ts"
   - path: config/data-table.ts
     type: registry:ui
-    target: "@/config/data-table.ts"
+    target: "@ui/edust-kit/data-table-config.ts"
   - path: types/data-table.ts
     type: registry:ui
-    target: "@/types/data-table.ts"
+    target: "@ui/edust-kit/data-table-types.ts"
 ---
 
 A complete data table solution with advanced filtering, sorting, pagination, and
 URL state management. This is a barrel export that re-exports all data-table
-sub-components from `@/components/data-table/*`.
+sub-components from `@/components/edust-kit/*`.
 
 ## Usage
 
 ```tsx
-import { DataTable, DataTableToolbar } from "@/components/data-table";
-import { useDataTable } from "@/hooks/use-data-table";
+import { DataTable, DataTableToolbar } from "@/components/edust-kit";
+import { useDataTable } from "@/components/edust-kit/use-data-table";
 ```
 
 ## Async Faceted Filter
@@ -167,7 +167,7 @@ interface AsyncColumnOptions {
 ### Usage
 
 ```tsx
-import { DataTableAsyncFacetedFilter } from "@/components/data-table";
+import { DataTableAsyncFacetedFilter } from "@/components/edust-kit/data-table-async-faceted-filter";
 import { useQuery } from "@tanstack/react-query";
 
 function useUsers(params: Record<string, unknown>) {
