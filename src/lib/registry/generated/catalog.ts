@@ -56,162 +56,162 @@ export const registryItems: RegistryItem[] = [
       "table",
       "input-group"
     ],
-    "target": "@/components/data-table/data-table.tsx",
+    "target": "@ui/edust-kit/data-table.tsx",
     "sourcePath": "registry/items/data-table/data-table.tsx",
     "files": [
       {
         "path": "registry/items/data-table/data-table.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table.tsx"
+        "target": "@ui/edust-kit/data-table.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-advanced-toolbar.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-advanced-toolbar.tsx"
+        "target": "@ui/edust-kit/data-table-advanced-toolbar.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-column-header.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-column-header.tsx"
+        "target": "@ui/edust-kit/data-table-column-header.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-date-filter.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-date-filter.tsx"
+        "target": "@ui/edust-kit/data-table-date-filter.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-async-faceted-filter.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-async-faceted-filter.tsx"
+        "target": "@ui/edust-kit/data-table-async-faceted-filter.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-faceted-filter.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-faceted-filter.tsx"
+        "target": "@ui/edust-kit/data-table-faceted-filter.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-filter-list.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-filter-list.tsx"
+        "target": "@ui/edust-kit/data-table-filter-list.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-filter-menu.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-filter-menu.tsx"
+        "target": "@ui/edust-kit/data-table-filter-menu.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-pagination.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-pagination.tsx"
+        "target": "@ui/edust-kit/data-table-pagination.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-range-filter.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-range-filter.tsx"
+        "target": "@ui/edust-kit/data-table-range-filter.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-skeleton.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-skeleton.tsx"
+        "target": "@ui/edust-kit/data-table-skeleton.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-slider-filter.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-slider-filter.tsx"
+        "target": "@ui/edust-kit/data-table-slider-filter.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-sort-list.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-sort-list.tsx"
+        "target": "@ui/edust-kit/data-table-sort-list.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-toolbar.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-toolbar.tsx"
+        "target": "@ui/edust-kit/data-table-toolbar.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-view-options.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/data-table-view-options.tsx"
+        "target": "@ui/edust-kit/data-table-view-options.tsx"
       },
       {
         "path": "registry/items/data-table/ui/faceted.tsx",
         "type": "registry:ui",
-        "target": "@/components/ui/faceted.tsx"
+        "target": "@ui/edust-kit/faceted.tsx"
       },
       {
         "path": "registry/items/data-table/ui/sortable.tsx",
         "type": "registry:ui",
-        "target": "@/components/ui/sortable.tsx"
+        "target": "@ui/edust-kit/sortable.tsx"
       },
       {
         "path": "registry/items/data-table/index.ts",
         "type": "registry:ui",
-        "target": "@/components/data-table/index.ts"
+        "target": "@ui/edust-kit/index.ts"
       },
       {
         "path": "registry/items/data-table/entity/entity-test.tsx",
         "type": "registry:ui",
-        "target": "@/components/data-table/entity/entity-test.tsx"
+        "target": "@ui/edust-kit/entity-test.tsx"
       },
       {
         "path": "registry/items/data-table/entity/index.ts",
         "type": "registry:ui",
-        "target": "@/components/data-table/entity/index.ts"
+        "target": "@ui/edust-kit/entity-index.ts"
       },
       {
         "path": "registry/items/data-table/lib/data-table.ts",
         "type": "registry:ui",
-        "target": "@/lib/data-table.ts"
+        "target": "@ui/edust-kit/data-table-lib.ts"
       },
       {
         "path": "registry/items/data-table/lib/parsers.ts",
         "type": "registry:ui",
-        "target": "@/lib/parsers.ts"
+        "target": "@ui/edust-kit/parsers.ts"
       },
       {
         "path": "registry/items/data-table/lib/format.ts",
         "type": "registry:ui",
-        "target": "@/lib/format.ts"
+        "target": "@ui/edust-kit/format.ts"
       },
       {
         "path": "registry/items/data-table/lib/id.ts",
         "type": "registry:ui",
-        "target": "@/lib/id.ts"
+        "target": "@ui/edust-kit/id.ts"
       },
       {
         "path": "registry/items/data-table/lib/compose-refs.ts",
         "type": "registry:ui",
-        "target": "@/lib/compose-refs.ts"
+        "target": "@ui/edust-kit/compose-refs.ts"
       },
       {
         "path": "registry/items/data-table/hooks/use-data-table.ts",
         "type": "registry:ui",
-        "target": "@/hooks/use-data-table.ts"
+        "target": "@ui/edust-kit/use-data-table.ts"
       },
       {
         "path": "registry/items/data-table/hooks/use-callback-ref.ts",
         "type": "registry:ui",
-        "target": "@/hooks/use-callback-ref.ts"
+        "target": "@ui/edust-kit/use-callback-ref.ts"
       },
       {
         "path": "registry/items/data-table/hooks/use-debounced-callback.ts",
         "type": "registry:ui",
-        "target": "@/hooks/use-debounced-callback.ts"
+        "target": "@ui/edust-kit/use-debounced-callback.ts"
       },
       {
         "path": "registry/items/data-table/config/data-table.ts",
         "type": "registry:ui",
-        "target": "@/config/data-table.ts"
+        "target": "@ui/edust-kit/data-table-config.ts"
       },
       {
         "path": "registry/items/data-table/types/data-table.ts",
         "type": "registry:ui",
-        "target": "@/types/data-table.ts"
+        "target": "@ui/edust-kit/data-table-types.ts"
       }
     ],
     "hasPreview": true,
-    "usage": "A complete data table solution with advanced filtering, sorting, pagination, and\nURL state management. This is a barrel export that re-exports all data-table\nsub-components from `@/components/data-table/*`.\n\n## Usage\n\n```tsx\nimport { DataTable, DataTableToolbar } from \"@/components/data-table\";\nimport { useDataTable } from \"@/hooks/use-data-table\";\n```\n\n## Async Faceted Filter\n\nThe `DataTableAsyncFacetedFilter` component provides a faceted filter that\nfetches options asynchronously from an API. It supports debounced search,\nloading states, error handling, and displaying selected items that are not\ncurrently in the fetched results.\n\n### Props\n\n| Prop | Type | Description |\n|------|------|-------------|\n| `column` | `Column<TData, TValue>` | The TanStack Table column to filter |\n| `title` | `string` | Display label for the filter button |\n| `asyncOptions` | `AsyncColumnOptions` | Configuration for async data fetching |\n\n### AsyncColumnOptions\n\n```typescript\ninterface AsyncColumnOptions {\n  useDataHook: (params: Record<string, unknown>) => {\n    data?: { data?: { items?: unknown[] } };\n    isFetching: boolean;\n    error: unknown;\n  };\n  searchParamKey?: string;       // Default: \"search\"\n  getItemLabel: (item: unknown) => string;\n  getItemValue?: (item: unknown) => string;  // Default: item.id\n  additionalParams?: Record<string, unknown>;\n  debounceDelay?: number;        // Default: 300\n}\n```\n\n### Usage\n\n```tsx\nimport { DataTableAsyncFacetedFilter } from \"@/components/data-table\";\nimport { useQuery } from \"@tanstack/react-query\";\n\nfunction useUsers(params: Record<string, unknown>) {\n  return useQuery({\n    queryKey: [\"users\", params],\n    queryFn: () => fetchUsers(params),\n  });\n}\n\n<DataTableAsyncFacetedFilter\n  column={table.getColumn(\"userId\")}\n  title=\"User\"\n  asyncOptions={{\n    useDataHook: useUsers,\n    getItemLabel: (item) => item.name,\n    getItemValue: (item) => item.id,\n    searchParamKey: \"search\",\n    debounceDelay: 300,\n  }}\n/>\n```\n\n## Entity\n\nThe `entity` subdirectory includes an `EntityTest` component that renders\n\"Hello Entity Text\"."
+    "usage": "A complete data table solution with advanced filtering, sorting, pagination, and\nURL state management. This is a barrel export that re-exports all data-table\nsub-components from `@/components/edust-kit/*`.\n\n## Usage\n\n```tsx\nimport { DataTable, DataTableToolbar } from \"@/components/edust-kit\";\nimport { useDataTable } from \"@/components/edust-kit/use-data-table\";\n```\n\n## Async Faceted Filter\n\nThe `DataTableAsyncFacetedFilter` component provides a faceted filter that\nfetches options asynchronously from an API. It supports debounced search,\nloading states, error handling, and displaying selected items that are not\ncurrently in the fetched results.\n\n### Props\n\n| Prop | Type | Description |\n|------|------|-------------|\n| `column` | `Column<TData, TValue>` | The TanStack Table column to filter |\n| `title` | `string` | Display label for the filter button |\n| `asyncOptions` | `AsyncColumnOptions` | Configuration for async data fetching |\n\n### AsyncColumnOptions\n\n```typescript\ninterface AsyncColumnOptions {\n  useDataHook: (params: Record<string, unknown>) => {\n    data?: { data?: { items?: unknown[] } };\n    isFetching: boolean;\n    error: unknown;\n  };\n  searchParamKey?: string;       // Default: \"search\"\n  getItemLabel: (item: unknown) => string;\n  getItemValue?: (item: unknown) => string;  // Default: item.id\n  additionalParams?: Record<string, unknown>;\n  debounceDelay?: number;        // Default: 300\n}\n```\n\n### Usage\n\n```tsx\nimport { DataTableAsyncFacetedFilter } from \"@/components/edust-kit/data-table-async-faceted-filter\";\nimport { useQuery } from \"@tanstack/react-query\";\n\nfunction useUsers(params: Record<string, unknown>) {\n  return useQuery({\n    queryKey: [\"users\", params],\n    queryFn: () => fetchUsers(params),\n  });\n}\n\n<DataTableAsyncFacetedFilter\n  column={table.getColumn(\"userId\")}\n  title=\"User\"\n  asyncOptions={{\n    useDataHook: useUsers,\n    getItemLabel: (item) => item.name,\n    getItemValue: (item) => item.id,\n    searchParamKey: \"search\",\n    debounceDelay: 300,\n  }}\n/>\n```\n\n## Entity\n\nThe `entity` subdirectory includes an `EntityTest` component that renders\n\"Hello Entity Text\"."
   },
   {
     "name": "date-picker",
