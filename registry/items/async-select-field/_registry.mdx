@@ -12,7 +12,13 @@ registryDependencies:
   - button
   - command
   - popover
-target: "@ui/edust-kit/async-select-field.tsx"
+files:
+  - path: async-select-field.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/async-select-field.tsx"
+  - path: hooks/use-debounced-callback.ts
+    type: registry:ui
+    target: "@ui/edust-kit/hooks/use-debounced-callback.ts"
 ---
 
 A generic async select field for single-value selection from remotely fetched data. Ideal for dropdowns backed by API endpoints with search support.
@@ -53,6 +59,7 @@ import { AsyncSelectField } from "@/components/edust-kit/async-select-field"
 | `additionalParams` | `Partial<Omit<TParams, keyof BaseSelectParams>>` | `{}` | Extra params merged into every request. |
 | `disabled` | `boolean` | `false` | Disables the select field. |
 | `showSearchIcon` | `boolean` | `false` | Show a search icon inside the search input. |
+| `lazy` | `boolean` | `false` | Fetch the dropdown list only after the popover is opened instead of on mount. |
 
 ## With react-hook-form
 
@@ -120,6 +127,26 @@ Use `renderItemLabel` to render arbitrary JSX in the dropdown (icons, multi-line
   )}
 />
 ```
+
+## Lazy loading
+
+By default the dropdown list is fetched as soon as the component mounts. On
+forms with many async selects (e.g. supplier, currency, product pickers on the
+same page) this fires a burst of requests at once and can exceed API rate
+limits. Pass `lazy` to defer fetching until the user opens the popover:
+
+```tsx
+<AsyncSelectField
+  lazy
+  value={selectedId}
+  onChange={setSelectedId}
+  useDataHook={useItemsHook}
+  getItemDisplayValue={(item) => item.name}
+/>
+```
+
+The selected item's label still renders immediately from `selectedItemData`
+(no extra fetch is needed for the trigger while the popover is closed).
 
 ## Custom styling
 

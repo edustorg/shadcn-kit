@@ -56,6 +56,7 @@ export function Preview() {
   const [value, setValue] = React.useState("")
   const [value2, setValue2] = React.useState("")
   const [value3, setValue3] = React.useState("")
+  const [value4, setValue4] = React.useState("")
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-6 py-4">
@@ -128,6 +129,29 @@ export function Preview() {
         />
         <code className="text-muted-foreground text-sm">
           Selected: {value3 || "None"}
+        </code>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <span className="text-muted-foreground text-xs">
+          Lazy (fetch only on open)
+        </span>
+        <AsyncSelectField
+          lazy
+          value={value4}
+          onChange={setValue4}
+          placeholder="Select a currency..."
+          searchPlaceholder="Search currencies..."
+          searchParamKey="search_by_name"
+          useDataHook={useMockDataHook}
+          getItemDisplayValue={(item) =>
+            item.name && item.code
+              ? `${item.symbol} ${item.code} — ${item.name}`
+              : item.name || ""
+          }
+        />
+        <code className="text-muted-foreground text-sm">
+          Selected: {value4 || "None"}
         </code>
       </div>
     </div>

@@ -19,6 +19,11 @@
           "path": "registry/items/async-select-field/async-select-field.tsx",
           "type": "registry:ui",
           "target": "@ui/edust-kit/async-select-field.tsx"
+        },
+        {
+          "path": "registry/items/async-select-field/hooks/use-debounced-callback.ts",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/hooks/use-debounced-callback.ts"
         }
       ]
     },
