@@ -1,11 +1,9 @@
 "use client"
 
-import * as React from "react"
-import { FieldValues, Path, useFormContext } from "react-hook-form"
-
-import { cn } from "@/lib/utils"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
+import { FieldValues, Path, useFormContext } from "react-hook-form"
 
 type TextFieldProps<TValues extends FieldValues> = {
   name: Path<TValues>
