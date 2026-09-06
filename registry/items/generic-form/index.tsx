@@ -31,13 +31,12 @@ export interface GenericFormRef<TValues extends FieldValues> {
 export interface GenericFormProps<
   TValues extends FieldValues,
   TSchema extends ZodType<TValues, TValues>,
-> {
+> extends Omit<React.ComponentProps<"form">, "onSubmit" | "ref"> {
   schema: TSchema
   initialValues: Partial<TValues>
   onSubmit: SubmitHandler<TValues>
   children: React.ReactNode
   ref?: React.Ref<GenericFormRef<TValues>>
-  className?: string
 }
 
 /**

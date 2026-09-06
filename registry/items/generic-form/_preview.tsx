@@ -1,9 +1,10 @@
 "use client"
 
-import * as React from "react"
 import { z } from "zod"
 
-import { GenericForm, type GenericFormRef } from "./generic-form"
+import * as React from "react"
+
+import { GenericForm, type GenericFormRef } from "./"
 import { TextField } from "./text-field"
 
 const previewSchema = z.object({
@@ -56,14 +57,14 @@ export function Preview() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="h-8 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80 disabled:opacity-50"
+            className="bg-primary text-primary-foreground hover:bg-primary/80 h-8 rounded-lg px-3 text-sm font-medium transition-colors disabled:opacity-50"
           >
             {isSubmitting ? "Submitting..." : "Submit"}
           </button>
           <button
             type="button"
             onClick={() => formRef.current?.reset({ name: "", email: "" })}
-            className="h-8 rounded-lg border bg-background px-3 text-sm font-medium hover:bg-muted"
+            className="bg-background hover:bg-muted h-8 rounded-lg border px-3 text-sm font-medium"
           >
             Reset
           </button>

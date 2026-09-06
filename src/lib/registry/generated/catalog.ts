@@ -262,13 +262,13 @@ export const registryItems: RegistryItem[] = [
       "field",
       "input"
     ],
-    "target": "@ui/edust-kit/generic-form.tsx",
-    "sourcePath": "registry/items/generic-form/generic-form.tsx",
+    "target": "@ui/edust-kit/generic-form/index.tsx",
+    "sourcePath": "registry/items/generic-form/index.tsx",
     "files": [
       {
-        "path": "registry/items/generic-form/generic-form.tsx",
+        "path": "registry/items/generic-form/index.tsx",
         "type": "registry:ui",
-        "target": "@ui/edust-kit/generic-form.tsx"
+        "target": "@ui/edust-kit/generic-form/index.tsx"
       },
       {
         "path": "registry/items/generic-form/text-field.tsx",
