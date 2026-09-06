@@ -252,14 +252,19 @@
       ],
       "files": [
         {
-          "path": "registry/items/generic-form/index.tsx",
+          "path": "registry/items/generic-form/generic-form.tsx",
           "type": "registry:ui",
-          "target": "@ui/edust-kit/generic-form/index.tsx"
+          "target": "@ui/edust-kit/generic-form/generic-form.tsx"
         },
         {
           "path": "registry/items/generic-form/text-field.tsx",
           "type": "registry:ui",
           "target": "@ui/edust-kit/generic-form/text-field.tsx"
+        },
+        {
+          "path": "registry/items/generic-form/index.ts",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/generic-form/index.ts"
         }
       ]
     }

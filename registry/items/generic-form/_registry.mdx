@@ -15,12 +15,15 @@ registryDependencies:
   - field
   - input
 files:
-  - path: index.tsx
+  - path: generic-form.tsx
     type: registry:ui
-    target: "@ui/edust-kit/generic-form/index.tsx"
+    target: "@ui/edust-kit/generic-form/generic-form.tsx"
   - path: text-field.tsx
     type: registry:ui
     target: "@ui/edust-kit/generic-form/text-field.tsx"
+  - path: index.ts
+    type: registry:ui
+    target: "@ui/edust-kit/generic-form/index.ts"
 ---
 
 A schema-driven generic form built on react-hook-form and Zod.
@@ -33,8 +36,7 @@ context and render the state without wiring a `Controller` by hand.
 ## Usage
 
 ```tsx
-import { GenericForm } from "@/components/edust-kit/generic-form"
-import { TextField } from "@/components/edust-kit/generic-form/text-field"
+import { GenericForm, TextField } from "@/components/edust-kit/generic-form"
 import { z } from "zod"
 
 const schema = z.object({
