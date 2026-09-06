@@ -1,0 +1,112 @@
+---
+name: generic-form
+type: registry:ui
+title: Generic Form
+description: >-
+  A schema-driven generic form built on react-hook-form and Zod. Wraps useForm
+  with a zod resolver, shares the instance through FormProvider, and exposes a
+  imperative ref API. Ships with a TextField input for single-line fields.
+dependencies:
+  - react-hook-form
+  - zod
+  - "@hookform/resolvers"
+registryDependencies:
+  - utils
+  - field
+  - input
+files:
+  - path: generic-form.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/generic-form.tsx"
+  - path: text-field.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/generic-form/text-field.tsx"
+---
+
+A schema-driven generic form built on react-hook-form and Zod.
+
+`GenericForm` takes a Zod schema, derives `initialValues` and validation from
+it, and shares the form instance through `FormProvider` so any child can query
+context with `useFormContext()`. Field components like `TextField` read the
+context and render the state without wiring a `Controller` by hand.
+
+## Usage
+
+```tsx
+import { GenericForm } from "@/components/edust-kit/generic-form"
+import { TextField } from "@/components/edust-kit/generic-form/text-field"
+import { z } from "zod"
+
+const schema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email"),
+})
+
+<GenericForm
+  schema={schema}
+  initialValues={{ name: "", email: "" }}
+  onSubmit={(values) => console.log(values)}
+>
+  <TextField name="name" label="Name" required placeholder="John Doe" />
+  <TextField name="email" label="Email" type="email" />
+  <button type="submit">Submit</button>
+</GenericForm>
+```
+
+## Imperative API
+
+`GenericForm` forwards a ref exposing the full control surface:
+
+| Ref property  | Type                                        | Description |
+|---------------|---------------------------------------------|-------------|
+| `getValues`   | `() => TValues`                             | Current form values. |
+| `reset`       | `(values?: Partial<TValues>) => void`       | Reset the form. |
+| `setValue`    | `(name, value) => void`                     | Set a single field. |
+| `formState`   | `FormState<TValues>`                        | State (errors, dirty, etc.). |
+| `control`     | `Control<TValues>`                          | RHF control for `Controller`. |
+| `form`        | `UseFormReturn<TValues>`                    | The full `useForm` return. |
+
+```tsx
+const formRef = useRef<GenericFormRef<FormValues>>(null)
+
+<GenericForm ref={formRef} ...>...</GenericForm>
+
+formRef.current?.getValues()
+formRef.current?.setValue("email", "a@b.com")
+formRef.current?.reset()
+```
+
+## TextField
+
+`TextField` is a single-line input bound directly to a schema field. It
+renders a label, required marker, the `Input`, and the resolved error
+message — no `Controller` needed.
+
+| Prop          | Type                                  | Default  | Description |
+|---------------|---------------------------------------|----------|-------------|
+| `name`        | `Path<TValues>`                       | —        | Field name (must exist in the schema). |
+| `label`       | `string`                              | —        | Label text; hidden when empty. |
+| `type`        | `"text" \| "email" \| "number" \| "password"` | `"text"` | Input type. |
+| `placeholder` | `string`                              | —        | Input placeholder. |
+| `required`    | `boolean`                             | `false`  | Renders the red `*` marker. |
+| `disabled`    | `boolean`                             | `false`  | Disables the input. |
+| `className`   | `string`                              | —        | Classes for the field wrapper. |
+| `inputClass`  | `string`                              | —        | Classes for the input. |
+
+## Validation
+
+Validation is driven entirely by the Zod schema. A field that fails its schema
+rule is marked invalid (`data-invalid`) and shows the error message from the
+schema:
+
+```tsx
+const schema = z.object({
+  email: z.string().email("Enter a valid email address"),
+})
+```
+
+## Error handling
+
+`TextField` renders `FieldError` automatically when the field is invalid. When
+an arbitrary `FieldError` is needed outside a text field, the underlying
+component reads `useFormContext().formState.errors` directly.

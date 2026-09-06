@@ -234,6 +234,34 @@
           "target": "@ui/edust-kit/date-picker.tsx"
         }
       ]
+    },
+    {
+      "name": "generic-form",
+      "type": "registry:ui",
+      "title": "Generic Form",
+      "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input for single-line fields.",
+      "dependencies": [
+        "react-hook-form",
+        "zod",
+        "@hookform/resolvers"
+      ],
+      "registryDependencies": [
+        "utils",
+        "field",
+        "input"
+      ],
+      "files": [
+        {
+          "path": "registry/items/generic-form/generic-form.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/generic-form.tsx"
+        },
+        {
+          "path": "registry/items/generic-form/text-field.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/generic-form/text-field.tsx"
+        }
+      ]
     }
   ]
 }

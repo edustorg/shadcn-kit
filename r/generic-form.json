@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "generic-form",
+  "type": "registry:ui",
+  "title": "Generic Form",
+  "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input for single-line fields.",
+  "dependencies": [
+    "react-hook-form",
+    "zod",
+    "@hookform/resolvers"
+  ],
+  "registryDependencies": [
+    "utils",
+    "field",
+    "input"
+  ],
+  "files": [
+    {
+      "path": "registry/items/generic-form/generic-form.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport {\n  Control,\n  DefaultValues,\n  FieldValues,\n  FormProvider,\n  FormState,\n  Path,\n  Resolver,\n  SubmitHandler,\n  useForm,\n  UseFormReturn,\n} from \"react-hook-form\"\nimport { zodResolver } from \"@hookform/resolvers/zod\"\nimport { type ZodType } from \"zod\"\n\nexport interface GenericFormRef<TValues extends FieldValues> {\n  /** Get the current form values. */\n  getValues: () => TValues\n  /** Reset the form to the given (or initial) values. */\n  reset: (values?: Partial<TValues>) => void\n  /** Set a single field value. */\n  setValue: (name: keyof TValues, value: TValues[keyof TValues]) => void\n  formState: FormState<TValues>\n  control: Control<TValues>\n  form: UseFormReturn<TValues>\n}\n\nexport interface GenericFormProps<\n  TValues extends FieldValues,\n  TSchema extends ZodType<TValues, TValues>,\n> {\n  schema: TSchema\n  initialValues: Partial<TValues>\n  onSubmit: SubmitHandler<TValues>\n  children: React.ReactNode\n  ref?: React.Ref<GenericFormRef<TValues>>\n  className?: string\n}\n\n/**\n * A schema-driven generic form built on react-hook-form and zod.\n *\n * Provides the form instance through `FormProvider` so field components can\n * read context with `useFormContext()`, and exposes an imperative handle via\n * `useImperativeHandle` for `getValues`, `reset`, `setValue`, `formState`,\n * `control`, and the full `form` instance.\n */\nexport const GenericForm = <\n  TValues extends FieldValues,\n  TSchema extends ZodType<TValues, TValues>,\n>({\n  ref,\n  initialValues,\n  schema,\n  onSubmit,\n  children,\n  className,\n  ...formProps\n}: GenericFormProps<TValues, TSchema>) => {\n  const form = useForm<TValues>({\n    resolver: zodResolver(schema) as Resolver<TValues>,\n    defaultValues: initialValues as DefaultValues<TValues>,\n  })\n\n  React.useImperativeHandle(ref, () => ({\n    getValues: form.getValues,\n    reset: (values?: Partial<TValues>) => form.reset(values as TValues),\n    setValue: (name: keyof TValues, value: TValues[keyof TValues]) =>\n      form.setValue(name as Path<TValues>, value),\n    formState: form.formState,\n    control: form.control,\n    form,\n  }))\n\n  return (\n    <FormProvider {...form}>\n      <form\n        {...formProps}\n        className={className}\n        onSubmit={form.handleSubmit(onSubmit)}\n      >\n        {children}\n      </form>\n    </FormProvider>\n  )\n}\n\nGenericForm.displayName = \"GenericForm\"",
+      "type": "registry:ui",
+      "target": "@ui/edust-kit/generic-form.tsx"
+    },
+    {
+      "path": "registry/items/generic-form/text-field.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { FieldValues, Path, useFormContext } from \"react-hook-form\"\n\nimport { cn } from \"@/lib/utils\"\nimport { Field, FieldError, FieldLabel } from \"@/components/ui/field\"\nimport { Input } from \"@/components/ui/input\"\n\ntype TextFieldProps<TValues extends FieldValues> = {\n  name: Path<TValues>\n  label?: string\n  type?: \"text\" | \"email\" | \"number\" | \"password\"\n  placeholder?: string\n  required?: boolean\n  disabled?: boolean\n  className?: string\n  inputClass?: string\n}\n\n/**\n * A single-line text input bound to a react-hook-form field.\n *\n * Renders a labeled `Field` with an `Input`, marks the field invalid when the\n * schema fails, and shows the resolved error message via `FieldError`. Works\n * inside a `GenericForm` (or any `FormProvider`).\n */\nconst TextField = <TValues extends FieldValues>({\n  name,\n  label,\n  type = \"text\",\n  placeholder,\n  required = false,\n  disabled = false,\n  className,\n  inputClass,\n}: TextFieldProps<TValues>) => {\n  const {\n    register,\n    formState: { errors },\n  } = useFormContext<TValues>()\n\n  const error = errors[name]\n\n  return (\n    <Field data-invalid={!!error} className={className}>\n      {label && (\n        <FieldLabel htmlFor={name}>\n          <span>{label}</span>\n          {required && <span className=\"text-destructive\">*</span>}\n        </FieldLabel>\n      )}\n      <Input\n        id={name}\n        type={type}\n        placeholder={placeholder}\n        disabled={disabled}\n        className={cn(inputClass)}\n        {...register(name)}\n      />\n      {error && <FieldError errors={[{ message: String(error.message) }]} />}\n    </Field>\n  )\n}\n\nTextField.displayName = \"TextField\"\n\nexport { TextField, type TextFieldProps }",
+      "type": "registry:ui",
+      "target": "@ui/edust-kit/generic-form/text-field.tsx"
+    }
+  ]
+}
