@@ -1,4 +1,4 @@
-import z from "zod"
+import { z } from "zod"
 
 const emptyStringToUndefined = z.literal("").transform(() => undefined)
 
@@ -24,4 +24,27 @@ const emptyStringToUndefined = z.literal("").transform(() => undefined)
  */
 export function zodAsOptionalField<T extends z.ZodTypeAny>(schema: T) {
   return schema.optional().or(emptyStringToUndefined)
+}
+
+/**
+ * Shorthand for `.nullable().optional()`, producing a `T | null | undefined` field.
+ *
+ * Use for optional number/date fields. Empty strings are NOT accepted here —
+ * coerce them in the form's `onChange` (e.g. `""` -> `null`) to keep input and
+ * output types identical for react-hook-form.
+ *
+ * @param schema - Zod schema to transform
+ * @returns A schema accepting the original type, null, or undefined
+ *
+ * @example
+ * const schema = z.object({
+ *   displayOrder: zodAsNullableField(z.number().int().min(0)),
+ * });
+ *
+ * schema.parse({ displayOrder: 3 }); // passes
+ * schema.parse({ displayOrder: null }); // passes
+ * schema.parse({}); // passes
+ */
+export function zodAsNullableField<T extends z.ZodTypeAny>(schema: T) {
+  return schema.nullable().optional()
 }

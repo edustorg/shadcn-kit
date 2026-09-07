@@ -9,7 +9,7 @@ import { TextField } from "./text-field"
 
 const previewSchema = z.object({
   name: z.string().min(1, "Name is required").max(50, "Max 50 characters"),
-  email: z.string().email("Enter a valid email address"),
+  email: z.email("Enter a valid email address"),
 })
 
 type PreviewValues = z.infer<typeof previewSchema>
