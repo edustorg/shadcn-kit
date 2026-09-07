@@ -1,5 +1,6 @@
 "use client"
 
+import { useDebouncedCallback } from "@/components/edust-kit/hooks/use-debounced-callback"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,20 +23,9 @@ import { ChevronsUpDownIcon, XIcon } from "lucide-react"
 
 import * as React from "react"
 
-import { useDebouncedCallback } from "@/components/edust-kit/hooks/use-debounced-callback"
+import type { BaseSelectParams, SelectFieldItem } from "./async-select-field"
 
-export interface SelectFieldItem {
-  id: string
-  name?: string
-  label?: string
-}
-
-export interface BaseSelectParams {
-  search_by_name?: string
-  page?: number
-  limit?: number
-  [key: string]: unknown
-}
+export type { BaseSelectParams, SelectFieldItem }
 
 export interface AsyncMultiSelectFieldProps<
   T extends SelectFieldItem,

@@ -6,6 +6,8 @@ import * as React from "react"
 
 import { GenericForm, type GenericFormRef } from "./"
 import { AsyncMultiSelectField } from "./async-multi-select-field"
+import { AsyncSelectField } from "./async-select-field"
+import type { SelectFieldItem } from "./async-select-field"
 import { TextField } from "./text-field"
 
 const previewSchema = z.object({
@@ -16,6 +18,53 @@ const previewSchema = z.object({
 type PreviewValues = z.infer<typeof previewSchema>
 
 type MockSubmitResult = { ok: boolean; message?: string }
+
+interface MockItem extends SelectFieldItem {
+  code: string
+  symbol: string
+}
+
+const MOCK_CURRENCIES: MockItem[] = [
+  { id: "1", code: "USD", symbol: "$", name: "US Dollar" },
+  { id: "2", code: "EUR", symbol: "€", name: "Euro" },
+  { id: "3", code: "GBP", symbol: "£", name: "British Pound" },
+  { id: "4", code: "JPY", symbol: "¥", name: "Japanese Yen" },
+  { id: "5", code: "IDR", symbol: "Rp", name: "Indonesian Rupiah" },
+  { id: "6", code: "SGD", symbol: "S$", name: "Singapore Dollar" },
+  { id: "7", code: "AUD", symbol: "A$", name: "Australian Dollar" },
+  { id: "8", code: "CAD", symbol: "C$", name: "Canadian Dollar" },
+]
+
+function useMockDataHook(params: Record<string, unknown>) {
+  const search = (params.search_by_name as string) ?? ""
+  const [data, setData] = React.useState<{ data: { items: MockItem[] } }>({
+    data: { items: [] },
+  })
+  const [isFetching, setIsFetching] = React.useState(true)
+
+  React.useEffect(() => {
+    let cancelled = false
+    const timer = setTimeout(() => {
+      const filtered = search
+        ? MOCK_CURRENCIES.filter(
+            (item) =>
+              item.name?.toLowerCase().includes(search.toLowerCase()) ||
+              item.code.toLowerCase().includes(search.toLowerCase()),
+          )
+        : MOCK_CURRENCIES
+      if (!cancelled) {
+        setData({ data: { items: filtered } })
+        setIsFetching(false)
+      }
+    }, 300)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [search])
+
+  return { data, isFetching, error: null }
+}
 
 interface MockLabel {
   id: string
@@ -77,6 +126,10 @@ export function Preview() {
   const [result, setResult] = React.useState<MockSubmitResult | null>(null)
   const [labels, setLabels] = React.useState<string[]>([])
   const [labelsMax, setLabelsMax] = React.useState<string[]>([])
+  const [currency, setCurrency] = React.useState("")
+  const [currency2, setCurrency2] = React.useState("")
+  const [currency3, setCurrency3] = React.useState("")
+  const [currency4, setCurrency4] = React.useState("")
 
   const handleSubmit = async (values: PreviewValues) => {
     setIsSubmitting(true)
@@ -165,6 +218,107 @@ export function Preview() {
           />
           <code className="text-muted-foreground text-sm">
             Selected: {labelsMax.length ? labelsMax.join(", ") : "None"}
+          </code>
+        </div>
+      </div>
+
+      <div className="flex w-full max-w-sm flex-col gap-6 py-4">
+        <div className="flex flex-col gap-2">
+          <span className="text-muted-foreground text-xs">Default size</span>
+          <AsyncSelectField
+            value={currency}
+            onChange={setCurrency}
+            placeholder="Select a currency..."
+            searchPlaceholder="Search currencies..."
+            searchParamKey="search_by_name"
+            useDataHook={useMockDataHook}
+            getItemDisplayValue={(item) =>
+              item.name && item.code
+                ? `${item.symbol} ${item.code} — ${item.name}`
+                : item.name || ""
+            }
+          />
+          <code className="text-muted-foreground text-sm">
+            Selected: {currency || "None"}
+          </code>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-muted-foreground text-xs">
+            Custom className + custom label
+          </span>
+          <AsyncSelectField
+            value={currency2}
+            onChange={setCurrency2}
+            placeholder="Pick currency..."
+            searchPlaceholder="Search..."
+            searchParamKey="search_by_name"
+            useDataHook={useMockDataHook}
+            className="h-7 text-[0.8rem]"
+            getItemDisplayValue={(item) => item.code ?? ""}
+            renderItemLabel={(item) => (
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{item.symbol}</span>
+                <span>{item.code}</span>
+                <span className="text-muted-foreground text-xs">
+                  {item.name}
+                </span>
+              </div>
+            )}
+          />
+          <code className="text-muted-foreground text-sm">
+            Selected: {currency2 || "None"}
+          </code>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-muted-foreground text-xs">
+            Icon-only trigger (30px)
+          </span>
+          <AsyncSelectField
+            value={currency3}
+            onChange={setCurrency3}
+            placeholder="$"
+            searchPlaceholder="Search currencies..."
+            searchParamKey="search_by_name"
+            useDataHook={useMockDataHook}
+            className="w-[30px] justify-center px-0"
+            getItemDisplayValue={(item) => item.symbol ?? ""}
+            renderItemLabel={(item) => (
+              <div className="flex items-center gap-2">
+                <span className="text-base font-medium">{item.symbol}</span>
+                <span>{item.code}</span>
+                <span className="text-muted-foreground text-xs">
+                  {item.name}
+                </span>
+              </div>
+            )}
+          />
+          <code className="text-muted-foreground text-sm">
+            Selected: {currency3 || "None"}
+          </code>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-muted-foreground text-xs">
+            Lazy (fetch only on open)
+          </span>
+          <AsyncSelectField
+            lazy
+            value={currency4}
+            onChange={setCurrency4}
+            placeholder="Select a currency..."
+            searchPlaceholder="Search currencies..."
+            searchParamKey="search_by_name"
+            useDataHook={useMockDataHook}
+            getItemDisplayValue={(item) =>
+              item.name && item.code
+                ? `${item.symbol} ${item.code} — ${item.name}`
+                : item.name || ""
+            }
+          />
+          <code className="text-muted-foreground text-sm">
+            Selected: {currency4 || "None"}
           </code>
         </div>
       </div>

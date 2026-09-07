@@ -4,26 +4,6 @@
   "homepage": "https://github.com/edustorg/shadcn-kit",
   "items": [
     {
-      "name": "async-select-field",
-      "type": "registry:ui",
-      "title": "Async Select Field",
-      "description": "A searchable async select field built on Popover and Command (cmdk). Fetches options from an API with debounced search, loading/error states, and support for pre-fetching the selected item's display value.",
-      "registryDependencies": [
-        "utils",
-        "button",
-        "command",
-        "popover",
-        "hooks"
-      ],
-      "files": [
-        {
-          "path": "registry/items/async-select-field/async-select-field.tsx",
-          "type": "registry:ui",
-          "target": "@ui/edust-kit/async-select-field.tsx"
-        }
-      ]
-    },
-    {
       "name": "data-table",
       "type": "registry:ui",
       "title": "Data Table",
@@ -226,7 +206,7 @@
       "name": "generic-form",
       "type": "registry:ui",
       "title": "Generic Form",
-      "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input and an AsyncMultiSelectField for single-line and multi-select fields.",
+      "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input, an AsyncSelectField and an AsyncMultiSelectField for single-line, async single-select and multi-select fields.",
       "dependencies": [
         "react-hook-form",
         "zod",
@@ -253,6 +233,11 @@
           "path": "registry/items/generic-form/text-field.tsx",
           "type": "registry:ui",
           "target": "@ui/edust-kit/generic-form/text-field.tsx"
+        },
+        {
+          "path": "registry/items/generic-form/async-select-field.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/generic-form/async-select-field.tsx"
         },
         {
           "path": "registry/items/generic-form/async-multi-select-field.tsx",

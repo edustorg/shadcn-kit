@@ -33,7 +33,7 @@ export interface BaseSelectParams {
   [key: string]: unknown
 }
 
-interface AsyncSelectFieldProps<
+export interface AsyncSelectFieldProps<
   T extends SelectFieldItem,
   TParams extends BaseSelectParams,
 > {

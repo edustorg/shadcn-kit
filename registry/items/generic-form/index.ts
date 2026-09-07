@@ -5,8 +5,12 @@ export {
 } from "./generic-form"
 export { TextField, type TextFieldProps } from "./text-field"
 export {
-  AsyncMultiSelectField,
-  type AsyncMultiSelectFieldProps,
+  AsyncSelectField,
+  type AsyncSelectFieldProps,
   type BaseSelectParams,
   type SelectFieldItem,
+} from "./async-select-field"
+export {
+  AsyncMultiSelectField,
+  type AsyncMultiSelectFieldProps,
 } from "./async-multi-select-field"
