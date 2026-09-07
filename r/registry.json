@@ -31,8 +31,7 @@
         "separator",
         "skeleton",
         "table",
-        "input-group",
-        "hooks"
+        "input-group"
       ],
       "files": [
         {
@@ -166,6 +165,11 @@
           "target": "@ui/edust-kit/data-table/hooks/use-data-table.ts"
         },
         {
+          "path": "registry/items/hooks/use-debounced-callback.ts",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/hooks/use-debounced-callback.ts"
+        },
+        {
           "path": "registry/items/data-table/config/data-table.ts",
           "type": "registry:ui",
           "target": "@ui/edust-kit/data-table/config/data-table.ts"
@@ -197,8 +201,7 @@
         "badge",
         "separator",
         "command",
-        "popover",
-        "hooks"
+        "popover"
       ],
       "files": [
         {
@@ -240,6 +243,11 @@
           "path": "registry/items/generic-form/hooks/zod-field-helpers.ts",
           "type": "registry:ui",
           "target": "@ui/edust-kit/hooks/zod-field-helpers.ts"
+        },
+        {
+          "path": "registry/items/hooks/use-debounced-callback.ts",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/hooks/use-debounced-callback.ts"
         }
       ]
     },

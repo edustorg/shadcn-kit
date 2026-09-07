@@ -28,7 +28,6 @@ registryDependencies:
   - skeleton
   - table
   - input-group
-  - hooks
 files:
   - path: data-table.tsx
     type: registry:ui
@@ -108,6 +107,9 @@ files:
   - path: hooks/use-data-table.ts
     type: registry:ui
     target: "@ui/edust-kit/data-table/hooks/use-data-table.ts"
+  - path: ../hooks/use-debounced-callback.ts
+    type: registry:ui
+    target: "@ui/edust-kit/hooks/use-debounced-callback.ts"
   - path: config/data-table.ts
     type: registry:ui
     target: "@ui/edust-kit/data-table/config/data-table.ts"

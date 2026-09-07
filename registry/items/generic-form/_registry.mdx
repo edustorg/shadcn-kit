@@ -22,7 +22,6 @@ registryDependencies:
   - separator
   - command
   - popover
-  - hooks
 files:
   - path: generic-form.tsx
     type: registry:ui
@@ -48,6 +47,9 @@ files:
   - path: hooks/zod-field-helpers.ts
     type: registry:ui
     target: "@ui/edust-kit/hooks/zod-field-helpers.ts"
+  - path: ../hooks/use-debounced-callback.ts
+    type: registry:ui
+    target: "@ui/edust-kit/hooks/use-debounced-callback.ts"
 ---
 
 A schema-driven generic form built on react-hook-form and Zod.
