@@ -14,3 +14,4 @@ export {
   AsyncMultiSelectField,
   type AsyncMultiSelectFieldProps,
 } from "./async-multi-select-field"
+export { DatePicker, type DatePickerProps } from "./date-picker"

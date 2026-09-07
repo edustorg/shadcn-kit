@@ -1,6 +1,15 @@
 "use client"
 
-import * as React from "react"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
 import { format, isValid, parseISO } from "date-fns"
 import type { Locale } from "date-fns"
 import { CalendarIcon } from "lucide-react"
@@ -11,20 +20,11 @@ import {
   Path,
 } from "react-hook-form"
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import * as React from "react"
 
 type DatePickerVariant = "button" | "input"
 
-type DatePickerProps<
+export type DatePickerProps<
   TFieldValues extends FieldValues,
   TName extends Path<TFieldValues>,
 > = {
@@ -97,7 +97,10 @@ function parseTypedDate(raw: string): Date | undefined {
       if (Number(prefix.slice(2)) >= 1 && Number(prefix.slice(2)) <= 12) {
         day = Number(prefix.slice(0, 2))
         month = Number(prefix.slice(2))
-      } else if (Number(prefix.slice(1)) >= 1 && Number(prefix.slice(1)) <= 12) {
+      } else if (
+        Number(prefix.slice(1)) >= 1 &&
+        Number(prefix.slice(1)) <= 12
+      ) {
         day = Number(prefix.slice(0, 1))
         month = Number(prefix.slice(1))
       } else {
@@ -165,7 +168,7 @@ export const DatePicker = <
       now.getHours(),
       now.getMinutes(),
       now.getSeconds(),
-      now.getMilliseconds()
+      now.getMilliseconds(),
     ).toISOString()
   }
 
@@ -255,7 +258,7 @@ export const DatePicker = <
                 size="icon"
                 disabled={disabled}
                 aria-label={`Open calendar for ${label}`}
-                className="absolute right-0.5 top-1/2 size-7 -translate-y-1/2"
+                className="absolute top-1/2 right-0.5 size-7 -translate-y-1/2"
               >
                 <CalendarIcon />
               </Button>
@@ -276,11 +279,13 @@ export const DatePicker = <
               aria-invalid={invalid || undefined}
               aria-required={required || undefined}
               aria-label={
-                selected ? `${label}: ${formattedValue}` : `${label}: ${placeholder}`
+                selected
+                  ? `${label}: ${formattedValue}`
+                  : `${label}: ${placeholder}`
               }
               className={cn(
                 "w-70 justify-start text-left font-normal",
-                !selected && "text-muted-foreground"
+                !selected && "text-muted-foreground",
               )}
             >
               {formattedValue}

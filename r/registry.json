@@ -178,45 +178,22 @@
       ]
     },
     {
-      "name": "date-picker",
-      "type": "registry:ui",
-      "title": "Date Picker",
-      "description": "A calendar date picker built on react-hook-form. Writes a UTC ISO string via field.onChange, combining the selected calendar day with the current time at the moment of selection (e.g. \"2026-08-13T14:32:05.123Z\"). Supports min/max dates, disabled days, custom placeholder, locale and display format.",
-      "dependencies": [
-        "date-fns",
-        "react-hook-form"
-      ],
-      "registryDependencies": [
-        "utils",
-        "button",
-        "calendar",
-        "popover",
-        "field",
-        "input"
-      ],
-      "files": [
-        {
-          "path": "registry/items/date-picker/date-picker.tsx",
-          "type": "registry:ui",
-          "target": "@ui/edust-kit/date-picker.tsx"
-        }
-      ]
-    },
-    {
       "name": "generic-form",
       "type": "registry:ui",
       "title": "Generic Form",
-      "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input, an AsyncSelectField and an AsyncMultiSelectField for single-line, async single-select and multi-select fields.",
+      "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input, AsyncSelectField and AsyncMultiSelectField async selects, and a DatePicker for calendar dates.",
       "dependencies": [
         "react-hook-form",
         "zod",
-        "@hookform/resolvers"
+        "@hookform/resolvers",
+        "date-fns"
       ],
       "registryDependencies": [
         "utils",
         "field",
         "input",
         "button",
+        "calendar",
         "badge",
         "separator",
         "command",
@@ -243,6 +220,11 @@
           "path": "registry/items/generic-form/async-multi-select-field.tsx",
           "type": "registry:ui",
           "target": "@ui/edust-kit/generic-form/async-multi-select-field.tsx"
+        },
+        {
+          "path": "registry/items/generic-form/date-picker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/generic-form/date-picker.tsx"
         },
         {
           "path": "registry/items/generic-form/index.ts",

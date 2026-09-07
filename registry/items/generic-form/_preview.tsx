@@ -1,5 +1,7 @@
 "use client"
 
+import { format, isToday, isYesterday } from "date-fns"
+import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import * as React from "react"
@@ -8,7 +10,15 @@ import { GenericForm, type GenericFormRef } from "./"
 import { AsyncMultiSelectField } from "./async-multi-select-field"
 import { AsyncSelectField } from "./async-select-field"
 import type { SelectFieldItem } from "./async-select-field"
+import { DatePicker } from "./date-picker"
 import { TextField } from "./text-field"
+
+export function formatRelativeDate(date: Date | string): string {
+  const d = typeof date === "string" ? new Date(date) : date
+  if (isToday(d)) return `Today at ${format(d, "h:mm a")}`
+  if (isYesterday(d)) return `Yesterday at ${format(d, "h:mm a")}`
+  return format(d, "MMM d, yyyy 'at' h:mm a")
+}
 
 const previewSchema = z.object({
   name: z.string().min(1, "Name is required").max(50, "Max 50 characters"),
@@ -130,6 +140,16 @@ export function Preview() {
   const [currency2, setCurrency2] = React.useState("")
   const [currency3, setCurrency3] = React.useState("")
   const [currency4, setCurrency4] = React.useState("")
+  const dateForm = useForm<{
+    startDate: string
+    endDate: string
+    eventDate: string
+  }>({
+    defaultValues: { startDate: "", endDate: "", eventDate: "" },
+  })
+  const startDate = dateForm.watch("startDate")
+  const endDate = dateForm.watch("endDate")
+  const eventDate = dateForm.watch("eventDate")
 
   const handleSubmit = async (values: PreviewValues) => {
     setIsSubmitting(true)
@@ -320,6 +340,74 @@ export function Preview() {
           <code className="text-muted-foreground text-sm">
             Selected: {currency4 || "None"}
           </code>
+        </div>
+      </div>
+
+      <div className="flex w-full flex-col items-center gap-6 py-4">
+        <div className="flex w-full max-w-sm flex-col gap-2">
+          <Controller
+            name="startDate"
+            control={dateForm.control}
+            render={({ field, fieldState }) => (
+              <DatePicker
+                field={field}
+                fieldState={fieldState}
+                label="Start date (button)"
+                variant="button"
+              />
+            )}
+          />
+          <code className="text-muted-foreground text-sm">
+            {startDate || "No date selected"}
+          </code>
+          <p className="text-muted-foreground text-sm">
+            {startDate ? formatRelativeDate(startDate) : "No date selected"}
+          </p>
+        </div>
+
+        <div className="flex w-full max-w-sm flex-col gap-2">
+          <Controller
+            name="endDate"
+            control={dateForm.control}
+            render={({ field, fieldState }) => (
+              <DatePicker
+                field={field}
+                fieldState={fieldState}
+                label="End date (input)"
+                variant="input"
+              />
+            )}
+          />
+          <code className="text-muted-foreground text-sm">
+            {endDate || "No date selected"}
+          </code>
+          <p className="text-muted-foreground text-sm">
+            {endDate ? formatRelativeDate(endDate) : "No date selected"}
+          </p>
+        </div>
+
+        <div className="flex w-full max-w-sm flex-col gap-2">
+          <Controller
+            name="eventDate"
+            control={dateForm.control}
+            render={({ field, fieldState }) => (
+              <DatePicker
+                field={field}
+                fieldState={fieldState}
+                label="Event date (dropdown to 31 Dec 2030)"
+                variant="button"
+                captionLayout="dropdown"
+                startMonth={new Date(2020, 0, 1)}
+                endMonth={new Date(2030, 11, 31)}
+              />
+            )}
+          />
+          <code className="text-muted-foreground text-sm">
+            {eventDate || "No date selected"}
+          </code>
+          <p className="text-muted-foreground text-sm">
+            {eventDate ? formatRelativeDate(eventDate) : "No date selected"}
+          </p>
         </div>
       </div>
     </>

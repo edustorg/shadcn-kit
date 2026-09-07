@@ -5,18 +5,19 @@ title: Generic Form
 description: >-
   A schema-driven generic form built on react-hook-form and Zod. Wraps useForm
   with a zod resolver, shares the instance through FormProvider, and exposes a
-  imperative ref API. Ships with a TextField input, an AsyncSelectField and an
-  AsyncMultiSelectField for single-line, async single-select and multi-select
-  fields.
+  imperative ref API. Ships with a TextField input, AsyncSelectField and
+  AsyncMultiSelectField async selects, and a DatePicker for calendar dates.
 dependencies:
   - react-hook-form
   - zod
   - "@hookform/resolvers"
+  - date-fns
 registryDependencies:
   - utils
   - field
   - input
   - button
+  - calendar
   - badge
   - separator
   - command
@@ -35,6 +36,9 @@ files:
   - path: async-multi-select-field.tsx
     type: registry:ui
     target: "@ui/edust-kit/generic-form/async-multi-select-field.tsx"
+  - path: date-picker.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/generic-form/date-picker.tsx"
   - path: index.ts
     type: registry:ui
     target: "@ui/edust-kit/generic-form/index.ts"
@@ -51,7 +55,9 @@ A schema-driven generic form built on react-hook-form and Zod.
 `GenericForm` takes a Zod schema, derives `initialValues` and validation from
 it, and shares the form instance through `FormProvider` so any child can query
 context with `useFormContext()`. Field components like `TextField` read the
-context and render the state without wiring a `Controller` by hand.
+context and render the state without wiring a `Controller` by hand. `DatePicker`
+is the one exception: it is bound through a react-hook-form `Controller` (see
+below).
 
 ## Usage
 
@@ -399,5 +405,222 @@ etc.):
   onChange={setSelectedId}
   useDataHook={useItemsHook}
   getItemDisplayValue={(item) => item.name}
+/>
+```
+
+## DatePicker
+
+A calendar date picker bound through react-hook-form `Controller`. Wrap the
+picker in a `Controller` to bind it to a form field. The picker writes a UTC ISO
+string via `field.onChange`, combining the selected calendar day with the
+current time at the moment of selection.
+
+### Typing dates
+
+The type-to-enter UX is opt-in via the `variant` prop. The default `"button"`
+keeps the original label-style trigger that opens the calendar; pass
+`variant="input"` to render a field where users can type a date directly
+instead of clicking the calendar. Both variants open the same calendar popover.
+
+Accepted typed formats (day/month/year, with or without leading zeros and
+optional separators):
+
+- `1482026` → 14 Aug 2026 (DDMMYYYY, unpadded month)
+- `14082026` → 14 Aug 2026 (DDMMYYYY)
+- `14/08/2026`, `14-8-2026` → 14 Aug 2026
+- `2026-08-14` → 14 Aug 2026 (YYYY-MM-DD)
+- `140825` → 14 Aug 2025 (DDMMYY)
+
+The value is committed as soon as the input forms a valid date; invalid or
+partial input is ignored until complete.
+
+```tsx
+<DatePicker
+  field={field}
+  fieldState={fieldState}
+  label="Start date"
+  variant="input"
+/>
+```
+
+### Value shape
+
+The stored value is always a full ISO 8601 UTC timestamp: the selected calendar
+day with the **current local time of day** stamped on it, serialized in UTC.
+
+**Format:** `YYYY-MM-DDTHH:mm:ss.sssZ`
+
+```text
+2026-08-14T07:23:41.123Z
+└──┬───┘ └─┬─┘ └─┬─┘ └┬┘ └┬┘
+  date   month  time  ms  Z = UTC
+```
+
+```json
+{
+  "startDate": "2026-08-14T07:23:41.123Z"
+}
+```
+
+- The **date** is the day the user picked in the calendar or typed.
+- The **time** is the current local time at the moment of selection (not
+  midnight), so two picks on the same day still differ by their time.
+- It is always `...Z` (UTC), regardless of the viewer's timezone.
+
+If you only need the date and not the time, strip it after parsing, or use a
+`z` transform in your schema (see below).
+
+### Validation (Zod)
+
+Validate the field with `z.iso.datetime` (Zod v4). Use `.optional()` when the
+field is not required, and `.refine()` to enforce a minimum date.
+
+```tsx
+import { z } from "zod"
+
+const formSchema = z.object({
+  startDate: z.iso
+    .datetime("Please select a valid date")
+    .refine((value) => new Date(value) >= new Date("2026-01-01"), {
+      message: "Date must be in 2026 or later",
+    }),
+  endDate: z.iso.datetime().optional(),
+})
+```
+
+To read it back as a `Date` (e.g. for an API or another component):
+
+```ts
+const date: Date = new Date(form.getValues("startDate"))
+// → Date object for 2026-08-14T07:23:41.123Z
+```
+
+### Basic usage
+
+```tsx
+import { DatePicker, GenericForm } from "@/components/edust-kit/generic-form"
+
+type FormValues = {
+  startDate: string
+}
+
+export function EventForm() {
+  const form = useForm<FormValues>()
+
+  return (
+    <Controller
+      name="startDate"
+      control={form.control}
+      render={({ field, fieldState }) => (
+        <DatePicker
+          field={field}
+          fieldState={fieldState}
+          label="Start date"
+          required
+        />
+      )}
+    />
+  )
+}
+```
+
+### Default value
+
+The field expects a UTC ISO string, so seed it with `new Date().toISOString()`
+to preselect the current date and time:
+
+```tsx
+const form = useForm<FormValues>({
+  defaultValues: {
+    startDate: new Date().toISOString(), // e.g. "2026-08-14T07:23:41.123Z"
+  },
+})
+```
+
+Any value parseable by `Date` (or a `Date` object) also works, since the picker
+accepts both string and `Date` values.
+
+### Constrained usage (min/max, disabled days, placeholder)
+
+`startMonth` / `endMonth` bound the navigable range, `disabledDates` disables
+specific days, and `placeholder` overrides the empty text.
+
+```tsx
+import { DatePicker } from "@/components/edust-kit/generic-form"
+import { Controller, useForm } from "react-hook-form"
+
+export function BookingForm() {
+  const form = useForm<{ startDate: string }>()
+
+  return (
+    <Controller
+      name="startDate"
+      control={form.control}
+      render={({ field, fieldState }) => (
+        <DatePicker
+          field={field}
+          fieldState={fieldState}
+          label="Booking date"
+          required
+          placeholder="Choose a booking date"
+          startMonth={new Date(2026, 0, 1)}
+          endMonth={new Date(2026, 11, 31)}
+          disabledDates={(date) => date.getDay() === 0}
+        />
+      )}
+    />
+  )
+}
+```
+
+### Props
+
+`DatePicker` is generic over your form values and field name
+(`<TFieldValues, TName>`). Beyond the `field` / `fieldState` from a
+`Controller`, it accepts:
+
+| Prop            | Type                                                             | Default         | Description                                                            |
+| --------------- | ---------------------------------------------------------------- | --------------- | ---------------------------------------------------------------------- |
+| `label`         | `string`                                                         | —               | Field label (required).                                                |
+| `variant`       | `"button" \| "input"`                                            | `"button"`      | `"button"` = label trigger; `"input"` = type-to-enter field.           |
+| `required`      | `boolean`                                                        | `true`          | Shows a required marker and marks the trigger.                         |
+| `disabled`      | `boolean`                                                        | `false`         | Disables the whole control.                                            |
+| `placeholder`   | `string`                                                         | `"Pick a date"` | Empty-state text on the trigger.                                       |
+| `startMonth`    | `Date`                                                           | —               | Earliest selectable month (inclusive). Also bounds the dropdown range. |
+| `endMonth`      | `Date`                                                           | —               | Latest selectable month (inclusive). Also bounds the dropdown range.   |
+| `disabledDates` | `Matcher \| Matcher[]` (react-day-picker)                        | —               | Disables specific days.                                                |
+| `captionLayout` | `"label" \| "dropdown" \| "dropdown-months" \| "dropdown-years"` | `"dropdown"`    | Calendar caption layout.                                               |
+| `locale`        | `Locale` (date-fns)                                              | —               | Locale for formatting and the calendar.                                |
+| `displayFormat` | `string`                                                         | `"PPP"`         | date-fns format string for the trigger label.                          |
+
+`captionLayout` defaults to `"dropdown"` — pass `"label"` to switch to a
+simple label:
+
+```tsx
+<DatePicker
+  field={field}
+  fieldState={fieldState}
+  label="Start date"
+  captionLayout="label"
+/>
+```
+
+### Dropdown navigation range
+
+With `captionLayout="dropdown"`, the year/month dropdowns only span the range
+set by `startMonth` / `endMonth`. If you omit them, the year dropdown defaults
+to **[current year − 100, current year]** — so future years like 2030 will not
+appear unless you extend `endMonth`. `startMonth` / `endMonth` also disable
+dates outside that range.
+
+```tsx
+<DatePicker
+  field={field}
+  fieldState={fieldState}
+  label="Event date"
+  variant="input"
+  captionLayout="dropdown"
+  startMonth={new Date(2020, 0, 1)}
+  endMonth={new Date(2030, 11, 31)}
 />
 ```
