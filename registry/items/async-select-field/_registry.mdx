@@ -12,13 +12,11 @@ registryDependencies:
   - button
   - command
   - popover
+  - hooks
 files:
   - path: async-select-field.tsx
     type: registry:ui
     target: "@ui/edust-kit/async-select-field.tsx"
-  - path: hooks/use-debounced-callback.ts
-    type: registry:ui
-    target: "@ui/edust-kit/hooks/use-debounced-callback.ts"
 ---
 
 A generic async select field for single-value selection from remotely fetched data. Ideal for dropdowns backed by API endpoints with search support.
@@ -28,7 +26,7 @@ A generic async select field for single-value selection from remotely fetched da
 ```tsx
 import { AsyncSelectField } from "@/components/edust-kit/async-select-field"
 
-<AsyncSelectField
+;<AsyncSelectField
   value={selectedId}
   onChange={setSelectedId}
   useDataHook={useItemsHook}
@@ -41,31 +39,31 @@ import { AsyncSelectField } from "@/components/edust-kit/async-select-field"
 
 `AsyncSelectField` is generic over `<T, TParams>` where `T` is the item type and `TParams` is the params type passed to `useDataHook`.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | — | Currently selected item ID. |
-| `onChange` | `(id: string) => void` | — | Called when the user selects an item. |
-| `placeholder` | `string` | `"Select..."` | Text shown when no item is selected. |
-| `className` | `string` | — | Additional CSS classes for the trigger button. |
-| `debounceDelay` | `number` | `500` | Debounce delay in ms for search input. |
-| `searchPlaceholder` | `string` | `"Search..."` | Placeholder for the search input. |
-| `searchParamKey` | `keyof TParams` | `"search_by_name"` | The param key used for the search term. |
-| `useDataHook` | `(params: TParams) => { data?, isFetching, error }` | — | Hook that fetches items given params. |
-| `selectedItemData` | `{ data?: { items?: T[] } }` | — | Pre-fetched data for the selected item (used when the item is not in the current page). |
-| `getItemDisplayValue` | `(item: T) => string` | — | Returns the plain-text display label (used in trigger and as fallback). |
-| `renderItemLabel` | `(item: T) => React.ReactNode` | — | Custom render for dropdown option content. Overrides `getItemDisplayValue` in the list. |
-| `getItemKey` | `(item: T) => string` | `item.id` | Returns a unique key for React rendering. |
-| `getItemValue` | `(item: T) => string` | `item.id` | Returns the value (ID) of an item. |
-| `additionalParams` | `Partial<Omit<TParams, keyof BaseSelectParams>>` | `{}` | Extra params merged into every request. |
-| `disabled` | `boolean` | `false` | Disables the select field. |
-| `showSearchIcon` | `boolean` | `false` | Show a search icon inside the search input. |
-| `lazy` | `boolean` | `false` | Fetch the dropdown list only after the popover is opened instead of on mount. |
+| Prop                  | Type                                                | Default            | Description                                                                             |
+| --------------------- | --------------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------- |
+| `value`               | `string`                                            | —                  | Currently selected item ID.                                                             |
+| `onChange`            | `(id: string) => void`                              | —                  | Called when the user selects an item.                                                   |
+| `placeholder`         | `string`                                            | `"Select..."`      | Text shown when no item is selected.                                                    |
+| `className`           | `string`                                            | —                  | Additional CSS classes for the trigger button.                                          |
+| `debounceDelay`       | `number`                                            | `500`              | Debounce delay in ms for search input.                                                  |
+| `searchPlaceholder`   | `string`                                            | `"Search..."`      | Placeholder for the search input.                                                       |
+| `searchParamKey`      | `keyof TParams`                                     | `"search_by_name"` | The param key used for the search term.                                                 |
+| `useDataHook`         | `(params: TParams) => { data?, isFetching, error }` | —                  | Hook that fetches items given params.                                                   |
+| `selectedItemData`    | `{ data?: { items?: T[] } }`                        | —                  | Pre-fetched data for the selected item (used when the item is not in the current page). |
+| `getItemDisplayValue` | `(item: T) => string`                               | —                  | Returns the plain-text display label (used in trigger and as fallback).                 |
+| `renderItemLabel`     | `(item: T) => React.ReactNode`                      | —                  | Custom render for dropdown option content. Overrides `getItemDisplayValue` in the list. |
+| `getItemKey`          | `(item: T) => string`                               | `item.id`          | Returns a unique key for React rendering.                                               |
+| `getItemValue`        | `(item: T) => string`                               | `item.id`          | Returns the value (ID) of an item.                                                      |
+| `additionalParams`    | `Partial<Omit<TParams, keyof BaseSelectParams>>`    | `{}`               | Extra params merged into every request.                                                 |
+| `disabled`            | `boolean`                                           | `false`            | Disables the select field.                                                              |
+| `showSearchIcon`      | `boolean`                                           | `false`            | Show a search icon inside the search input.                                             |
+| `lazy`                | `boolean`                                           | `false`            | Fetch the dropdown list only after the popover is opened instead of on mount.           |
 
 ## With react-hook-form
 
 ```tsx
-import { Controller, useForm } from "react-hook-form"
 import { AsyncSelectField } from "@/components/edust-kit/async-select-field"
+import { Controller, useForm } from "react-hook-form"
 
 type FormValues = {
   currencyId: string
@@ -154,7 +152,7 @@ Pass `className` to customize the trigger button (height, width, font size, etc.
 
 ```tsx
 <AsyncSelectField
-  className="h-7 text-[0.8rem] max-w-xs"
+  className="h-7 max-w-xs text-[0.8rem]"
   value={selectedId}
   onChange={setSelectedId}
   useDataHook={useItemsHook}

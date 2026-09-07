@@ -12,18 +12,14 @@
         "utils",
         "button",
         "command",
-        "popover"
+        "popover",
+        "hooks"
       ],
       "files": [
         {
           "path": "registry/items/async-select-field/async-select-field.tsx",
           "type": "registry:ui",
           "target": "@ui/edust-kit/async-select-field.tsx"
-        },
-        {
-          "path": "registry/items/async-select-field/hooks/use-debounced-callback.ts",
-          "type": "registry:ui",
-          "target": "@ui/edust-kit/hooks/use-debounced-callback.ts"
         }
       ]
     },
@@ -55,7 +51,8 @@
         "separator",
         "skeleton",
         "table",
-        "input-group"
+        "input-group",
+        "hooks"
       ],
       "files": [
         {
@@ -189,16 +186,6 @@
           "target": "@ui/edust-kit/data-table/hooks/use-data-table.ts"
         },
         {
-          "path": "registry/items/data-table/hooks/use-callback-ref.ts",
-          "type": "registry:ui",
-          "target": "@ui/edust-kit/data-table/hooks/use-callback-ref.ts"
-        },
-        {
-          "path": "registry/items/data-table/hooks/use-debounced-callback.ts",
-          "type": "registry:ui",
-          "target": "@ui/edust-kit/data-table/hooks/use-debounced-callback.ts"
-        },
-        {
           "path": "registry/items/data-table/config/data-table.ts",
           "type": "registry:ui",
           "target": "@ui/edust-kit/data-table/config/data-table.ts"
@@ -239,7 +226,7 @@
       "name": "generic-form",
       "type": "registry:ui",
       "title": "Generic Form",
-      "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input for single-line fields.",
+      "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input and an AsyncMultiSelectField for single-line and multi-select fields.",
       "dependencies": [
         "react-hook-form",
         "zod",
@@ -248,7 +235,13 @@
       "registryDependencies": [
         "utils",
         "field",
-        "input"
+        "input",
+        "button",
+        "badge",
+        "separator",
+        "command",
+        "popover",
+        "hooks"
       ],
       "files": [
         {
@@ -260,6 +253,11 @@
           "path": "registry/items/generic-form/text-field.tsx",
           "type": "registry:ui",
           "target": "@ui/edust-kit/generic-form/text-field.tsx"
+        },
+        {
+          "path": "registry/items/generic-form/async-multi-select-field.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/generic-form/async-multi-select-field.tsx"
         },
         {
           "path": "registry/items/generic-form/index.ts",
@@ -275,6 +273,19 @@
           "path": "registry/items/generic-form/hooks/zod-field-helpers.ts",
           "type": "registry:ui",
           "target": "@ui/edust-kit/hooks/zod-field-helpers.ts"
+        }
+      ]
+    },
+    {
+      "name": "hooks",
+      "type": "registry:ui",
+      "title": "Shared Hooks",
+      "description": "Shared hooks used across edust-kit registry items. Ships useDebouncedCallback, used by the async select and async multi-select components to debounce the search input before it hits the data hook.",
+      "files": [
+        {
+          "path": "registry/items/hooks/use-debounced-callback.ts",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/hooks/use-debounced-callback.ts"
         }
       ]
     }

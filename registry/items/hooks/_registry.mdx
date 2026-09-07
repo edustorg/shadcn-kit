@@ -1,0 +1,37 @@
+---
+name: hooks
+type: registry:ui
+title: Shared Hooks
+description: >-
+  Shared hooks used across edust-kit registry items. Ships useDebouncedCallback,
+  used by the async select and async multi-select components to debounce the
+  search input before it hits the data hook.
+dependencies: []
+registryDependencies: []
+files:
+  - path: use-debounced-callback.ts
+    type: registry:ui
+    target: "@ui/edust-kit/hooks/use-debounced-callback.ts"
+---
+
+Shared hooks used across `edust-kit` registry items. Install this item (or add
+it as a `registryDependency` of another item) to get a single copy of each hook
+at `@/components/edust-kit/hooks/`.
+
+## useDebouncedCallback
+
+Returns a memoized function that debounces calls to `callback` by `delay` ms.
+Any pending timeout is cleared on unmount.
+
+```tsx
+import { useDebouncedCallback } from "@/components/edust-kit/hooks/use-debounced-callback"
+
+import * as React from "react"
+
+const [debouncedSearch, setDebouncedSearch] = React.useState("")
+const debouncedSetSearch = useDebouncedCallback(setDebouncedSearch, 500)
+```
+
+This is the same hook bundled (and previously duplicated) by
+`async-select-field` and `generic-form`. Once installed through this item, both
+components depend on it instead of shipping their own copy.

@@ -5,7 +5,8 @@ title: Generic Form
 description: >-
   A schema-driven generic form built on react-hook-form and Zod. Wraps useForm
   with a zod resolver, shares the instance through FormProvider, and exposes a
-  imperative ref API. Ships with a TextField input for single-line fields.
+  imperative ref API. Ships with a TextField input and an AsyncMultiSelectField
+  for single-line and multi-select fields.
 dependencies:
   - react-hook-form
   - zod
@@ -14,6 +15,12 @@ registryDependencies:
   - utils
   - field
   - input
+  - button
+  - badge
+  - separator
+  - command
+  - popover
+  - hooks
 files:
   - path: generic-form.tsx
     type: registry:ui
@@ -21,6 +28,9 @@ files:
   - path: text-field.tsx
     type: registry:ui
     target: "@ui/edust-kit/generic-form/text-field.tsx"
+  - path: async-multi-select-field.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/generic-form/async-multi-select-field.tsx"
   - path: index.ts
     type: registry:ui
     target: "@ui/edust-kit/generic-form/index.ts"
@@ -126,3 +136,117 @@ const schema = z.object({
 `TextField` renders `FieldError` automatically when the field is invalid. When
 an arbitrary `FieldError` is needed outside a text field, the underlying
 component reads `useFormContext().formState.errors` directly.
+
+## AsyncMultiSelectField
+
+A searchable multi-select for remotely fetched data. Built on `Popover` and
+`Command` (cmdk), it fetches options from an API with debounced search, renders
+selected values as removable badges, and supports loading, error, and empty
+states.
+
+```tsx
+import { AsyncMultiSelectField } from "@/components/edust-kit/generic-form"
+
+;<AsyncMultiSelectField
+  value={selectedIds}
+  onChange={setSelectedIds}
+  useDataHook={useLabelsHook}
+  getItemDisplayValue={(item) => item.name}
+  placeholder="Select labels..."
+/>
+```
+
+### Props
+
+`AsyncMultiSelectField` is generic over `<T, TParams>` where `T` is the item
+type and `TParams` is the params type passed to `useDataHook`.
+
+| Prop                  | Type                                                | Default            | Description                                                                                |
+| --------------------- | --------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------ |
+| `value`               | `string[]`                                          | `[]`               | Currently selected item IDs.                                                               |
+| `onChange`            | `(values: string[]) => void`                        | —                  | Called with the full array whenever the selection changes.                                 |
+| `placeholder`         | `string`                                            | `"Select..."`      | Text shown when nothing is selected.                                                       |
+| `className`           | `string`                                            | —                  | Classes for the trigger button.                                                            |
+| `badgeClassName`      | `string`                                            | —                  | Classes for the selected-value badges.                                                     |
+| `debounceDelay`       | `number`                                            | `500`              | Debounce delay in ms for search input.                                                     |
+| `searchPlaceholder`   | `string`                                            | `"Search..."`      | Placeholder for the search input.                                                          |
+| `searchParamKey`      | `keyof TParams`                                     | `"search_by_name"` | The param key used for the search term.                                                    |
+| `useDataHook`         | `(params: TParams) => { data?, isFetching, error }` | —                  | Hook that fetches items given params.                                                      |
+| `selectedItemsData`   | `{ data?: { items?: T[] } }`                        | —                  | Pre-fetched data used to resolve badge labels for selected items outside the fetched page. |
+| `getItemDisplayValue` | `(item: T) => string`                               | —                  | Returns the plain-text label (badges and dropdown fallback).                               |
+| `renderItemLabel`     | `(item: T) => React.ReactNode`                      | —                  | Custom render for dropdown option content.                                                 |
+| `getItemKey`          | `(item: T) => string`                               | `item.id`          | Unique React key for an item.                                                              |
+| `getItemValue`        | `(item: T) => string`                               | `item.id`          | The value (ID) of an item.                                                                 |
+| `additionalParams`    | `Partial<Omit<TParams, keyof BaseSelectParams>>`    | `{}`               | Extra params merged into every request.                                                    |
+| `disabled`            | `boolean`                                           | `false`            | Disables the field.                                                                        |
+| `maxSelected`         | `number`                                            | —                  | Maximum number of selections allowed.                                                      |
+| `maxBadges`           | `number`                                            | `4`                | How many selected badges to render before showing `+N`.                                    |
+| `showSearchIcon`      | `boolean`                                           | `false`            | Show a search icon inside the search input.                                                |
+| `lazy`                | `boolean`                                           | `false`            | Fetch the dropdown list only after the popover is opened.                                  |
+| `emptyIndicator`      | `React.ReactNode`                                   | —                  | Custom empty-state message.                                                                |
+
+### With react-hook-form
+
+```tsx
+import { AsyncMultiSelectField } from "@/components/edust-kit/generic-form"
+import { Controller, useForm } from "react-hook-form"
+
+type FormValues = {
+  labelIds: string[]
+}
+
+export function TaskForm() {
+  const form = useForm<FormValues>({ defaultValues: { labelIds: [] } })
+
+  return (
+    <Controller
+      name="labelIds"
+      control={form.control}
+      render={({ field }) => (
+        <AsyncMultiSelectField
+          value={field.value}
+          onChange={field.onChange}
+          useDataHook={useLabelsHook}
+          getItemDisplayValue={(item) => item.name}
+          placeholder="Select labels..."
+        />
+      )}
+    />
+  )
+}
+```
+
+### Limiting selections
+
+Pass `maxSelected` to cap the number of items the user can pick. When the cap is
+reached the dropdown shows a hint and further selections are ignored.
+
+```tsx
+<AsyncMultiSelectField
+  maxSelected={3}
+  value={selectedIds}
+  onChange={setSelectedIds}
+  useDataHook={useLabelsHook}
+  getItemDisplayValue={(item) => item.name}
+/>
+```
+
+### Resolving badge labels
+
+The trigger resolves badge labels from the fetched list plus
+`selectedItemsData`. When a selected value does not appear in the current page
+(e.g. paginated results), pass pre-fetched data so its badge still renders:
+
+```tsx
+const { data: selectedLabelsData } = useGetLabels(
+  selectedIds.length ? { ids: selectedIds } : undefined,
+)
+
+<AsyncMultiSelectField
+  value={selectedIds}
+  onChange={setSelectedIds}
+  useDataHook={useLabelsHook}
+  selectedItemsData={selectedLabelsData}
+  getItemDisplayValue={(item) => item.name}
+/>
+```

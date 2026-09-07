@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hooks",
+  "type": "registry:ui",
+  "title": "Shared Hooks",
+  "description": "Shared hooks used across edust-kit registry items. Ships useDebouncedCallback, used by the async select and async multi-select components to debounce the search input before it hits the data hook.",
+  "files": [
+    {
+      "path": "registry/items/hooks/use-debounced-callback.ts",
+      "content": "import * as React from \"react\"\n\nfunction useCallbackRef<T extends (...args: never[]) => unknown>(callback: T) {\n  const callbackRef = React.useRef(callback)\n  React.useEffect(() => {\n    callbackRef.current = callback\n  })\n  return React.useCallback(\n    (...args: Parameters<T>) => callbackRef.current(...args),\n    [],\n  )\n}\n\nexport function useDebouncedCallback<T extends (...args: never[]) => unknown>(\n  callback: T,\n  delay: number,\n) {\n  const handleCallback = useCallbackRef(callback)\n  const debounceTimerRef = React.useRef(0)\n  React.useEffect(() => () => window.clearTimeout(debounceTimerRef.current), [])\n\n  const setValue = React.useCallback(\n    (...args: Parameters<T>) => {\n      window.clearTimeout(debounceTimerRef.current)\n      debounceTimerRef.current = window.setTimeout(\n        () => handleCallback(...args),\n        delay,\n      )\n    },\n    [handleCallback, delay],\n  )\n\n  return setValue\n}\n",
+      "type": "registry:ui",
+      "target": "@ui/edust-kit/hooks/use-debounced-callback.ts"
+    }
+  ]
+}

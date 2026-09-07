@@ -1,5 +1,6 @@
 "use client"
 
+import { useDebouncedCallback } from "@/components/edust-kit/hooks/use-debounced-callback"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -18,8 +19,6 @@ import {
 import { cn } from "@/lib/utils"
 
 import * as React from "react"
-
-import { useDebouncedCallback } from "./hooks/use-debounced-callback"
 
 export interface SelectFieldItem {
   id: string
@@ -158,9 +157,7 @@ function AsyncSelectCommand<T extends SelectFieldItem>({
   )
 }
 
-interface UseAsyncSelectFieldStateConfig<
-  TParams extends BaseSelectParams,
-> {
+interface UseAsyncSelectFieldStateConfig<TParams extends BaseSelectParams> {
   onChange: (id: string) => void
   debounceDelay: number
   searchParamKey: keyof TParams
@@ -294,7 +291,10 @@ interface AsyncSelectLazyBodyProps<
   useDataHook: AsyncSelectFieldProps<T, TParams>["useDataHook"]
 }
 
-function AsyncSelectLazyBody<T extends SelectFieldItem, TParams extends BaseSelectParams>({
+function AsyncSelectLazyBody<
+  T extends SelectFieldItem,
+  TParams extends BaseSelectParams,
+>({
   params,
   useDataHook,
   ...commandProps
@@ -422,7 +422,10 @@ interface AsyncSelectEagerProps<
   placeholder: string
   state: ReturnType<typeof useAsyncSelectFieldState<TParams>>
   getValue: (item: T) => string
-  commandProps: Omit<AsyncSelectCommandProps<T>, "items" | "isFetching" | "error">
+  commandProps: Omit<
+    AsyncSelectCommandProps<T>,
+    "items" | "isFetching" | "error"
+  >
 }
 
 function AsyncSelectEager<
