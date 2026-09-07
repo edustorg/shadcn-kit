@@ -86,20 +86,28 @@ formRef.current?.reset()
 
 ## TextField
 
-`TextField` is a single-line input bound directly to a schema field. It
-renders a label, required marker, the `Input`, and the resolved error
-message — no `Controller` needed.
+`TextField` is a single-line input bound to a schema field via react-hook-form
+`Controller`. It renders a label, required marker, the `Input`, and the
+resolved error message.
 
-| Prop          | Type                                  | Default  | Description |
-|---------------|---------------------------------------|----------|-------------|
-| `name`        | `Path<TValues>`                       | —        | Field name (must exist in the schema). |
-| `label`       | `string`                              | —        | Label text; hidden when empty. |
-| `type`        | `"text" \| "email" \| "number" \| "password"` | `"text"` | Input type. |
-| `placeholder` | `string`                              | —        | Input placeholder. |
-| `required`    | `boolean`                             | `false`  | Renders the red `*` marker. |
-| `disabled`    | `boolean`                             | `false`  | Disables the input. |
-| `className`   | `string`                              | —        | Classes for the field wrapper. |
-| `inputClass`  | `string`                              | —        | Classes for the input. |
+For `type="number"`, values are coerced to a number (or `null` when empty)
+before being written to the form, so `onChange` payloads stay in sync with
+zod+API shapes. Use `onValueChange` for custom coercion.
+
+| Prop            | Type                                        | Default  | Description |
+|-----------------|---------------------------------------------|----------|-------------|
+| `name`          | `Path<TValues>`                             | —        | Field name (must exist in the schema). |
+| `label`         | `string`                                    | —        | Label text; hidden when empty. |
+| `type`          | `"text" \| "email" \| "number" \| "password" \| "tel" \| "url"` | `"text"` | Input type. |
+| `placeholder`   | `string`                                    | —        | Input placeholder. |
+| `required`      | `boolean`                                   | `false`  | Renders the red `*` marker. |
+| `disabled`      | `boolean`                                   | `false`  | Disables the input. |
+| `className`     | `string`                                    | —        | Classes for the field wrapper. |
+| `inputClass`    | `string`                                    | —        | Classes for the input. |
+| `min` / `max`   | `number \| string`                          | —        | Min/max bounds (numbers). |
+| `step`          | `number \| string`                          | —        | Step for number inputs. |
+| `autoComplete`  | `string`                                    | —        | Browser autofill hint. |
+| `onValueChange` | `(value: string \| number \| null) => void` | —        | Custom value transform; bypasses built-in coercion. |
 
 ## Validation
 

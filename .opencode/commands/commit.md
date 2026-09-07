@@ -18,9 +18,11 @@ description: Generate a conventional commit from staged changes and commit them.
    - Summary: Concise description of the primary change.
    - Body: If there are multiple significant changes, append a bullet list describing the additional functional or business changes.
 
-5. Show the generated commit message and wait 2 seconds, then run `git commit` automatically (no prompt before committing).
+5. Show the generated commit message and start a **3-second countdown** with live update.
+    - Show: `Committing in 3s... (press any key to cancel)`
+    - Decrease countdown each second: `2s... 1s...`
+    - If user presses any key during countdown → cancel and say: "Commit cancelled."
+    - If countdown completes → run `git commit`
     - **[SKIP]** → output only the generated commit message without committing.
 
-6. After committing, **[ASK]** whether to push to the remote.
-    - Yes or Enter → run `git push`.
-    - No → stop.
+6. After committing, run `git push` automatically without asking.
