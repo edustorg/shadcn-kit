@@ -84,9 +84,6 @@ files:
   - path: ui/sortable.tsx
     type: registry:ui
     target: "@ui/edust-kit/data-table/ui/sortable.tsx"
-  - path: index.ts
-    type: registry:ui
-    target: "@ui/edust-kit/data-table/index.ts"
   - path: entity/entity-test.tsx
     type: registry:ui
     target: "@ui/edust-kit/data-table/entity/entity-test.tsx"
@@ -135,7 +132,8 @@ sub-components from `@/components/edust-kit/data-table/*`.
 ## Usage
 
 ```tsx
-import { DataTable, DataTableToolbar } from "@/components/edust-kit/data-table"
+import { DataTable } from "@/components/edust-kit/data-table/data-table"
+import { DataTableToolbar } from "@/components/edust-kit/data-table/data-table-toolbar"
 import { useDataTable } from "@/components/edust-kit/data-table/hooks/use-data-table"
 ```
 
@@ -232,7 +230,7 @@ import {
   ActionBarItem,
   ActionBarSelection,
   ActionBarSeparator,
-} from "@/components/edust-kit/data-table"
+} from "@/components/edust-kit/data-table/action-bar"
 import { CheckCircle2, Download, X } from "lucide-react"
 
 function TableActionBar({ table }) {
@@ -275,4 +273,29 @@ Pass it to `DataTable` via the `actionBar` prop:
 
 ```tsx
 <DataTable table={table} actionBar={<TableActionBar table={table} />} />
+```
+
+## DataTable
+
+The `DataTable` component renders the TanStack Table instance with headers, rows,
+static pinning styles, pagination and an optional action bar. When `isFetching`
+is `true` it renders skeleton rows instead of data.
+
+### Props
+
+| Prop         | Type                                         | Description                                                        |
+| ------------ | -------------------------------------------- | ------------------------------------------------------------------ |
+| `table`      | `TanstackTable<TData>`                       | The TanStack Table instance                                        |
+| `isFetching` | `boolean`                                    | When `true`, renders skeleton loading rows                         |
+| `skeleton`   | `{ columnCount?, rowCount?, cellWidths?, shrinkZero? }` | Skeleton shape overrides (defaults to all leaf columns / 10 rows) |
+| `actionBar`  | `React.ReactNode`                            | Rendered when rows are selected                                    |
+
+### Usage
+
+```tsx
+import { DataTable } from "@/components/edust-kit/data-table/data-table"
+
+<DataTable table={table} isFetching={isFetching} actionBar={<TableActionBar table={table} />}>
+  <DataTableToolbar table={table} />
+</DataTable>
 ```

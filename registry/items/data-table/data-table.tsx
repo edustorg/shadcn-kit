@@ -2,6 +2,7 @@ import { flexRender, type Table as TanstackTable } from "@tanstack/react-table";
 import type * as React from "react";
 
 import { DataTablePagination } from "./data-table-pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -15,16 +16,40 @@ import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData> extends React.ComponentProps<"div"> {
   table: TanstackTable<TData>;
+  isFetching: boolean;
+  skeleton?: {
+    columnCount?: number;
+    rowCount?: number;
+    cellWidths?: string[];
+    shrinkZero?: boolean;
+  };
   actionBar?: React.ReactNode;
 }
 
 export function DataTable<TData>({
   table,
+  isFetching,
+  skeleton,
   actionBar,
   children,
   className,
   ...props
 }: DataTableProps<TData>) {
+  const columnCount = skeleton?.columnCount ?? table.getAllLeafColumns().length;
+
+  const rowCount = skeleton?.rowCount ?? 10;
+
+  const cellWidths = skeleton?.cellWidths?.length
+    ? skeleton.cellWidths
+    : ["auto"];
+
+  const shrinkZero = skeleton?.shrinkZero ?? false;
+
+  const cozyCellWidths = Array.from(
+    { length: columnCount },
+    (_, i) => cellWidths[i % cellWidths.length],
+  );
+
   return (
     <div
       className={cn("flex w-full flex-col gap-2.5 overflow-auto", className)}
@@ -56,36 +81,56 @@ export function DataTable<TData>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
+            {isFetching ? (
+              Array.from({ length: rowCount }).map((_, i) => (
+                <TableRow key={i} className="hover:bg-transparent">
+                  {Array.from({ length: columnCount }).map((_, j) => (
                     <TableCell
-                      key={cell.id}
+                      key={j}
                       style={{
-                        ...getColumnPinningStyle({ column: cell.column }),
+                        width: cozyCellWidths[j],
+                        minWidth: shrinkZero ? cozyCellWidths[j] : "auto",
                       }}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      <Skeleton className="h-6 w-full" />
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={table.getAllColumns().length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
+              <>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          style={{
+                            ...getColumnPinningStyle({ column: cell.column }),
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={table.getAllColumns().length}
+                      className="h-24 text-center"
+                    >
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
             )}
           </TableBody>
         </Table>

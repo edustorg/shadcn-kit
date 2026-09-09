@@ -126,11 +126,6 @@
           "target": "@ui/edust-kit/data-table/ui/sortable.tsx"
         },
         {
-          "path": "registry/items/data-table/index.ts",
-          "type": "registry:ui",
-          "target": "@ui/edust-kit/data-table/index.ts"
-        },
-        {
           "path": "registry/items/data-table/entity/entity-test.tsx",
           "type": "registry:ui",
           "target": "@ui/edust-kit/data-table/entity/entity-test.tsx"

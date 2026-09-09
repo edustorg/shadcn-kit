@@ -84,24 +84,27 @@ const asyncUserOptions: AsyncColumnOptions = {
 export function Preview() {
   const [useAdvanced, setUseAdvanced] = React.useState(false);
   const [data, setData] = React.useState<Todo[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const [isFetching, setIsFetching] = React.useState(true);
 
   React.useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    fetch("https://jsonplaceholder.typicode.com/todos?_limit=25")
-      .then((res) => res.json())
-      .then((todos: Todo[]) => {
-        if (!cancelled) {
-          setData(todos);
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setLoading(false);
-      });
+    setIsFetching(true);
+    const timer = setTimeout(() => {
+      fetch("https://jsonplaceholder.typicode.com/todos?_limit=25")
+        .then((res) => res.json())
+        .then((todos: Todo[]) => {
+          if (!cancelled) {
+            setData(todos);
+            setIsFetching(false);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setIsFetching(false);
+        });
+    }, 500);
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
   }, []);
 
@@ -190,10 +193,6 @@ export function Preview() {
     },
   });
 
-  if (loading) {
-    return <div className="text-muted-foreground text-sm">Loading todos...</div>;
-  }
-
   return (
     <div className="flex w-full flex-col gap-4">
       <div className="flex items-center gap-2">
@@ -207,7 +206,11 @@ export function Preview() {
           <option value="standard">Standard</option>
         </select>
       </div>
-      <DataTable table={table}>
+      <DataTable
+        table={table}
+        isFetching={isFetching}
+        skeleton={{ rowCount: 10 }}
+      >
         {useAdvanced ? (
           <DataTableAdvancedToolbar table={table}>
             <DataTableFilterList table={table} align="start" />
