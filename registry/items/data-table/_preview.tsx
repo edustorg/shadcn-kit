@@ -7,7 +7,6 @@ import { DataTableToolbar } from "./data-table-toolbar";
 import { DataTableSortList } from "./data-table-sort-list";
 import { DataTableAdvancedToolbar } from "./data-table-advanced-toolbar";
 import { DataTableFilterList } from "./data-table-filter-list";
-import { DataTableFilterMenu } from "./data-table-filter-menu";
 import type { AsyncColumnOptions } from "./types/data-table";
 import {
   getCoreRowModel,
@@ -52,10 +51,11 @@ function useAsyncUsers(params: Record<string, unknown>) {
     data?: { items?: typeof ALL_USERS };
   }>({});
   const [isFetching, setIsFetching] = React.useState(false);
-  const [error, setError] = React.useState<unknown>(null);
+  const [error] = React.useState<unknown>(null);
 
   React.useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsFetching(true);
     const timer = setTimeout(() => {
       if (cancelled) return;
