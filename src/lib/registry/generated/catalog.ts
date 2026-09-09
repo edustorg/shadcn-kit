@@ -12,6 +12,7 @@ export const registryItems: RegistryItem[] = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@radix-ui/react-direction",
       "@radix-ui/react-slot",
       "@tanstack/react-table",
       "nuqs",
@@ -32,9 +33,14 @@ export const registryItems: RegistryItem[] = [
       "table",
       "input-group"
     ],
-    "target": "@ui/edust-kit/data-table/data-table.tsx",
-    "sourcePath": "registry/items/data-table/data-table.tsx",
+    "target": "@ui/edust-kit/data-table/action-bar.tsx",
+    "sourcePath": "registry/items/data-table/action-bar.tsx",
     "files": [
+      {
+        "path": "registry/items/data-table/action-bar.tsx",
+        "type": "registry:ui",
+        "target": "@ui/edust-kit/data-table/action-bar.tsx"
+      },
       {
         "path": "registry/items/data-table/data-table.tsx",
         "type": "registry:ui",
@@ -166,6 +172,16 @@ export const registryItems: RegistryItem[] = [
         "target": "@ui/edust-kit/data-table/hooks/use-data-table.ts"
       },
       {
+        "path": "registry/items/data-table/hooks/use-as-ref.ts",
+        "type": "registry:ui",
+        "target": "@ui/edust-kit/data-table/hooks/use-as-ref.ts"
+      },
+      {
+        "path": "registry/items/data-table/hooks/use-isomorphic-layout-effect.ts",
+        "type": "registry:ui",
+        "target": "@ui/edust-kit/data-table/hooks/use-isomorphic-layout-effect.ts"
+      },
+      {
         "path": "registry/items/hooks/use-debounced-callback.ts",
         "type": "registry:ui",
         "target": "@ui/edust-kit/hooks/use-debounced-callback.ts"
@@ -182,7 +198,7 @@ export const registryItems: RegistryItem[] = [
       }
     ],
     "hasPreview": true,
-    "usage": "A complete data table solution with advanced filtering, sorting, pagination, and\nURL state management. This is a barrel export that re-exports all data-table\nsub-components from `@/components/edust-kit/data-table/*`.\n\n## Usage\n\n```tsx\nimport { DataTable, DataTableToolbar } from \"@/components/edust-kit/data-table\"\nimport { useDataTable } from \"@/components/edust-kit/data-table/hooks/use-data-table\"\n```\n\n## Async Faceted Filter\n\nThe `DataTableAsyncFacetedFilter` component provides a faceted filter that\nfetches options asynchronously from an API. It supports debounced search,\nloading states, error handling, and displaying selected items that are not\ncurrently in the fetched results.\n\n### Props\n\n| Prop           | Type                    | Description                           |\n| -------------- | ----------------------- | ------------------------------------- |\n| `column`       | `Column<TData, TValue>` | The TanStack Table column to filter   |\n| `title`        | `string`                | Display label for the filter button   |\n| `asyncOptions` | `AsyncColumnOptions`    | Configuration for async data fetching |\n\n### AsyncColumnOptions\n\n```typescript\ninterface AsyncColumnOptions {\n  useDataHook: (params: Record<string, unknown>) => {\n    data?: { data?: { items?: unknown[] } }\n    isFetching: boolean\n    error: unknown\n  }\n  searchParamKey?: string // Default: \"search\"\n  getItemLabel: (item: unknown) => string\n  getItemValue?: (item: unknown) => string // Default: item.id\n  additionalParams?: Record<string, unknown>\n  debounceDelay?: number // Default: 300\n}\n```\n\n### Usage\n\n```tsx\nimport { DataTableAsyncFacetedFilter } from \"@/components/edust-kit/data-table/data-table-async-faceted-filter\"\nimport { useQuery } from \"@tanstack/react-query\"\n\nfunction useUsers(params: Record<string, unknown>) {\n  return useQuery({\n    queryKey: [\"users\", params],\n    queryFn: () => fetchUsers(params),\n  })\n}\n\n;<DataTableAsyncFacetedFilter\n  column={table.getColumn(\"userId\")}\n  title=\"User\"\n  asyncOptions={{\n    useDataHook: useUsers,\n    getItemLabel: (item) => item.name,\n    getItemValue: (item) => item.id,\n    searchParamKey: \"search\",\n    debounceDelay: 300,\n  }}\n/>\n```\n\n## Entity\n\nThe `entity` subdirectory includes an `EntityTest` component that renders\n\"Hello Entity Text\"."
+    "usage": "A complete data table solution with advanced filtering, sorting, pagination, and\nURL state management. This is a barrel export that re-exports all data-table\nsub-components from `@/components/edust-kit/data-table/*`.\n\n## Usage\n\n```tsx\nimport { DataTable, DataTableToolbar } from \"@/components/edust-kit/data-table\"\nimport { useDataTable } from \"@/components/edust-kit/data-table/hooks/use-data-table\"\n```\n\n## Async Faceted Filter\n\nThe `DataTableAsyncFacetedFilter` component provides a faceted filter that\nfetches options asynchronously from an API. It supports debounced search,\nloading states, error handling, and displaying selected items that are not\ncurrently in the fetched results.\n\n### Props\n\n| Prop           | Type                    | Description                           |\n| -------------- | ----------------------- | ------------------------------------- |\n| `column`       | `Column<TData, TValue>` | The TanStack Table column to filter   |\n| `title`        | `string`                | Display label for the filter button   |\n| `asyncOptions` | `AsyncColumnOptions`    | Configuration for async data fetching |\n\n### AsyncColumnOptions\n\n```typescript\ninterface AsyncColumnOptions {\n  useDataHook: (params: Record<string, unknown>) => {\n    data?: { data?: { items?: unknown[] } }\n    isFetching: boolean\n    error: unknown\n  }\n  searchParamKey?: string // Default: \"search\"\n  getItemLabel: (item: unknown) => string\n  getItemValue?: (item: unknown) => string // Default: item.id\n  additionalParams?: Record<string, unknown>\n  debounceDelay?: number // Default: 300\n}\n```\n\n### Usage\n\n```tsx\nimport { DataTableAsyncFacetedFilter } from \"@/components/edust-kit/data-table/data-table-async-faceted-filter\"\nimport { useQuery } from \"@tanstack/react-query\"\n\nfunction useUsers(params: Record<string, unknown>) {\n  return useQuery({\n    queryKey: [\"users\", params],\n    queryFn: () => fetchUsers(params),\n  })\n}\n\n;<DataTableAsyncFacetedFilter\n  column={table.getColumn(\"userId\")}\n  title=\"User\"\n  asyncOptions={{\n    useDataHook: useUsers,\n    getItemLabel: (item) => item.name,\n    getItemValue: (item) => item.id,\n    searchParamKey: \"search\",\n    debounceDelay: 300,\n  }}\n/>\n```\n\n## Action Bar\n\nA floating toolbar that appears when rows are selected in a data table. Renders\nas a portal at the bottom of the viewport.\n\n### Props\n\n| Prop             | Type                           | Description                                |\n| ---------------- | ------------------------------ | ------------------------------------------ |\n| `open`           | `boolean`                      | Whether the action bar is visible          |\n| `onOpenChange`   | `(open: boolean) => void`      | Callback when visibility changes           |\n| `side`           | `\"top\" \\| \"bottom\"`            | Which side to anchor to (default: bottom)  |\n| `align`          | `\"start\" \\| \"center\" \\| \"end\"` | Horizontal alignment (default: center)     |\n| `sideOffset`     | `number`                       | Distance from edge in px (default: 16)     |\n| `orientation`    | `\"horizontal\" \\| \"vertical\"`   | Layout direction (default: horizontal)     |\n| `loop`           | `boolean`                      | Arrow key navigation wraps (default: true) |\n\n### Sub-components\n\n- `ActionBarSelection` — shows selected row count with a close button\n- `ActionBarGroup` — groups related action items with roving tabindex\n- `ActionBarItem` — individual action button (wraps Button)\n- `ActionBarClose` — dismisses the action bar\n- `ActionBarSeparator` — visual divider between items\n\n### Usage\n\n```tsx\nimport {\n  ActionBar,\n  ActionBarClose,\n  ActionBarGroup,\n  ActionBarItem,\n  ActionBarSelection,\n  ActionBarSeparator,\n} from \"@/components/edust-kit/data-table\"\nimport { CheckCircle2, Download, X } from \"lucide-react\"\n\nfunction TableActionBar({ table }) {\n  const rows = table.getFilteredSelectedRowModel().rows\n\n  const onOpenChange = React.useCallback(\n    (open: boolean) => {\n      if (!open) table.toggleAllRowsSelected(false)\n    },\n    [table],\n  )\n\n  return (\n    <ActionBar open={rows.length > 0} onOpenChange={onOpenChange}>\n      <ActionBarSelection>\n        <span className=\"font-medium\">{rows.length}</span>\n        <span>selected</span>\n        <ActionBarSeparator />\n        <ActionBarClose>\n          <X />\n        </ActionBarClose>\n      </ActionBarSelection>\n      <ActionBarSeparator />\n      <ActionBarGroup>\n        <ActionBarItem>\n          <CheckCircle2 />\n          Status\n        </ActionBarItem>\n        <ActionBarItem>\n          <Download />\n          Export\n        </ActionBarItem>\n      </ActionBarGroup>\n    </ActionBar>\n  )\n}\n```\n\nPass it to `DataTable` via the `actionBar` prop:\n\n```tsx\n<DataTable table={table} actionBar={<TableActionBar table={table} />} />\n```"
   },
   {
     "name": "generic-form",

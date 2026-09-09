@@ -13,6 +13,7 @@
         "@dnd-kit/modifiers",
         "@dnd-kit/sortable",
         "@dnd-kit/utilities",
+        "@radix-ui/react-direction",
         "@radix-ui/react-slot",
         "@tanstack/react-table",
         "nuqs",
@@ -34,6 +35,11 @@
         "input-group"
       ],
       "files": [
+        {
+          "path": "registry/items/data-table/action-bar.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/data-table/action-bar.tsx"
+        },
         {
           "path": "registry/items/data-table/data-table.tsx",
           "type": "registry:ui",
@@ -163,6 +169,16 @@
           "path": "registry/items/data-table/hooks/use-data-table.ts",
           "type": "registry:ui",
           "target": "@ui/edust-kit/data-table/hooks/use-data-table.ts"
+        },
+        {
+          "path": "registry/items/data-table/hooks/use-as-ref.ts",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/data-table/hooks/use-as-ref.ts"
+        },
+        {
+          "path": "registry/items/data-table/hooks/use-isomorphic-layout-effect.ts",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/data-table/hooks/use-isomorphic-layout-effect.ts"
         },
         {
           "path": "registry/items/hooks/use-debounced-callback.ts",
