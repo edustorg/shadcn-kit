@@ -6,11 +6,11 @@ import { z } from "zod"
 
 import * as React from "react"
 
-import { GenericForm, type GenericFormRef } from "./"
 import { AsyncMultiSelectField } from "./async-multi-select-field"
 import { AsyncSelectField } from "./async-select-field"
 import type { SelectFieldItem } from "./async-select-field"
 import { DatePicker } from "./date-picker"
+import { GenericForm, type GenericFormRef } from "./generic-form"
 import { TextField } from "./text-field"
 
 export function formatRelativeDate(date: Date | string): string {

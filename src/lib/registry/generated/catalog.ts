@@ -235,11 +235,6 @@ export const registryItems: RegistryItem[] = [
         "target": "@ui/edust-kit/generic-form/date-picker.tsx"
       },
       {
-        "path": "registry/items/generic-form/index.ts",
-        "type": "registry:ui",
-        "target": "@ui/edust-kit/generic-form/index.ts"
-      },
-      {
         "path": "registry/items/generic-form/hooks/get-dirty-payload.ts",
         "type": "registry:ui",
         "target": "@ui/edust-kit/hooks/get-dirty-payload.ts"
