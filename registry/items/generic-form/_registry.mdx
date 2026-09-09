@@ -5,8 +5,9 @@ title: Generic Form
 description: >-
   A schema-driven generic form built on react-hook-form and Zod. Wraps useForm
   with a zod resolver, shares the instance through FormProvider, and exposes a
-  imperative ref API. Ships with a TextField input, AsyncSelectField and
-  AsyncMultiSelectField async selects, and a DatePicker for calendar dates.
+  imperative ref API. Ships with a TextField input, a TextAreaField multiline
+  field, AsyncSelectField and AsyncMultiSelectField async selects, and a
+  DatePicker for calendar dates.
 dependencies:
   - react-hook-form
   - zod
@@ -17,6 +18,7 @@ registryDependencies:
   - field
   - input
   - button
+  - textarea
   - calendar
   - badge
   - separator
@@ -29,6 +31,9 @@ files:
   - path: text-field.tsx
     type: registry:ui
     target: "@ui/edust-kit/generic-form/text-field.tsx"
+  - path: text-area-field.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/generic-form/text-area-field.tsx"
   - path: async-select-field.tsx
     type: registry:ui
     target: "@ui/edust-kit/generic-form/async-select-field.tsx"
@@ -127,6 +132,36 @@ zod+API shapes. Use `onValueChange` for custom coercion.
 | `step`          | `number \| string`                                              | —        | Step for number inputs.                             |
 | `autoComplete`  | `string`                                                        | —        | Browser autofill hint.                              |
 | `onValueChange` | `(value: string \| number \| null) => void`                     | —        | Custom value transform; bypasses built-in coercion. |
+
+## TextAreaField
+
+`TextAreaField` is the multiline sibling of `TextField`, bound to a schema field
+via react-hook-form `Controller`. It renders a label, required marker, a
+`Textarea`, and the resolved error message.
+
+```tsx
+import { TextAreaField } from "@/components/edust-kit/generic-form/text-area-field"
+
+;<TextAreaField
+  name="notes"
+  label="Notes"
+  placeholder="Short description..."
+  className="min-h-25 resize-none"
+/>
+```
+
+| Prop            | Type            | Default | Description                            |
+| --------------- | --------------- | ------- | -------------------------------------- |
+| `name`          | `Path<TValues>` | —       | Field name (must exist in the schema). |
+| `label`         | `string`        | —       | Label text; hidden when empty.         |
+| `placeholder`   | `string`        | —       | Textarea placeholder.                  |
+| `description`   | `string`        | —       | Helper text under the textarea.        |
+| `required`      | `boolean`       | `false` | Renders the red `*` marker.            |
+| `disabled`      | `boolean`       | `false` | Disables the textarea.                 |
+| `className`     | `string`        | —       | Classes for the field wrapper.         |
+| `textAreaClass` | `string`        | —       | Classes for the textarea.              |
+| `rows`          | `number`        | —       | Number of visible textarea rows.       |
+| `autoComplete`  | `string`        | —       | Browser autofill hint.                 |
 
 ## Validation
 
