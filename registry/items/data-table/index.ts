@@ -1,3 +1,11 @@
+export {
+  ActionBar,
+  ActionBarSelection,
+  ActionBarGroup,
+  ActionBarItem,
+  ActionBarClose,
+  ActionBarSeparator,
+} from "./action-bar";
 export { DataTable } from "./data-table";
 export { DataTableAdvancedToolbar } from "./data-table-advanced-toolbar";
 export { DataTableAsyncFacetedFilter } from "./data-table-async-faceted-filter";

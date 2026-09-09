@@ -10,6 +10,7 @@ dependencies:
   - "@dnd-kit/modifiers"
   - "@dnd-kit/sortable"
   - "@dnd-kit/utilities"
+  - "@radix-ui/react-direction"
   - "@radix-ui/react-slot"
   - "@tanstack/react-table"
   - nuqs
@@ -29,6 +30,9 @@ registryDependencies:
   - table
   - input-group
 files:
+  - path: action-bar.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/data-table/action-bar.tsx"
   - path: data-table.tsx
     type: registry:ui
     target: "@ui/edust-kit/data-table/data-table.tsx"
@@ -107,6 +111,12 @@ files:
   - path: hooks/use-data-table.ts
     type: registry:ui
     target: "@ui/edust-kit/data-table/hooks/use-data-table.ts"
+  - path: hooks/use-as-ref.ts
+    type: registry:ui
+    target: "@ui/edust-kit/data-table/hooks/use-as-ref.ts"
+  - path: hooks/use-isomorphic-layout-effect.ts
+    type: registry:ui
+    target: "@ui/edust-kit/data-table/hooks/use-isomorphic-layout-effect.ts"
   - path: ../hooks/use-debounced-callback.ts
     type: registry:ui
     target: "@ui/edust-kit/hooks/use-debounced-callback.ts"
@@ -187,7 +197,82 @@ function useUsers(params: Record<string, unknown>) {
 />
 ```
 
-## Entity
+## Action Bar
 
-The `entity` subdirectory includes an `EntityTest` component that renders
-"Hello Entity Text".
+A floating toolbar that appears when rows are selected in a data table. Renders
+as a portal at the bottom of the viewport.
+
+### Props
+
+| Prop             | Type                           | Description                                |
+| ---------------- | ------------------------------ | ------------------------------------------ |
+| `open`           | `boolean`                      | Whether the action bar is visible          |
+| `onOpenChange`   | `(open: boolean) => void`      | Callback when visibility changes           |
+| `side`           | `"top" \| "bottom"`            | Which side to anchor to (default: bottom)  |
+| `align`          | `"start" \| "center" \| "end"` | Horizontal alignment (default: center)     |
+| `sideOffset`     | `number`                       | Distance from edge in px (default: 16)     |
+| `orientation`    | `"horizontal" \| "vertical"`   | Layout direction (default: horizontal)     |
+| `loop`           | `boolean`                      | Arrow key navigation wraps (default: true) |
+
+### Sub-components
+
+- `ActionBarSelection` — shows selected row count with a close button
+- `ActionBarGroup` — groups related action items with roving tabindex
+- `ActionBarItem` — individual action button (wraps Button)
+- `ActionBarClose` — dismisses the action bar
+- `ActionBarSeparator` — visual divider between items
+
+### Usage
+
+```tsx
+import {
+  ActionBar,
+  ActionBarClose,
+  ActionBarGroup,
+  ActionBarItem,
+  ActionBarSelection,
+  ActionBarSeparator,
+} from "@/components/edust-kit/data-table"
+import { CheckCircle2, Download, X } from "lucide-react"
+
+function TableActionBar({ table }) {
+  const rows = table.getFilteredSelectedRowModel().rows
+
+  const onOpenChange = React.useCallback(
+    (open: boolean) => {
+      if (!open) table.toggleAllRowsSelected(false)
+    },
+    [table],
+  )
+
+  return (
+    <ActionBar open={rows.length > 0} onOpenChange={onOpenChange}>
+      <ActionBarSelection>
+        <span className="font-medium">{rows.length}</span>
+        <span>selected</span>
+        <ActionBarSeparator />
+        <ActionBarClose>
+          <X />
+        </ActionBarClose>
+      </ActionBarSelection>
+      <ActionBarSeparator />
+      <ActionBarGroup>
+        <ActionBarItem>
+          <CheckCircle2 />
+          Status
+        </ActionBarItem>
+        <ActionBarItem>
+          <Download />
+          Export
+        </ActionBarItem>
+      </ActionBarGroup>
+    </ActionBar>
+  )
+}
+```
+
+Pass it to `DataTable` via the `actionBar` prop:
+
+```tsx
+<DataTable table={table} actionBar={<TableActionBar table={table} />} />
+```
