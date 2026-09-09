@@ -187,7 +187,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     return filterableColumns.reduce<
       Record<string, SingleParser<string> | SingleParser<string[]>>
     >((acc, column) => {
-      if (column.meta?.options) {
+      if (column.meta?.options || column.meta?.variant === "asyncMultiSelect") {
         acc[column.id ?? ""] = parseAsArrayOf(
           parseAsString,
           ARRAY_SEPARATOR,

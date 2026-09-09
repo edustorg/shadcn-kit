@@ -4,6 +4,7 @@ import type { Column, Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
 import * as React from "react";
 
+import { DataTableAsyncFacetedFilter } from "./data-table-async-faceted-filter";
 import { DataTableDateFilter } from "./data-table-date-filter";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableSliderFilter } from "./data-table-slider-filter";
@@ -135,6 +136,15 @@ function DataTableToolbarFilter<TData>({
               title={columnMeta.label ?? column.id}
               options={columnMeta.options ?? []}
               multiple={columnMeta.variant === "multiSelect"}
+            />
+          );
+
+        case "asyncMultiSelect":
+          return (
+            <DataTableAsyncFacetedFilter
+              column={column}
+              title={columnMeta.label ?? column.id}
+              asyncOptions={columnMeta.asyncOptions!}
             />
           );
 

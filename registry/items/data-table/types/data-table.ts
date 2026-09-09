@@ -12,6 +12,7 @@ declare module "@tanstack/react-table" {
     placeholder?: string;
     variant?: FilterVariant;
     options?: Option[];
+    asyncOptions?: AsyncColumnOptions;
     range?: [number, number];
     unit?: string;
     icon?: React.ComponentType<React.ComponentProps<"svg">>;

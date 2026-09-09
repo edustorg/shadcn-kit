@@ -8,6 +8,7 @@ import { DataTableSortList } from "./data-table-sort-list";
 import { DataTableAdvancedToolbar } from "./data-table-advanced-toolbar";
 import { DataTableFilterList } from "./data-table-filter-list";
 import { DataTableFilterMenu } from "./data-table-filter-menu";
+import type { AsyncColumnOptions } from "./types/data-table";
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -32,10 +33,53 @@ const USER_NAMES: Record<number, string> = {
   5: "Chelsey Dietrich",
 };
 
+const ALL_USERS = [
+  { id: "1", name: "Leanne Graham" },
+  { id: "2", name: "Ervin Howell" },
+  { id: "3", name: "Clementine Bauch" },
+  { id: "4", name: "Patricia Lebsack" },
+  { id: "5", name: "Chelsey Dietrich" },
+];
+
 const STATUS_OPTIONS = [
   { label: "Todo", value: "false" },
   { label: "Done", value: "true" },
 ];
+
+function useAsyncUsers(params: Record<string, unknown>) {
+  const search = (params.search as string) ?? "";
+  const [data, setData] = React.useState<{
+    data?: { items?: typeof ALL_USERS };
+  }>({});
+  const [isFetching, setIsFetching] = React.useState(false);
+  const [error, setError] = React.useState<unknown>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    setIsFetching(true);
+    const timer = setTimeout(() => {
+      if (cancelled) return;
+      const filtered = ALL_USERS.filter((u) =>
+        u.name.toLowerCase().includes(search.toLowerCase()),
+      );
+      setData({ data: { items: filtered } });
+      setIsFetching(false);
+    }, 300);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [search]);
+
+  return { data, isFetching, error };
+}
+
+const asyncUserOptions: AsyncColumnOptions = {
+  useDataHook: useAsyncUsers,
+  getItemLabel: (item: unknown) => (item as { name: string }).name,
+  getItemValue: (item: unknown) => (item as { id: string }).id,
+  searchParamKey: "search",
+};
 
 export function Preview() {
   const [useAdvanced, setUseAdvanced] = React.useState(false);
@@ -92,11 +136,8 @@ export function Preview() {
         header: "Assignee",
         meta: {
           label: "Assignee",
-          variant: "select",
-          options: Object.entries(USER_NAMES).map(([id, name]) => ({
-            label: name,
-            value: id,
-          })),
+          variant: "asyncMultiSelect",
+          asyncOptions: asyncUserOptions,
         },
         enableColumnFilter: true,
         enableSorting: true,
