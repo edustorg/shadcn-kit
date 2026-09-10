@@ -1,14 +1,16 @@
-"use client";
+"use client"
 
-import type { Table } from "@tanstack/react-table";
-import type * as React from "react";
+import { cn } from "@/lib/utils"
+import type { Table } from "@tanstack/react-table"
 
-import { DataTableViewOptions } from "./data-table-view-options";
-import { cn } from "@/lib/utils";
+import type * as React from "react"
 
-interface DataTableAdvancedToolbarProps<TData>
-  extends React.ComponentProps<"div"> {
-  table: Table<TData>;
+import { DataTableViewOptions } from "./data-table-view-options"
+
+interface DataTableAdvancedToolbarProps<
+  TData,
+> extends React.ComponentProps<"div"> {
+  table: Table<TData>
 }
 
 export function DataTableAdvancedToolbar<TData>({
@@ -32,5 +34,5 @@ export function DataTableAdvancedToolbar<TData>({
         <DataTableViewOptions table={table} align="end" />
       </div>
     </div>
-  );
+  )
 }

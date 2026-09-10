@@ -1,8 +1,4 @@
-import { flexRender, type Table as TanstackTable } from "@tanstack/react-table";
-import type * as React from "react";
-
-import { DataTablePagination } from "./data-table-pagination";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
@@ -10,20 +6,25 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { getColumnPinningStyle } from "./lib/data-table";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/table"
+import { cn } from "@/lib/utils"
+import { type Table as TanstackTable, flexRender } from "@tanstack/react-table"
+
+import type * as React from "react"
+
+import { DataTablePagination } from "./data-table-pagination"
+import { getColumnPinningStyle } from "./lib/data-table"
 
 interface DataTableProps<TData> extends React.ComponentProps<"div"> {
-  table: TanstackTable<TData>;
-  isFetching: boolean;
+  table: TanstackTable<TData>
+  isFetching: boolean
   skeleton?: {
-    columnCount?: number;
-    rowCount?: number;
-    cellWidths?: string[];
-    shrinkZero?: boolean;
-  };
-  actionBar?: React.ReactNode;
+    columnCount?: number
+    rowCount?: number
+    cellWidths?: string[]
+    shrinkZero?: boolean
+  }
+  actionBar?: React.ReactNode
 }
 
 export function DataTable<TData>({
@@ -35,20 +36,20 @@ export function DataTable<TData>({
   className,
   ...props
 }: DataTableProps<TData>) {
-  const columnCount = skeleton?.columnCount ?? table.getAllLeafColumns().length;
+  const columnCount = skeleton?.columnCount ?? table.getAllLeafColumns().length
 
-  const rowCount = skeleton?.rowCount ?? 10;
+  const rowCount = skeleton?.rowCount ?? 10
 
   const cellWidths = skeleton?.cellWidths?.length
     ? skeleton.cellWidths
-    : ["auto"];
+    : ["auto"]
 
-  const shrinkZero = skeleton?.shrinkZero ?? false;
+  const shrinkZero = skeleton?.shrinkZero ?? false
 
   const cozyCellWidths = Array.from(
     { length: columnCount },
     (_, i) => cellWidths[i % cellWidths.length],
-  );
+  )
 
   return (
     <div
@@ -142,5 +143,5 @@ export function DataTable<TData>({
           actionBar}
       </div>
     </div>
-  );
+  )
 }

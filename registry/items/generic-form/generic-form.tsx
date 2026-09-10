@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Control,
   DefaultValues,
@@ -10,11 +10,12 @@ import {
   Path,
   Resolver,
   SubmitHandler,
-  useForm,
   UseFormReturn,
+  useForm,
 } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { type ZodType } from "zod"
+
+import * as React from "react"
 
 export interface GenericFormRef<TValues extends FieldValues> {
   /** Get the current form values. */

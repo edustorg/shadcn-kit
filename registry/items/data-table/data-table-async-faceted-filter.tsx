@@ -211,7 +211,7 @@ export function DataTableAsyncFacetedFilter<TData, TValue>({
             ) : options.length === 0 ? (
               <CommandEmpty>No results found.</CommandEmpty>
             ) : (
-              <CommandGroup className="max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto">
+              <CommandGroup className="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto">
                 {options.map((option) => {
                   const isSelected = selectedValues.has(option.value)
 
