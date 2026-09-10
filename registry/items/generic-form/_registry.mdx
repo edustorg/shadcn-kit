@@ -6,13 +6,14 @@ description: >-
   A schema-driven generic form built on react-hook-form and Zod. Wraps useForm
   with a zod resolver, shares the instance through FormProvider, and exposes a
   imperative ref API. Ships with a TextField input, a TextAreaField multiline
-  field, AsyncSelectField and AsyncMultiSelectField async selects, and a
-  DatePicker for calendar dates.
+  field, a PhoneField phone number field, AsyncSelectField and
+  AsyncMultiSelectField async selects, and a DatePicker for calendar dates.
 dependencies:
   - react-hook-form
   - zod
   - "@hookform/resolvers"
   - date-fns
+  - react-phone-number-input
 registryDependencies:
   - utils
   - field
@@ -24,6 +25,7 @@ registryDependencies:
   - separator
   - command
   - popover
+  - scroll-area
 files:
   - path: generic-form.tsx
     type: registry:ui
@@ -43,6 +45,12 @@ files:
   - path: date-picker.tsx
     type: registry:ui
     target: "@ui/edust-kit/generic-form/date-picker.tsx"
+  - path: phone-input.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/generic-form/phone-input.tsx"
+  - path: phone-field.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/generic-form/phone-field.tsx"
   - path: hooks/get-dirty-payload.ts
     type: registry:ui
     target: "@ui/edust-kit/hooks/get-dirty-payload.ts"
@@ -162,6 +170,54 @@ import { TextAreaField } from "@/components/edust-kit/generic-form/text-area-fie
 | `textAreaClass` | `string`        | —       | Classes for the textarea.              |
 | `rows`          | `number`        | —       | Number of visible textarea rows.       |
 | `autoComplete`  | `string`        | —       | Browser autofill hint.                 |
+
+## PhoneField
+
+`PhoneField` is a phone number input bound to a schema field via
+react-hook-form `Controller`. Built on `react-phone-number-input`, it renders a
+country selector (with flags and search) plus the number input, and normalizes
+empty input to an empty string.
+
+The stored value is an **E.164 string** (e.g. `+628123456789`). Validate it with
+a regex rule in your schema:
+
+```tsx
+import { PhoneField } from "@/components/edust-kit/generic-form/phone-field"
+
+const schema = z.object({
+  phone: z
+    .string()
+    .regex(/^\+?[1-9]\d{6,14}$/, "Invalid phone number"),
+})
+
+;<GenericForm schema={schema} initialValues={{ phone: "" }} onSubmit={...}>
+  <PhoneField name="phone" label="Phone" required defaultCountry="ID" />
+</GenericForm>
+```
+
+| Prop            | Type            | Default | Description                            |
+| --------------- | --------------- | ------- | -------------------------------------- |
+| `name`          | `Path<TValues>` | —       | Field name (must exist in the schema). |
+| `label`         | `string`        | —       | Label text; hidden when empty.         |
+| `placeholder`   | `string`        | —       | Input placeholder.                     |
+| `description`   | `string`        | —       | Helper text under the input.           |
+| `required`      | `boolean`       | `false` | Renders the red `*` marker.            |
+| `disabled`      | `boolean`       | `false` | Disables the field.                    |
+| `className`     | `string`        | —       | Classes for the field wrapper.         |
+| `defaultCountry` | `React.ComponentProps<typeof PhoneInput>["defaultCountry"]` | `"BD"` | Default country code (ISO 3166-1 alpha-2, uppercase). |
+
+`PhoneField` also accepts the bare `PhoneInput` (no form binding) directly:
+
+```tsx
+import { PhoneInput } from "@/components/edust-kit/generic-form/phone-input"
+
+;<PhoneInput
+  value={phone}
+  onChange={setPhone}
+  defaultCountry="ID"
+  placeholder="Enter phone number"
+/>
+```
 
 ## Validation
 

@@ -11,6 +11,7 @@ import { AsyncSelectField } from "./async-select-field"
 import type { SelectFieldItem } from "./async-select-field"
 import { DatePicker } from "./date-picker"
 import { GenericForm, type GenericFormRef } from "./generic-form"
+import { PhoneField } from "./phone-field"
 import { TextField } from "./text-field"
 
 export function formatRelativeDate(date: Date | string): string {
@@ -23,6 +24,9 @@ export function formatRelativeDate(date: Date | string): string {
 const previewSchema = z.object({
   name: z.string().min(1, "Name is required").max(50, "Max 50 characters"),
   email: z.email("Enter a valid email address"),
+  phone: z
+    .string()
+    .regex(/^\+?[1-9]\d{6,14}$/, "Enter a valid phone number"),
 })
 
 type PreviewValues = z.infer<typeof previewSchema>
@@ -165,7 +169,7 @@ export function Preview() {
         <GenericForm
           ref={formRef}
           schema={previewSchema}
-          initialValues={{ name: "", email: "" }}
+          initialValues={{ name: "", email: "", phone: "" }}
           onSubmit={handleSubmit}
           className="flex flex-col gap-4"
         >
@@ -175,6 +179,12 @@ export function Preview() {
             label="Email"
             type="email"
             placeholder="john@example.com"
+          />
+          <PhoneField
+            name="phone"
+            label="Phone"
+            required
+            placeholder="+880 1XXX-XXXXXX"
           />
           <div className="flex gap-2">
             <button
@@ -186,7 +196,9 @@ export function Preview() {
             </button>
             <button
               type="button"
-              onClick={() => formRef.current?.reset({ name: "", email: "" })}
+              onClick={() =>
+                formRef.current?.reset({ name: "", email: "", phone: "" })
+              }
               className="bg-background hover:bg-muted h-8 rounded-lg border px-3 text-sm font-medium"
             >
               Reset
