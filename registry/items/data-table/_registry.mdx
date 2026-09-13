@@ -102,6 +102,9 @@ files:
   - path: lib/id.ts
     type: registry:ui
     target: "@ui/edust-kit/data-table/lib/id.ts"
+  - path: lib/query-params.ts
+    type: registry:ui
+    target: "@ui/edust-kit/data-table/lib/query-params.ts"
   - path: lib/compose-refs.ts
     type: registry:ui
     target: "@ui/edust-kit/data-table/lib/compose-refs.ts"
@@ -298,4 +301,76 @@ import { DataTable } from "@/components/edust-kit/data-table/data-table"
 <DataTable table={table} isFetching={isFetching} actionBar={<TableActionBar table={table} />}>
   <DataTableToolbar table={table} />
 </DataTable>
+```
+
+## Query Params
+
+Utilities for mapping browser URL state into API query params. They cover both
+supported browser URL formats for multi-value params.
+
+```text
+?assignee=id1,id2            ?assignee=id1&assignee=id2
+        ↓                             ↓
+getArrayParam(params, "assignee")     getArrayParam(params, "assignee")
+        ↓                             ↓
+["id1", "id2"]                        ["id1", "id2"]
+```
+
+Return a real array so your HTTP client (axios `params`, qs `indices`) serializes
+it as `filter_by_assignee_ids[0]=id1&filter_by_assignee_ids[1]=id2` — never a
+comma-joined single string.
+
+### Functions
+
+| Function                                        | Description                                          |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| `getArrayParam(params, key, delimiter?)`        | `string[]` from comma-separated or repeated params   |
+| `getBooleanParam(params, key)`                  | `boolean` from `"true"` / `"false"`                  |
+| `getNumberParam(params, key, fallback?)`        | `number` from a single value                         |
+| `getRangeParam(params, key, delimiter?)`        | `{ from?, to? }` from `"from,to"`                    |
+
+### Usage
+
+```tsx
+import { useSearchParams } from "next/navigation"
+import { useQuery } from "@tanstack/react-query"
+import {
+  getArrayParam,
+  getBooleanParam,
+  getNumberParam,
+  getRangeParam,
+} from "@/components/edust-kit/data-table/lib/query-params"
+
+function useTasksQuery(options?: { userId?: string }) {
+  const params = useSearchParams()
+
+  const query = {
+    search: params.get("title") || undefined,
+    status: getArrayParam(params, "status"),
+    priority: getArrayParam(params, "priority"),
+    filter_by_assignee_ids: options?.userId
+      ? [options.userId]
+      : getArrayParam(params, "assignee"),
+    filter_by_created_by_ids: getArrayParam(params, "createdBy"),
+    filter_by_label_ids: getArrayParam(params, "labelId"),
+    range_by_due_date: getRangeParam(params, "dueDate"),
+    filter_by_unassigned: getBooleanParam(params, "filter_by_unassigned"),
+    page: getNumberParam(params, "page", 1),
+    limit: getNumberParam(params, "limit", 10),
+  }
+
+  return query
+}
+
+function useTasks() {
+  const query = useTasksQuery()
+
+  return useQuery({
+    queryKey: ["tasks", query],
+    queryFn: async () => {
+      const res = await axios.get(baseUrl, { params: query })
+      return res.data
+    },
+  })
+}
 ```

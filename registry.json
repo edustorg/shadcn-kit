@@ -156,6 +156,11 @@
           "target": "@ui/edust-kit/data-table/lib/id.ts"
         },
         {
+          "path": "registry/items/data-table/lib/query-params.ts",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/data-table/lib/query-params.ts"
+        },
+        {
           "path": "registry/items/data-table/lib/compose-refs.ts",
           "type": "registry:ui",
           "target": "@ui/edust-kit/data-table/lib/compose-refs.ts"
