@@ -201,7 +201,7 @@
       "name": "generic-form",
       "type": "registry:ui",
       "title": "Generic Form",
-      "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input, a TextAreaField multiline field, a PhoneField phone number field, AsyncSelectField and AsyncMultiSelectField async selects, and a DatePicker for calendar dates.",
+      "description": "A schema-driven generic form built on react-hook-form and Zod. Wraps useForm with a zod resolver, shares the instance through FormProvider, and exposes a imperative ref API. Ships with a TextField input, a TextAreaField multiline field, a PhoneField phone number field, a SelectField static select, AsyncSelectField and AsyncMultiSelectField async selects, and a DatePicker for calendar dates.",
       "dependencies": [
         "react-hook-form",
         "zod",
@@ -220,7 +220,8 @@
         "separator",
         "command",
         "popover",
-        "scroll-area"
+        "scroll-area",
+        "select"
       ],
       "files": [
         {
@@ -237,6 +238,11 @@
           "path": "registry/items/generic-form/text-area-field.tsx",
           "type": "registry:ui",
           "target": "@ui/edust-kit/generic-form/text-area-field.tsx"
+        },
+        {
+          "path": "registry/items/generic-form/select-field.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/generic-form/select-field.tsx"
         },
         {
           "path": "registry/items/generic-form/async-select-field.tsx",

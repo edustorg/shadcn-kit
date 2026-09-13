@@ -1,7 +1,7 @@
 "use client"
 
 import { format, isToday, isYesterday } from "date-fns"
-import { Controller, useForm } from "react-hook-form"
+import { FormProvider, Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import * as React from "react"
@@ -12,6 +12,7 @@ import type { SelectFieldItem } from "./async-select-field"
 import { DatePicker } from "./date-picker"
 import { GenericForm, type GenericFormRef } from "./generic-form"
 import { PhoneField } from "./phone-field"
+import { SelectField } from "./select-field"
 import { TextField } from "./text-field"
 
 export function formatRelativeDate(date: Date | string): string {
@@ -27,9 +28,18 @@ const previewSchema = z.object({
   phone: z
     .string()
     .regex(/^\+?[1-9]\d{6,14}$/, "Enter a valid phone number"),
+  statementType: z
+    .enum(["Income", "Expense", "Transfer"])
+    .or(z.literal("")),
 })
 
 type PreviewValues = z.infer<typeof previewSchema>
+
+enum PreviewStatementType {
+  Income = "Income",
+  Expense = "Expense",
+  Transfer = "Transfer",
+}
 
 type MockSubmitResult = { ok: boolean; message?: string }
 
@@ -151,6 +161,7 @@ export function Preview() {
   }>({
     defaultValues: { startDate: "", endDate: "", eventDate: "" },
   })
+  const categoryForm = useForm({ defaultValues: { category: "" } })
   const startDate = dateForm.watch("startDate")
   const endDate = dateForm.watch("endDate")
   const eventDate = dateForm.watch("eventDate")
@@ -169,7 +180,7 @@ export function Preview() {
         <GenericForm
           ref={formRef}
           schema={previewSchema}
-          initialValues={{ name: "", email: "", phone: "" }}
+          initialValues={{ name: "", email: "", phone: "", statementType: "" }}
           onSubmit={handleSubmit}
           className="flex flex-col gap-4"
         >
@@ -186,6 +197,12 @@ export function Preview() {
             required
             placeholder="+880 1XXX-XXXXXX"
           />
+          <SelectField
+            name="statementType"
+            label="Statement Type"
+            placeholder="Select statement type"
+            options={Object.values(PreviewStatementType)}
+          />
           <div className="flex gap-2">
             <button
               type="submit"
@@ -197,7 +214,12 @@ export function Preview() {
             <button
               type="button"
               onClick={() =>
-                formRef.current?.reset({ name: "", email: "", phone: "" })
+                formRef.current?.reset({
+                  name: "",
+                  email: "",
+                  phone: "",
+                  statementType: "",
+                })
               }
               className="bg-background hover:bg-muted h-8 rounded-lg border px-3 text-sm font-medium"
             >
@@ -353,6 +375,31 @@ export function Preview() {
             Selected: {currency4 || "None"}
           </code>
         </div>
+      </div>
+
+      <div className="flex w-full max-w-sm flex-col gap-6 py-4">
+        <FormProvider {...categoryForm}>
+          <div className="flex flex-col gap-2">
+            <span className="text-muted-foreground text-xs">
+              Static select — record options + emptyOption
+            </span>
+            <SelectField
+              name="category"
+              label="Category"
+              placeholder="Pick a category"
+              options={{
+                food: "Food & Drinks",
+                travel: "Travel",
+                shopping: "Shopping",
+                other: "Other",
+              }}
+              emptyOption={{ label: "None" }}
+            />
+            <code className="text-muted-foreground text-sm">
+              Selected: {categoryForm.watch("category") || "None"}
+            </code>
+          </div>
+        </FormProvider>
       </div>
 
       <div className="flex w-full flex-col items-center gap-6 py-4">

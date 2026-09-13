@@ -6,8 +6,9 @@ description: >-
   A schema-driven generic form built on react-hook-form and Zod. Wraps useForm
   with a zod resolver, shares the instance through FormProvider, and exposes a
   imperative ref API. Ships with a TextField input, a TextAreaField multiline
-  field, a PhoneField phone number field, AsyncSelectField and
-  AsyncMultiSelectField async selects, and a DatePicker for calendar dates.
+  field, a PhoneField phone number field, a SelectField static select,
+  AsyncSelectField and AsyncMultiSelectField async selects, and a DatePicker
+  for calendar dates.
 dependencies:
   - react-hook-form
   - zod
@@ -26,6 +27,7 @@ registryDependencies:
   - command
   - popover
   - scroll-area
+  - select
 files:
   - path: generic-form.tsx
     type: registry:ui
@@ -36,6 +38,9 @@ files:
   - path: text-area-field.tsx
     type: registry:ui
     target: "@ui/edust-kit/generic-form/text-area-field.tsx"
+  - path: select-field.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/generic-form/select-field.tsx"
   - path: async-select-field.tsx
     type: registry:ui
     target: "@ui/edust-kit/generic-form/async-select-field.tsx"
@@ -170,6 +175,156 @@ import { TextAreaField } from "@/components/edust-kit/generic-form/text-area-fie
 | `textAreaClass` | `string`        | —       | Classes for the textarea.              |
 | `rows`          | `number`        | —       | Number of visible textarea rows.       |
 | `autoComplete`  | `string`        | —       | Browser autofill hint.                 |
+
+## SelectField
+
+`SelectField` is a single select bound to a schema field via react-hook-form
+`Controller`. It renders a label, required marker, a `Select` trigger, the
+option list, and the resolved error message.
+
+```tsx
+import { SelectField } from "@/components/edust-kit/generic-form/select-field"
+import { z } from "zod"
+
+enum StatementType {
+  Income = "Income",
+  Expense = "Expense",
+  Transfer = "Transfer",
+}
+
+const schema = z.object({
+  statementType: z.enum(["Income", "Expense", "Transfer"]),
+})
+
+;<GenericForm schema={schema} initialValues={{ statementType: "" }} onSubmit={...}>
+  <SelectField
+    name="statementType"
+    label="Statement Type"
+    required
+    placeholder="Select statement type"
+    options={Object.values(StatementType)}
+  />
+</GenericForm>
+```
+
+`options` accepts any of three shapes, all copy-paste ready. Pick whichever
+matches your data.
+
+**1. Array of strings** — value and label are the same string:
+
+```tsx
+import { SelectField } from "@/components/edust-kit/generic-form/select-field"
+import { z } from "zod"
+
+const schema = z.object({
+  statementType: z.enum(["Income", "Expense", "Transfer"]),
+})
+
+;<GenericForm schema={schema} initialValues={{ statementType: "" }} onSubmit={...}>
+  <SelectField
+    name="statementType"
+    label="Statement Type"
+    required
+    placeholder="Select statement type"
+    options={["Income", "Expense", "Transfer"]}
+  />
+</GenericForm>
+```
+
+Works with `Object.values(...)` of a TS enum too:
+
+```tsx
+enum StatementType {
+  Income = "Income",
+  Expense = "Expense",
+  Transfer = "Transfer",
+}
+
+;<SelectField
+  name="statementType"
+  label="Statement Type"
+  required
+  placeholder="Select statement type"
+  options={Object.values(StatementType)}
+/>
+```
+
+**2. Array of `{ value, label }`** — value stays stable while the label is
+whatever you display:
+
+```tsx
+const schema = z.object({
+  country: z.string(),
+})
+
+;<GenericForm schema={schema} initialValues={{ country: "" }} onSubmit={...}>
+  <SelectField
+    name="country"
+    label="Country"
+    required
+    placeholder="Pick a country"
+    options={[
+      { value: "ID", label: "Indonesia" },
+      { value: "US", label: "United States" },
+      { value: "GB", label: "United Kingdom" },
+      { value: "JP", label: "Japan" },
+    ]}
+  />
+</GenericForm>
+```
+
+**3. `Record<string, string>` map** — API keys as values, human labels as the
+map values:
+
+```tsx
+const schema = z.object({
+  status: z.enum(["draft", "published", "archived"]),
+})
+
+;<GenericForm schema={schema} initialValues={{ status: "" }} onSubmit={...}>
+  <SelectField
+    name="status"
+    label="Status"
+    required
+    placeholder="Pick a status"
+    options={{
+      draft: "Draft",
+      published: "Published",
+      archived: "Archived",
+    }}
+  />
+</GenericForm>
+```
+
+They also work together — e.g. an enum for the stored value, a custom label or
+`emptyOption` (adds a "None" item that resets the field to `""`):
+
+```tsx
+;<SelectField
+  name="status"
+  label="Status"
+  placeholder="Pick a status"
+  options={Object.values(Status)}
+  emptyOption={{ label: "None" }}
+/>
+```
+
+| Prop            | Type                                                              | Default      | Description                                     |
+| --------------- | ----------------------------------------------------------------- | ------------ | ----------------------------------------------- |
+| `name`          | `Path<TValues>`                                                   | —            | Field name (must exist in the schema).          |
+| `label`         | `string`                                                          | —            | Label text; hidden when empty.                  |
+| `placeholder`   | `string`                                                          | `"Select..."` | Select placeholder.                             |
+| `description`   | `string`                                                          | —            | Helper text under the select.                   |
+| `required`      | `boolean`                                                         | `false`      | Renders the red `*` marker.                     |
+| `disabled`      | `boolean`                                                         | `false`      | Disables the select.                            |
+| `className`     | `string`                                                          | —            | Classes for the field wrapper.                  |
+| `triggerClass`  | `string`                                                          | —            | Classes for the trigger.                        |
+| `options`       | `ReadonlyArray<string \| { value, label }> \| Record<string, string>` | —            | The selectable options.                         |
+| `emptyOption`   | `{ value?: string; label?: string }`                              | —            | Adds a "None" item at the top that clears value. |
+| `onValueChange` | `(value: string) => void`                                         | —            | Custom handler; overrides the default write.    |
+
+For remotely fetched option lists, use [`AsyncSelectField`](#asyncselectfield)
+instead.
 
 ## PhoneField
 
