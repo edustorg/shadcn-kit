@@ -203,6 +203,15 @@ export const DatePicker = <
     }
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement | HTMLButtonElement>) => {
+    if ((event.key === "Backspace" || event.key === "Delete") && selected && !disabled) {
+      event.preventDefault()
+      field.onChange(undefined)
+      setDraft("")
+      setOpen(false)
+    }
+  }
+
   const calendar = (
     <Calendar
       mode="single"
@@ -230,7 +239,7 @@ export const DatePicker = <
       {variant === "input" ? (
         <Popover open={open} onOpenChange={setOpen}>
           <div className="relative w-70">
-            <Input
+<Input
               id={id}
               type="text"
               inputMode="numeric"
@@ -240,8 +249,8 @@ export const DatePicker = <
                 editing
                   ? draft
                   : selected
-                    ? format(selected, displayFormat, localeOptions)
-                    : ""
+                  ? format(selected, displayFormat, localeOptions)
+                  : ""
               }
               placeholder={editing ? "DDMMYYYY" : placeholder}
               aria-invalid={invalid || undefined}
@@ -249,6 +258,7 @@ export const DatePicker = <
               onChange={handleInputChange}
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
+              onKeyDown={handleKeyDown}
               className="pr-10"
             />
             <PopoverTrigger asChild>
@@ -265,7 +275,7 @@ export const DatePicker = <
             </PopoverTrigger>
           </div>
 
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-auto p-0" align="start" onKeyDown={handleKeyDown}>
             {calendar}
           </PopoverContent>
         </Popover>
@@ -287,12 +297,13 @@ export const DatePicker = <
                 "w-70 justify-start text-left font-normal",
                 !selected && "text-muted-foreground",
               )}
+              onKeyDown={handleKeyDown}
             >
               {formattedValue}
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-auto p-0" align="start" onKeyDown={handleKeyDown}>
             {calendar}
           </PopoverContent>
         </Popover>
