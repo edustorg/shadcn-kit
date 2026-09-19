@@ -99,6 +99,9 @@ files:
   - path: lib/format.ts
     type: registry:ui
     target: "@ui/edust-kit/data-table/lib/format.ts"
+  - path: lib/date-format.ts
+    type: registry:ui
+    target: "@ui/edust-kit/data-table/lib/date-format.ts"
   - path: lib/id.ts
     type: registry:ui
     target: "@ui/edust-kit/data-table/lib/id.ts"
@@ -373,4 +376,70 @@ function useTasks() {
     },
   })
 }
+```
+
+## Date Formatting
+
+The `lib/date-format.ts` provides utilities for formatting dates in data tables using
+[date-fns](https://date-fns.org/). It includes 9 format variants and 2 helper functions.
+
+### Variants
+
+| Variant          | Description                            | Example Output                          |
+| ---------------- | -------------------------------------- | --------------------------------------- |
+| `relative`       | Full relative with time                | "Today at 10:35 AM" / "Jun 16, 2025 at 10:35 AM" |
+| `relative-short` | Compact relative                       | "Today 10:35 AM" / "Wed 10:35 AM" / "Jun 16, 2025" |
+| `short`          | Date only                              | "Jun 16, 2026"                          |
+| `medium`         | Date + time (default)                  | "Jun 16, 2026 10:35 AM"                 |
+| `long`           | Long month + date + time               | "June 16, 2026 10:35 AM"                |
+| `full`           | Full weekday + month + date + time     | "Tuesday, June 16, 2026 at 10:35 AM"    |
+| `time-only`      | Time only                              | "10:35 AM"                              |
+| `date-only`      | Date only (short month)                | "Jun 16, 2026"                          |
+| `iso`            | ISO 8601                               | "2026-06-16T10:35:00+00:00"             |
+
+### Functions
+
+```typescript
+import {
+  formatDate,
+  formatRelativeDate,
+  formatRelativeDateShort,
+  type DateFormatVariant,
+} from "@/components/edust-kit/data-table/lib/date-format"
+```
+
+| Function                      | Description                                    |
+| ----------------------------- | ---------------------------------------------- |
+| `formatDate(date, variant?)`  | Main formatter with variant support            |
+| `formatRelativeDate(date)`    | Shortcut for `formatDate(date, "relative")`    |
+| `formatRelativeDateShort(date)` | Shortcut for `formatDate(date, "relative-short")` |
+
+### Usage in DataTable Columns
+
+```tsx
+import { formatDate } from "@/components/edust-kit/data-table/lib/date-format"
+
+const columns = [
+  {
+    accessorKey: "createdAt",
+    header: "Created",
+    cell: ({ row }) => formatDate(row.getValue("createdAt"), "relative-short"),
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "Updated",
+    cell: ({ row }) => formatDate(row.getValue("updatedAt"), "relative"),
+  },
+]
+```
+
+### Input Handling
+
+Accepts `Date`, ISO string, timestamp (number), `null`, or `undefined`. Returns `"-"` for invalid/missing dates.
+
+```tsx
+formatDate(new Date("2026-06-16T10:35:00Z"), "relative")     // "Today at 10:35 AM"
+formatDate("2026-06-15T10:35:00Z", "relative-short")        // "Yesterday 10:35 AM"
+formatDate(1718620500000, "medium")                          // "Jun 16, 2026 10:35 AM"
+formatDate(null, "short")                                    // "-"
 ```

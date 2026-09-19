@@ -151,6 +151,11 @@
           "target": "@ui/edust-kit/data-table/lib/format.ts"
         },
         {
+          "path": "registry/items/data-table/lib/date-format.ts",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/data-table/lib/date-format.ts"
+        },
+        {
           "path": "registry/items/data-table/lib/id.ts",
           "type": "registry:ui",
           "target": "@ui/edust-kit/data-table/lib/id.ts"
