@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
 import type { Column } from "@tanstack/react-table"
+import { endOfDay, startOfDay } from "date-fns"
 import { CalendarIcon, XCircle } from "lucide-react"
 import type { DateRange } from "react-day-picker"
 
@@ -90,8 +91,8 @@ export function DataTableDateFilter<TData>({
       }
 
       if (multiple && !("getTime" in date)) {
-        const from = date.from?.getTime()
-        const to = date.to?.getTime()
+        const from = date.from ? startOfDay(date.from).getTime() : undefined
+        const to = date.to ? endOfDay(date.to).getTime() : undefined
         column.setFilterValue(from || to ? [from, to] : undefined)
       } else if (!multiple && "getTime" in date) {
         column.setFilterValue(date.getTime())
