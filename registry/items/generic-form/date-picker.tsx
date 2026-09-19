@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 import { format, isValid, parseISO } from "date-fns"
 import type { Locale } from "date-fns"
 import { CalendarIcon } from "lucide-react"
+import type { Matcher } from "react-day-picker"
 import {
   ControllerFieldState,
   ControllerRenderProps,
@@ -45,7 +46,7 @@ export type DatePickerProps<
   /** Latest selectable date (inclusive). */
   endMonth?: Date
   /** Matchers forwarded to the calendar to disable specific days. */
-  disabledDates?: React.ComponentProps<typeof Calendar>["disabled"]
+  disabledDates?: Matcher | Matcher[]
   captionLayout?: React.ComponentProps<typeof Calendar>["captionLayout"]
   /** Locale used for formatting and the calendar. */
   locale?: Locale
@@ -203,8 +204,12 @@ export const DatePicker = <
     }
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement | HTMLButtonElement>) => {
-    if ((event.key === "Backspace" || event.key === "Delete") && selected && !disabled) {
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (
+      (event.key === "Backspace" || event.key === "Delete") &&
+      selected &&
+      !disabled
+    ) {
       event.preventDefault()
       field.onChange(undefined)
       setDraft("")
@@ -239,7 +244,7 @@ export const DatePicker = <
       {variant === "input" ? (
         <Popover open={open} onOpenChange={setOpen}>
           <div className="relative w-70">
-<Input
+            <Input
               id={id}
               type="text"
               inputMode="numeric"
@@ -249,8 +254,8 @@ export const DatePicker = <
                 editing
                   ? draft
                   : selected
-                  ? format(selected, displayFormat, localeOptions)
-                  : ""
+                    ? format(selected, displayFormat, localeOptions)
+                    : ""
               }
               placeholder={editing ? "DDMMYYYY" : placeholder}
               aria-invalid={invalid || undefined}
@@ -275,7 +280,11 @@ export const DatePicker = <
             </PopoverTrigger>
           </div>
 
-          <PopoverContent className="w-auto p-0" align="start" onKeyDown={handleKeyDown}>
+          <PopoverContent
+            className="w-auto p-0"
+            align="start"
+            onKeyDown={handleKeyDown}
+          >
             {calendar}
           </PopoverContent>
         </Popover>
@@ -303,7 +312,11 @@ export const DatePicker = <
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent className="w-auto p-0" align="start" onKeyDown={handleKeyDown}>
+          <PopoverContent
+            className="w-auto p-0"
+            align="start"
+            onKeyDown={handleKeyDown}
+          >
             {calendar}
           </PopoverContent>
         </Popover>
