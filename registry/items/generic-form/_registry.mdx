@@ -309,19 +309,19 @@ They also work together — e.g. an enum for the stored value, a custom label or
 />
 ```
 
-| Prop            | Type                                                              | Default      | Description                                     |
-| --------------- | ----------------------------------------------------------------- | ------------ | ----------------------------------------------- |
-| `name`          | `Path<TValues>`                                                   | —            | Field name (must exist in the schema).          |
-| `label`         | `string`                                                          | —            | Label text; hidden when empty.                  |
-| `placeholder`   | `string`                                                          | `"Select..."` | Select placeholder.                             |
-| `description`   | `string`                                                          | —            | Helper text under the select.                   |
-| `required`      | `boolean`                                                         | `false`      | Renders the red `*` marker.                     |
-| `disabled`      | `boolean`                                                         | `false`      | Disables the select.                            |
-| `className`     | `string`                                                          | —            | Classes for the field wrapper.                  |
-| `triggerClass`  | `string`                                                          | —            | Classes for the trigger.                        |
-| `options`       | `ReadonlyArray<string \| { value, label }> \| Record<string, string>` | —            | The selectable options.                         |
-| `emptyOption`   | `{ value?: string; label?: string }`                              | —            | Adds a "None" item at the top that clears value. |
-| `onValueChange` | `(value: string) => void`                                         | —            | Custom handler; overrides the default write.    |
+| Prop            | Type                                                                  | Default       | Description                                      |
+| --------------- | --------------------------------------------------------------------- | ------------- | ------------------------------------------------ |
+| `name`          | `Path<TValues>`                                                       | —             | Field name (must exist in the schema).           |
+| `label`         | `string`                                                              | —             | Label text; hidden when empty.                   |
+| `placeholder`   | `string`                                                              | `"Select..."` | Select placeholder.                              |
+| `description`   | `string`                                                              | —             | Helper text under the select.                    |
+| `required`      | `boolean`                                                             | `false`       | Renders the red `*` marker.                      |
+| `disabled`      | `boolean`                                                             | `false`       | Disables the select.                             |
+| `className`     | `string`                                                              | —             | Classes for the field wrapper.                   |
+| `triggerClass`  | `string`                                                              | —             | Classes for the trigger.                         |
+| `options`       | `ReadonlyArray<string \| { value, label }> \| Record<string, string>` | —             | The selectable options.                          |
+| `emptyOption`   | `{ value?: string; label?: string }`                                  | —             | Adds a "None" item at the top that clears value. |
+| `onValueChange` | `(value: string) => void`                                             | —             | Custom handler; overrides the default write.     |
 
 For remotely fetched option lists, use [`AsyncSelectField`](#asyncselectfield)
 instead.
@@ -350,16 +350,16 @@ const schema = z.object({
 </GenericForm>
 ```
 
-| Prop            | Type            | Default | Description                            |
-| --------------- | --------------- | ------- | -------------------------------------- |
-| `name`          | `Path<TValues>` | —       | Field name (must exist in the schema). |
-| `label`         | `string`        | —       | Label text; hidden when empty.         |
-| `placeholder`   | `string`        | —       | Input placeholder.                     |
-| `description`   | `string`        | —       | Helper text under the input.           |
-| `required`      | `boolean`       | `false` | Renders the red `*` marker.            |
-| `disabled`      | `boolean`       | `false` | Disables the field.                    |
-| `className`     | `string`        | —       | Classes for the field wrapper.         |
-| `defaultCountry` | `React.ComponentProps<typeof PhoneInput>["defaultCountry"]` | `"BD"` | Default country code (ISO 3166-1 alpha-2, uppercase). |
+| Prop             | Type                                                        | Default | Description                                           |
+| ---------------- | ----------------------------------------------------------- | ------- | ----------------------------------------------------- |
+| `name`           | `Path<TValues>`                                             | —       | Field name (must exist in the schema).                |
+| `label`          | `string`                                                    | —       | Label text; hidden when empty.                        |
+| `placeholder`    | `string`                                                    | —       | Input placeholder.                                    |
+| `description`    | `string`                                                    | —       | Helper text under the input.                          |
+| `required`       | `boolean`                                                   | `false` | Renders the red `*` marker.                           |
+| `disabled`       | `boolean`                                                   | `false` | Disables the field.                                   |
+| `className`      | `string`                                                    | —       | Classes for the field wrapper.                        |
+| `defaultCountry` | `React.ComponentProps<typeof PhoneInput>["defaultCountry"]` | `"BD"`  | Default country code (ISO 3166-1 alpha-2, uppercase). |
 
 `PhoneField` also accepts the bare `PhoneInput` (no form binding) directly:
 
@@ -510,7 +510,8 @@ const { data: selectedLabelsData } = useGetLabels(
 
 An async single-select field for remotely fetched data. Built on `Popover` and
 `Command` (cmdk), fetches options from an API with debounced search, loading/
-error states, and support for pre-fetching the selected item's display value.
+error states, infinite scrolling for paginated responses, and support for
+pre-fetching the selected item's display value.
 
 ```tsx
 import { AsyncSelectField } from "@/components/edust-kit/generic-form"
@@ -529,25 +530,25 @@ import { AsyncSelectField } from "@/components/edust-kit/generic-form"
 `AsyncSelectField` is generic over `<T, TParams>` where `T` is the item type
 and `TParams` is the params type passed to `useDataHook`.
 
-| Prop                  | Type                                                | Default            | Description                                                                             |
-| --------------------- | --------------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------- |
-| `value`               | `string`                                            | —                  | Currently selected item ID.                                                             |
-| `onChange`            | `(id: string) => void`                              | —                  | Called when the user selects an item.                                                   |
-| `placeholder`         | `string`                                            | `"Select..."`      | Text shown when no item is selected.                                                    |
-| `className`           | `string`                                            | —                  | Additional CSS classes for the trigger button.                                          |
-| `debounceDelay`       | `number`                                            | `500`              | Debounce delay in ms for search input.                                                  |
-| `searchPlaceholder`   | `string`                                            | `"Search..."`      | Placeholder for the search input.                                                       |
-| `searchParamKey`      | `keyof TParams`                                     | `"search_by_name"` | The param key used for the search term.                                                 |
-| `useDataHook`         | `(params: TParams) => { data?, isFetching, error }` | —                  | Hook that fetches items given params.                                                   |
-| `selectedItemData`    | `{ data?: { items?: T[] } }`                        | —                  | Pre-fetched data for the selected item (used when the item is not in the current page). |
-| `getItemDisplayValue` | `(item: T) => string`                               | —                  | Returns the plain-text display label (used in trigger and as fallback).                 |
-| `renderItemLabel`     | `(item: T) => React.ReactNode`                      | —                  | Custom render for dropdown option content. Overrides `getItemDisplayValue` in the list. |
-| `getItemKey`          | `(item: T) => string`                               | `item.id`          | Returns a unique key for React rendering.                                               |
-| `getItemValue`        | `(item: T) => string`                               | `item.id`          | Returns the value (ID) of an item.                                                      |
-| `additionalParams`    | `Partial<Omit<TParams, keyof BaseSelectParams>>`    | `{}`               | Extra params merged into every request.                                                 |
-| `disabled`            | `boolean`                                           | `false`            | Disables the select field.                                                              |
-| `showSearchIcon`      | `boolean`                                           | `false`            | Show a search icon inside the search input.                                             |
-| `lazy`                | `boolean`                                           | `false`            | Fetch the dropdown list only after the popover is opened instead of on mount.           |
+| Prop                  | Type                                             | Default            | Description                                                                             |
+| --------------------- | ------------------------------------------------ | ------------------ | --------------------------------------------------------------------------------------- |
+| `value`               | `string`                                         | —                  | Currently selected item ID.                                                             |
+| `onChange`            | `(id: string) => void`                           | —                  | Called when the user selects an item.                                                   |
+| `placeholder`         | `string`                                         | `"Select..."`      | Text shown when no item is selected.                                                    |
+| `className`           | `string`                                         | —                  | Additional CSS classes for the trigger button.                                          |
+| `debounceDelay`       | `number`                                         | `500`              | Debounce delay in ms for search input.                                                  |
+| `searchPlaceholder`   | `string`                                         | `"Search..."`      | Placeholder for the search input.                                                       |
+| `searchParamKey`      | `keyof TParams`                                  | `"search_by_name"` | The param key used for the search term.                                                 |
+| `useDataHook`         | `(params: TParams) => AsyncSelectQueryResult<T>` | —                  | Hook that fetches items given params; may return `pagination` for infinite scrolling.   |
+| `selectedItemData`    | `AsyncSelectData<T>`                             | —                  | Pre-fetched data for the selected item (used when the item is not in the current page). |
+| `getItemDisplayValue` | `(item: T) => string`                            | —                  | Returns the plain-text display label (used in trigger and as fallback).                 |
+| `renderItemLabel`     | `(item: T) => React.ReactNode`                   | —                  | Custom render for dropdown option content. Overrides `getItemDisplayValue` in the list. |
+| `getItemKey`          | `(item: T) => string`                            | `item.id`          | Returns a unique key for React rendering.                                               |
+| `getItemValue`        | `(item: T) => string`                            | `item.id`          | Returns the value (ID) of an item.                                                      |
+| `additionalParams`    | `Partial<Omit<TParams, keyof BaseSelectParams>>` | `{}`               | Extra params merged into every request.                                                 |
+| `disabled`            | `boolean`                                        | `false`            | Disables the select field.                                                              |
+| `showSearchIcon`      | `boolean`                                        | `false`            | Show a search icon inside the search input.                                             |
+| `lazy`                | `boolean`                                        | `false`            | Fetch the dropdown list only after the popover is opened instead of on mount.           |
 
 ### With react-hook-form
 
@@ -637,6 +638,32 @@ limits. Pass `lazy` to defer fetching until the user opens the popover:
 
 The selected item's label still renders immediately from `selectedItemData`
 (no extra fetch is needed for the trigger while the popover is closed).
+
+### Paginated loading
+
+When the data hook returns the standard `pagination` metadata, the field sends
+`page` in the request parameters, loads the next page when the list reaches the
+bottom, and keeps already-loaded items visible while the next page is loading.
+The hook should preserve the API response shape:
+
+```tsx
+type ItemsResponse = {
+  data: { items: Item[] }
+  pagination?: {
+    hasNextPage?: boolean
+    nextPage?: number | null
+  }
+}
+
+const useItemsHook = (params: { page?: number; search_by_name?: string }) =>
+  useQuery({
+    queryKey: ["items", params],
+    queryFn: () => getItems(params),
+  })
+```
+
+No component-specific pagination code is required. Existing single-page hooks
+continue to work when `pagination` is omitted.
 
 ### Custom styling
 

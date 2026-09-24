@@ -33,6 +33,23 @@ export interface BaseSelectParams {
   [key: string]: unknown
 }
 
+export interface AsyncSelectPagination {
+  hasNextPage?: boolean
+  nextPage?: number | null
+}
+
+export interface AsyncSelectData<T> {
+  data?: { items?: T[] }
+  pagination?: AsyncSelectPagination
+}
+
+export interface AsyncSelectQueryResult<T> {
+  data?: AsyncSelectData<T>
+  isFetching: boolean
+  error: unknown
+  refetch?: () => unknown
+}
+
 export interface AsyncSelectFieldProps<
   T extends SelectFieldItem,
   TParams extends BaseSelectParams,
@@ -43,12 +60,8 @@ export interface AsyncSelectFieldProps<
   debounceDelay?: number
   searchPlaceholder?: string
   searchParamKey?: keyof TParams
-  useDataHook: (params: TParams) => {
-    data?: { data?: { items?: T[] } }
-    isFetching: boolean
-    error: unknown
-  }
-  selectedItemData?: { data?: { items?: T[] } }
+  useDataHook: (params: TParams) => AsyncSelectQueryResult<T>
+  selectedItemData?: AsyncSelectData<T>
   getItemDisplayValue: (item: T) => string
   getItemKey?: (item: T) => string
   getItemValue?: (item: T) => string
@@ -67,6 +80,249 @@ export interface AsyncSelectFieldProps<
 
 const defaultGetItemValue = (item: SelectFieldItem) => item.id
 
+interface AsyncSelectCachedPage<T> {
+  items: T[]
+  hasNextPage: boolean
+  nextPage: number | null
+}
+
+interface AsyncSelectPageCache<T> {
+  key: string
+  pages: Map<number, AsyncSelectCachedPage<T>>
+}
+
+interface AsyncSelectPageStore<T> {
+  subscribe: (listener: () => void) => () => void
+  getSnapshot: () => AsyncSelectPageCache<T>
+  setPage: (
+    key: string,
+    page: number,
+    pageData: AsyncSelectCachedPage<T>,
+  ) => void
+}
+
+interface AsyncSelectPageRequest {
+  key: string
+  page: number
+  hasNextPage: boolean
+  nextPage: number | null
+}
+
+function areAsyncSelectItemsEqual<T>(
+  previous: T[] | undefined,
+  next: T[],
+): boolean {
+  return (
+    previous !== undefined &&
+    previous.length === next.length &&
+    previous.every((item, index) => item === next[index])
+  )
+}
+
+function createAsyncSelectPageStore<T>(): AsyncSelectPageStore<T> {
+  let snapshot: AsyncSelectPageCache<T> = {
+    key: "",
+    pages: new Map(),
+  }
+  const listeners = new Set<() => void>()
+
+  return {
+    subscribe: (listener) => {
+      listeners.add(listener)
+      return () => listeners.delete(listener)
+    },
+    getSnapshot: () => snapshot,
+    setPage: (key, page, pageData) => {
+      const previousPage =
+        snapshot.key === key ? snapshot.pages.get(page) : undefined
+      if (
+        previousPage &&
+        areAsyncSelectItemsEqual(previousPage.items, pageData.items) &&
+        previousPage.hasNextPage === pageData.hasNextPage &&
+        previousPage.nextPage === pageData.nextPage
+      ) {
+        return
+      }
+
+      const pages = snapshot.key === key ? new Map(snapshot.pages) : new Map()
+      pages.set(page, pageData)
+      snapshot = { key, pages }
+      listeners.forEach((listener) => listener())
+    },
+  }
+}
+
+function createAsyncSelectPageRequest(key: string): AsyncSelectPageRequest {
+  return {
+    key,
+    page: 1,
+    hasNextPage: false,
+    nextPage: null,
+  }
+}
+
+interface UseAsyncSelectPagesConfig<
+  T extends SelectFieldItem,
+  TParams extends BaseSelectParams,
+> {
+  useDataHook: (params: TParams) => AsyncSelectQueryResult<T>
+  params: TParams
+  getItemKey?: (item: T) => string
+  getItemValue: (item: T) => string
+}
+
+function useAsyncSelectPages<
+  T extends SelectFieldItem,
+  TParams extends BaseSelectParams,
+>({
+  useDataHook,
+  params,
+  getItemKey,
+  getItemValue,
+}: UseAsyncSelectPagesConfig<T, TParams>) {
+  const paramsKey = React.useMemo(() => JSON.stringify(params) ?? "", [params])
+  const [pageRequest, setPageRequest] = React.useState<AsyncSelectPageRequest>(
+    () => createAsyncSelectPageRequest(paramsKey),
+  )
+  const [pageStore] = React.useState(() => createAsyncSelectPageStore<T>())
+  const pageCache = React.useSyncExternalStore(
+    pageStore.subscribe,
+    pageStore.getSnapshot,
+    pageStore.getSnapshot,
+  )
+  const isCurrentRequest = pageRequest.key === paramsKey
+  const currentPage = isCurrentRequest ? pageRequest.page : 1
+  const queryParams = React.useMemo(
+    () => ({ ...params, page: currentPage }) as TParams,
+    [params, currentPage],
+  )
+  const { data, isFetching, error, refetch } = useDataHook(queryParams)
+  const pageItems = React.useMemo(() => data?.data?.items ?? [], [data])
+  const hasNextPage = data?.pagination?.hasNextPage ?? false
+  const nextPage = data?.pagination?.nextPage ?? null
+  const emptyPages = React.useMemo(
+    () => new Map<number, AsyncSelectCachedPage<T>>(),
+    [],
+  )
+  const cachedPages = pageCache.key === paramsKey ? pageCache.pages : emptyPages
+  const cachedPage = cachedPages.get(currentPage)
+  const currentDataIsUsable =
+    data !== undefined &&
+    (isCurrentRequest || (currentPage === 1 && !isFetching))
+  const currentPageEntry = React.useMemo(() => {
+    if (currentDataIsUsable) {
+      return {
+        items: pageItems,
+        hasNextPage,
+        nextPage: nextPage ?? (hasNextPage ? currentPage + 1 : null),
+      }
+    }
+
+    return (
+      cachedPage ?? {
+        items: [],
+        hasNextPage: isCurrentRequest && pageRequest.hasNextPage,
+        nextPage: isCurrentRequest ? pageRequest.nextPage : null,
+      }
+    )
+  }, [
+    cachedPage,
+    currentDataIsUsable,
+    currentPage,
+    hasNextPage,
+    isCurrentRequest,
+    nextPage,
+    pageItems,
+    pageRequest.hasNextPage,
+    pageRequest.nextPage,
+  ])
+
+  React.useEffect(() => {
+    if (!data || (!isCurrentRequest && isFetching)) return
+
+    pageStore.setPage(paramsKey, currentPage, {
+      items: pageItems,
+      hasNextPage,
+      nextPage: nextPage ?? (hasNextPage ? currentPage + 1 : null),
+    })
+  }, [
+    currentPage,
+    data,
+    hasNextPage,
+    isFetching,
+    isCurrentRequest,
+    nextPage,
+    pageItems,
+    pageStore,
+    paramsKey,
+  ])
+
+  const items = React.useMemo(() => {
+    const pageMap = new Map(cachedPages)
+    if (currentDataIsUsable) {
+      pageMap.set(currentPage, currentPageEntry)
+    }
+
+    const seen = new Set<string>()
+    return [...pageMap.entries()]
+      .sort(([pageA], [pageB]) => pageA - pageB)
+      .flatMap(([, page]) =>
+        page.items.filter((item) => {
+          const itemKey = getItemKey ? getItemKey(item) : getItemValue(item)
+          if (seen.has(itemKey)) return false
+          seen.add(itemKey)
+          return true
+        }),
+      )
+  }, [
+    cachedPages,
+    currentDataIsUsable,
+    currentPage,
+    currentPageEntry,
+    getItemKey,
+    getItemValue,
+  ])
+
+  const loadMore = React.useCallback(() => {
+    if (isFetching || !currentPageEntry.hasNextPage) return
+
+    if (currentDataIsUsable) {
+      pageStore.setPage(paramsKey, currentPage, currentPageEntry)
+    }
+
+    const targetPage = currentPageEntry.nextPage ?? currentPage + 1
+    if (targetPage === currentPage && currentDataIsUsable) return
+    if (targetPage === currentPage && refetch) {
+      void refetch()
+      return
+    }
+
+    setPageRequest({
+      key: paramsKey,
+      page: targetPage,
+      hasNextPage: currentPageEntry.hasNextPage,
+      nextPage: currentPageEntry.nextPage,
+    })
+  }, [
+    currentDataIsUsable,
+    currentPage,
+    currentPageEntry,
+    isFetching,
+    pageStore,
+    paramsKey,
+    refetch,
+  ])
+
+  return {
+    items,
+    isFetching,
+    isFetchingNextPage: isFetching && currentPage > 1,
+    error,
+    hasNextPage: currentPageEntry.hasNextPage,
+    loadMore,
+  }
+}
+
 interface AsyncSelectCommandProps<T extends SelectFieldItem> {
   search: string
   setSearch: (value: string) => void
@@ -75,7 +331,10 @@ interface AsyncSelectCommandProps<T extends SelectFieldItem> {
   showSearchIcon: boolean
   items: T[]
   isFetching: boolean
+  isFetchingNextPage: boolean
   error: unknown
+  hasNextPage: boolean
+  loadMore: () => void
   getItemKey?: (item: T) => string
   getItemValue: (item: T) => string
   getItemDisplayValue: (item: T) => string
@@ -91,7 +350,10 @@ function AsyncSelectCommand<T extends SelectFieldItem>({
   showSearchIcon,
   items,
   isFetching,
+  isFetchingNextPage,
   error,
+  hasNextPage,
+  loadMore,
   getItemKey,
   getItemValue,
   getItemDisplayValue,
@@ -123,34 +385,54 @@ function AsyncSelectCommand<T extends SelectFieldItem>({
           />
         </div>
       )}
-      <CommandList>
-        {isFetching ? (
+      <CommandList
+        className="max-h-75"
+        onScroll={(event) => {
+          const target = event.currentTarget
+          const distanceFromBottom =
+            target.scrollHeight - target.scrollTop - target.clientHeight
+          if (distanceFromBottom <= 48 && hasNextPage) loadMore()
+        }}
+      >
+        {isFetching && items.length === 0 ? (
           <div className="text-muted-foreground flex items-center justify-center py-6 text-sm">
             Loading...
           </div>
-        ) : error ? (
+        ) : error && items.length === 0 ? (
           <CommandEmpty>Failed to load items.</CommandEmpty>
         ) : items.length === 0 ? (
           <CommandEmpty>
             {search ? "No items found." : "No items available."}
           </CommandEmpty>
         ) : (
-          <CommandGroup className="max-h-75 overflow-y-auto">
-            {items.map((item) => {
-              const itemValue = getItemValue(item)
-              return (
-                <CommandItem
-                  key={getItemKey ? getItemKey(item) : itemValue}
-                  value={itemValue}
-                  onSelect={() => onSelect(itemValue)}
-                >
-                  {renderItemLabel
-                    ? renderItemLabel(item)
-                    : getItemDisplayValue(item)}
-                </CommandItem>
-              )
-            })}
-          </CommandGroup>
+          <>
+            <CommandGroup>
+              {items.map((item) => {
+                const itemValue = getItemValue(item)
+                return (
+                  <CommandItem
+                    key={getItemKey ? getItemKey(item) : itemValue}
+                    value={itemValue}
+                    onSelect={() => onSelect(itemValue)}
+                  >
+                    {renderItemLabel
+                      ? renderItemLabel(item)
+                      : getItemDisplayValue(item)}
+                  </CommandItem>
+                )
+              })}
+            </CommandGroup>
+            {isFetching && (
+              <div className="text-muted-foreground flex items-center justify-center py-3 text-sm">
+                {isFetchingNextPage ? "Loading more..." : "Refreshing..."}
+              </div>
+            )}
+            {error && (
+              <div className="text-destructive flex items-center justify-center py-3 text-sm">
+                Failed to load more items.
+              </div>
+            )}
+          </>
         )}
       </CommandList>
     </Command>
@@ -286,7 +568,15 @@ function AsyncSelectShell<T extends SelectFieldItem>({
 interface AsyncSelectLazyBodyProps<
   T extends SelectFieldItem,
   TParams extends BaseSelectParams,
-> extends Omit<AsyncSelectCommandProps<T>, "items" | "isFetching" | "error"> {
+> extends Omit<
+  AsyncSelectCommandProps<T>,
+  | "items"
+  | "isFetching"
+  | "isFetchingNextPage"
+  | "error"
+  | "hasNextPage"
+  | "loadMore"
+> {
   params: TParams
   useDataHook: AsyncSelectFieldProps<T, TParams>["useDataHook"]
 }
@@ -299,15 +589,29 @@ function AsyncSelectLazyBody<
   useDataHook,
   ...commandProps
 }: AsyncSelectLazyBodyProps<T, TParams>) {
-  const { data, isFetching, error } = useDataHook(params)
-  const items = React.useMemo(() => data?.data?.items ?? [], [data])
+  const {
+    items,
+    isFetching,
+    isFetchingNextPage,
+    error,
+    hasNextPage,
+    loadMore,
+  } = useAsyncSelectPages({
+    useDataHook,
+    params,
+    getItemKey: commandProps.getItemKey,
+    getItemValue: commandProps.getItemValue,
+  })
 
   return (
     <AsyncSelectCommand
       {...commandProps}
       items={items}
       isFetching={isFetching}
+      isFetchingNextPage={isFetchingNextPage}
       error={error}
+      hasNextPage={hasNextPage}
+      loadMore={loadMore}
     />
   )
 }
@@ -424,7 +728,12 @@ interface AsyncSelectEagerProps<
   getValue: (item: T) => string
   commandProps: Omit<
     AsyncSelectCommandProps<T>,
-    "items" | "isFetching" | "error"
+    | "items"
+    | "isFetching"
+    | "isFetchingNextPage"
+    | "error"
+    | "hasNextPage"
+    | "loadMore"
   >
 }
 
@@ -443,9 +752,19 @@ function AsyncSelectEager<
   getValue,
   commandProps,
 }: AsyncSelectEagerProps<T, TParams>) {
-  const { data, isFetching, error } = useDataHook(state.params)
-
-  const items = React.useMemo(() => data?.data?.items ?? [], [data])
+  const {
+    items,
+    isFetching,
+    isFetchingNextPage,
+    error,
+    hasNextPage,
+    loadMore,
+  } = useAsyncSelectPages({
+    useDataHook,
+    params: state.params,
+    getItemKey: commandProps.getItemKey,
+    getItemValue: commandProps.getItemValue,
+  })
 
   const selectedItemFromList = React.useMemo(
     () => items.find((item) => getValue(item) === value),
@@ -470,7 +789,10 @@ function AsyncSelectEager<
         {...commandProps}
         items={items}
         isFetching={isFetching}
+        isFetchingNextPage={isFetchingNextPage}
         error={error}
+        hasNextPage={hasNextPage}
+        loadMore={loadMore}
       />
     </AsyncSelectShell>
   )
