@@ -31,7 +31,8 @@ export const registryItems: RegistryItem[] = [
       "separator",
       "skeleton",
       "table",
-      "input-group"
+      "input-group",
+      "checkbox"
     ],
     "target": "@ui/edust-kit/data-table/action-bar.tsx",
     "sourcePath": "registry/items/data-table/action-bar.tsx",
@@ -105,6 +106,11 @@ export const registryItems: RegistryItem[] = [
         "path": "registry/items/data-table/data-table-sort-list.tsx",
         "type": "registry:ui",
         "target": "@ui/edust-kit/data-table/data-table-sort-list.tsx"
+      },
+      {
+        "path": "registry/items/data-table/data-table-select-column.tsx",
+        "type": "registry:ui",
+        "target": "@ui/edust-kit/data-table/data-table-select-column.tsx"
       },
       {
         "path": "registry/items/data-table/data-table-toolbar.tsx",

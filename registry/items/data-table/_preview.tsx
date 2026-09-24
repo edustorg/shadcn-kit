@@ -14,8 +14,8 @@ import * as React from "react"
 
 import { DataTable } from "./data-table"
 import { DataTableAdvancedToolbar } from "./data-table-advanced-toolbar"
-import { DataTableDateFilter } from "./data-table-date-filter"
 import { DataTableFilterList } from "./data-table-filter-list"
+import { getSelectColumn } from "./data-table-select-column"
 import { DataTableSortList } from "./data-table-sort-list"
 import { DataTableToolbar } from "./data-table-toolbar"
 import { formatDate } from "./lib/date-format"
@@ -126,13 +126,10 @@ export function Preview() {
 
   const columns = React.useMemo<ColumnDef<Todo, unknown>[]>(
     () => [
-      {
-        id: "id",
-        accessorKey: "id",
-        header: "ID",
-        enableSorting: true,
-        enableHiding: true,
-      },
+      getSelectColumn<Todo>({
+        indexValue: (row) => row.id,
+        size: 8,
+      }),
       {
         id: "title",
         accessorKey: "title",
@@ -146,9 +143,7 @@ export function Preview() {
         enableSorting: true,
         enableHiding: true,
         cell: ({ row }) => (
-          <span className="max-w-[400px] truncate">
-            {row.getValue("title")}
-          </span>
+          <span className="max-w-100 truncate">{row.getValue("title")}</span>
         ),
       },
       {
@@ -221,12 +216,13 @@ export function Preview() {
   const table = useReactTable({
     data,
     columns,
+    enableRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     initialState: {
-      sorting: [{ id: "id", desc: false }],
+      sorting: [{ id: "title", desc: false }],
       pagination: { pageSize: 5 },
     },
   })

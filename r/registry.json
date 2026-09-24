@@ -32,7 +32,8 @@
         "separator",
         "skeleton",
         "table",
-        "input-group"
+        "input-group",
+        "checkbox"
       ],
       "files": [
         {
@@ -104,6 +105,11 @@
           "path": "registry/items/data-table/data-table-sort-list.tsx",
           "type": "registry:ui",
           "target": "@ui/edust-kit/data-table/data-table-sort-list.tsx"
+        },
+        {
+          "path": "registry/items/data-table/data-table-select-column.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/data-table/data-table-select-column.tsx"
         },
         {
           "path": "registry/items/data-table/data-table-toolbar.tsx",
