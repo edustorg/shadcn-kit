@@ -396,8 +396,8 @@ component reads `useFormContext().formState.errors` directly.
 
 A searchable multi-select for remotely fetched data. Built on `Popover` and
 `Command` (cmdk), it fetches options from an API with debounced search, renders
-selected values as removable badges, and supports loading, error, and empty
-states.
+selected values as removable badges, supports infinite scrolling for paginated
+responses, and handles loading, error, and empty states.
 
 ```tsx
 import { AsyncMultiSelectField } from "@/components/edust-kit/generic-form"
@@ -416,29 +416,29 @@ import { AsyncMultiSelectField } from "@/components/edust-kit/generic-form"
 `AsyncMultiSelectField` is generic over `<T, TParams>` where `T` is the item
 type and `TParams` is the params type passed to `useDataHook`.
 
-| Prop                  | Type                                                | Default            | Description                                                                                |
-| --------------------- | --------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------ |
-| `value`               | `string[]`                                          | `[]`               | Currently selected item IDs.                                                               |
-| `onChange`            | `(values: string[]) => void`                        | —                  | Called with the full array whenever the selection changes.                                 |
-| `placeholder`         | `string`                                            | `"Select..."`      | Text shown when nothing is selected.                                                       |
-| `className`           | `string`                                            | —                  | Classes for the trigger button.                                                            |
-| `badgeClassName`      | `string`                                            | —                  | Classes for the selected-value badges.                                                     |
-| `debounceDelay`       | `number`                                            | `500`              | Debounce delay in ms for search input.                                                     |
-| `searchPlaceholder`   | `string`                                            | `"Search..."`      | Placeholder for the search input.                                                          |
-| `searchParamKey`      | `keyof TParams`                                     | `"search_by_name"` | The param key used for the search term.                                                    |
-| `useDataHook`         | `(params: TParams) => { data?, isFetching, error }` | —                  | Hook that fetches items given params.                                                      |
-| `selectedItemsData`   | `{ data?: { items?: T[] } }`                        | —                  | Pre-fetched data used to resolve badge labels for selected items outside the fetched page. |
-| `getItemDisplayValue` | `(item: T) => string`                               | —                  | Returns the plain-text label (badges and dropdown fallback).                               |
-| `renderItemLabel`     | `(item: T) => React.ReactNode`                      | —                  | Custom render for dropdown option content.                                                 |
-| `getItemKey`          | `(item: T) => string`                               | `item.id`          | Unique React key for an item.                                                              |
-| `getItemValue`        | `(item: T) => string`                               | `item.id`          | The value (ID) of an item.                                                                 |
-| `additionalParams`    | `Partial<Omit<TParams, keyof BaseSelectParams>>`    | `{}`               | Extra params merged into every request.                                                    |
-| `disabled`            | `boolean`                                           | `false`            | Disables the field.                                                                        |
-| `maxSelected`         | `number`                                            | —                  | Maximum number of selections allowed.                                                      |
-| `maxBadges`           | `number`                                            | `4`                | How many selected badges to render before showing `+N`.                                    |
-| `showSearchIcon`      | `boolean`                                           | `false`            | Show a search icon inside the search input.                                                |
-| `lazy`                | `boolean`                                           | `false`            | Fetch the dropdown list only after the popover is opened.                                  |
-| `emptyIndicator`      | `React.ReactNode`                                   | —                  | Custom empty-state message.                                                                |
+| Prop                  | Type                                             | Default            | Description                                                                                |
+| --------------------- | ------------------------------------------------ | ------------------ | ------------------------------------------------------------------------------------------ |
+| `value`               | `string[]`                                       | `[]`               | Currently selected item IDs.                                                               |
+| `onChange`            | `(values: string[]) => void`                     | —                  | Called with the full array whenever the selection changes.                                 |
+| `placeholder`         | `string`                                         | `"Select..."`      | Text shown when nothing is selected.                                                       |
+| `className`           | `string`                                         | —                  | Classes for the trigger button.                                                            |
+| `badgeClassName`      | `string`                                         | —                  | Classes for the selected-value badges.                                                     |
+| `debounceDelay`       | `number`                                         | `500`              | Debounce delay in ms for search input.                                                     |
+| `searchPlaceholder`   | `string`                                         | `"Search..."`      | Placeholder for the search input.                                                          |
+| `searchParamKey`      | `keyof TParams`                                  | `"search_by_name"` | The param key used for the search term.                                                    |
+| `useDataHook`         | `(params: TParams) => AsyncSelectQueryResult<T>` | —                  | Hook that fetches items given params; may return `pagination` for infinite scrolling.      |
+| `selectedItemsData`   | `AsyncSelectData<T>`                             | —                  | Pre-fetched data used to resolve badge labels for selected items outside the fetched page. |
+| `getItemDisplayValue` | `(item: T) => string`                            | —                  | Returns the plain-text label (badges and dropdown fallback).                               |
+| `renderItemLabel`     | `(item: T) => React.ReactNode`                   | —                  | Custom render for dropdown option content.                                                 |
+| `getItemKey`          | `(item: T) => string`                            | `item.id`          | Unique React key for an item.                                                              |
+| `getItemValue`        | `(item: T) => string`                            | `item.id`          | The value (ID) of an item.                                                                 |
+| `additionalParams`    | `Partial<Omit<TParams, keyof BaseSelectParams>>` | `{}`               | Extra params merged into every request.                                                    |
+| `disabled`            | `boolean`                                        | `false`            | Disables the field.                                                                        |
+| `maxSelected`         | `number`                                         | —                  | Maximum number of selections allowed.                                                      |
+| `maxBadges`           | `number`                                         | `4`                | How many selected badges to render before showing `+N`.                                    |
+| `showSearchIcon`      | `boolean`                                        | `false`            | Show a search icon inside the search input.                                                |
+| `lazy`                | `boolean`                                        | `false`            | Fetch the dropdown list only after the popover is opened.                                  |
+| `emptyIndicator`      | `React.ReactNode`                                | —                  | Custom empty-state message.                                                                |
 
 ### With react-hook-form
 
@@ -506,6 +506,25 @@ const { data: selectedLabelsData } = useGetLabels(
 />
 ```
 
+### Paginated loading
+
+When the data hook returns the standard `pagination` metadata, the field sends
+`page` in the request parameters, loads the next page when the list reaches the
+bottom, and keeps already-loaded options visible while the next page is loading.
+The response shape is the same as `AsyncSelectField`:
+
+```tsx
+type ItemsResponse = {
+  data: { items: Item[] }
+  pagination?: {
+    hasNextPage?: boolean
+    nextPage?: number | null
+  }
+}
+```
+
+Existing single-page hooks continue to work when `pagination` is omitted.
+
 ## AsyncSelectField
 
 An async single-select field for remotely fetched data. Built on `Popover` and
@@ -548,6 +567,7 @@ and `TParams` is the params type passed to `useDataHook`.
 | `additionalParams`    | `Partial<Omit<TParams, keyof BaseSelectParams>>` | `{}`               | Extra params merged into every request.                                                 |
 | `disabled`            | `boolean`                                        | `false`            | Disables the select field.                                                              |
 | `showSearchIcon`      | `boolean`                                        | `false`            | Show a search icon inside the search input.                                             |
+| `emptyIndicator`      | `React.ReactNode`                                | —                  | Custom content shown when no items are available.                                       |
 | `lazy`                | `boolean`                                        | `false`            | Fetch the dropdown list only after the popover is opened instead of on mount.           |
 
 ### With react-hook-form
@@ -664,6 +684,24 @@ const useItemsHook = (params: { page?: number; search_by_name?: string }) =>
 
 No component-specific pagination code is required. Existing single-page hooks
 continue to work when `pagination` is omitted.
+
+### Custom empty state
+
+Use `emptyIndicator` to replace the default empty text with custom content:
+
+```tsx
+<AsyncSelectField
+  value={selectedId}
+  onChange={setSelectedId}
+  useDataHook={useItemsHook}
+  getItemDisplayValue={(item) => item.name}
+  emptyIndicator={
+    <div className="text-muted-foreground py-6 text-center text-sm">
+      No matching items
+    </div>
+  }
+/>
+```
 
 ### Custom styling
 

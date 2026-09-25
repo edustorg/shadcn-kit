@@ -31,7 +31,7 @@ export const getSelectColumn = <TData,>({
       if (!indexValue) return checkbox
 
       return (
-        <div className="flex w-4 items-center gap-2">
+        <div className="flex items-center gap-2">
           {checkbox}
           <span> #</span>
         </div>
@@ -51,7 +51,7 @@ export const getSelectColumn = <TData,>({
       const value = indexValue(row.original)
 
       return (
-        <div className="flex w-4 items-center gap-2">
+        <div className="flex items-center gap-2">
           {checkbox}
           {value != null ? (
             <span>{value}</span>

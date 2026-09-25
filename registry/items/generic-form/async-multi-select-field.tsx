@@ -23,7 +23,13 @@ import { ChevronsUpDownIcon, XIcon } from "lucide-react"
 
 import * as React from "react"
 
-import type { BaseSelectParams, SelectFieldItem } from "./async-select-field"
+import {
+  type AsyncSelectData,
+  type AsyncSelectQueryResult,
+  type BaseSelectParams,
+  type SelectFieldItem,
+  useAsyncSelectPages,
+} from "./async-select-field"
 
 export type { BaseSelectParams, SelectFieldItem }
 
@@ -37,12 +43,8 @@ export interface AsyncMultiSelectFieldProps<
   debounceDelay?: number
   searchPlaceholder?: string
   searchParamKey?: keyof TParams
-  useDataHook: (params: TParams) => {
-    data?: { data?: { items?: T[] } }
-    isFetching: boolean
-    error: unknown
-  }
-  selectedItemsData?: { data?: { items?: T[] } }
+  useDataHook: (params: TParams) => AsyncSelectQueryResult<T>
+  selectedItemsData?: AsyncSelectData<T>
   getItemDisplayValue: (item: T) => string
   getItemKey?: (item: T) => string
   getItemValue?: (item: T) => string
@@ -69,7 +71,10 @@ interface AsyncMultiSelectCommandProps<T extends SelectFieldItem> {
   items: T[]
   value: string[]
   isFetching: boolean
+  isFetchingNextPage: boolean
   error: unknown
+  hasNextPage: boolean
+  loadMore: () => void
   maxSelected?: number
   emptyIndicator?: React.ReactNode
   getItemKey?: (item: T) => string
@@ -88,7 +93,10 @@ function AsyncMultiSelectCommand<T extends SelectFieldItem>({
   items,
   value,
   isFetching,
+  isFetchingNextPage,
   error,
+  hasNextPage,
+  loadMore,
   maxSelected,
   emptyIndicator,
   getItemKey,
@@ -124,12 +132,20 @@ function AsyncMultiSelectCommand<T extends SelectFieldItem>({
           />
         </div>
       )}
-      <CommandList>
-        {isFetching ? (
+      <CommandList
+        className="max-h-75"
+        onScroll={(event) => {
+          const target = event.currentTarget
+          const distanceFromBottom =
+            target.scrollHeight - target.scrollTop - target.clientHeight
+          if (distanceFromBottom <= 48 && hasNextPage) loadMore()
+        }}
+      >
+        {isFetching && items.length === 0 ? (
           <div className="text-muted-foreground flex items-center justify-center py-6 text-sm">
             Loading...
           </div>
-        ) : error ? (
+        ) : error && items.length === 0 ? (
           <CommandEmpty>Failed to load items.</CommandEmpty>
         ) : items.length === 0 ? (
           <CommandEmpty>
@@ -139,31 +155,43 @@ function AsyncMultiSelectCommand<T extends SelectFieldItem>({
                 (search ? "No items found." : "No items available."))}
           </CommandEmpty>
         ) : (
-          <CommandGroup className="max-h-75 overflow-y-auto">
-            {isMaxReached && (
-              <p className="text-muted-foreground px-2 py-1.5 text-sm">
-                Maximum {maxSelected} items selected
-              </p>
+          <>
+            <CommandGroup>
+              {isMaxReached && (
+                <p className="text-muted-foreground px-2 py-1.5 text-sm">
+                  Maximum {maxSelected} items selected
+                </p>
+              )}
+              {items.map((item) => {
+                const itemValue = getItemValue(item)
+                const isSelected = value.includes(itemValue)
+                return (
+                  <CommandItem
+                    key={getItemKey ? getItemKey(item) : itemValue}
+                    value={itemValue}
+                    data-checked={isSelected}
+                    aria-selected={isSelected}
+                    onSelect={() => onToggle(itemValue)}
+                    className="cursor-pointer"
+                  >
+                    {renderItemLabel
+                      ? renderItemLabel(item)
+                      : getItemDisplayValue(item)}
+                  </CommandItem>
+                )
+              })}
+            </CommandGroup>
+            {isFetching && (
+              <div className="text-muted-foreground flex items-center justify-center py-3 text-sm">
+                {isFetchingNextPage ? "Loading more..." : "Refreshing..."}
+              </div>
             )}
-            {items.map((item) => {
-              const itemValue = getItemValue(item)
-              const isSelected = value.includes(itemValue)
-              return (
-                <CommandItem
-                  key={getItemKey ? getItemKey(item) : itemValue}
-                  value={itemValue}
-                  data-checked={isSelected}
-                  aria-selected={isSelected}
-                  onSelect={() => onToggle(itemValue)}
-                  className="cursor-pointer"
-                >
-                  {renderItemLabel
-                    ? renderItemLabel(item)
-                    : getItemDisplayValue(item)}
-                </CommandItem>
-              )
-            })}
-          </CommandGroup>
+            {error && (
+              <div className="text-destructive flex items-center justify-center py-3 text-sm">
+                Failed to load more items.
+              </div>
+            )}
+          </>
         )}
       </CommandList>
     </Command>
@@ -394,7 +422,12 @@ interface AsyncMultiSelectLazyBodyProps<
   TParams extends BaseSelectParams,
 > extends Omit<
   AsyncMultiSelectCommandProps<T>,
-  "items" | "isFetching" | "error"
+  | "items"
+  | "isFetching"
+  | "isFetchingNextPage"
+  | "error"
+  | "hasNextPage"
+  | "loadMore"
 > {
   params: TParams
   useDataHook: AsyncMultiSelectFieldProps<T, TParams>["useDataHook"]
@@ -408,15 +441,29 @@ function AsyncMultiSelectLazyBody<
   useDataHook,
   ...commandProps
 }: AsyncMultiSelectLazyBodyProps<T, TParams>) {
-  const { data, isFetching, error } = useDataHook(params)
-  const items = React.useMemo(() => data?.data?.items ?? [], [data])
+  const {
+    items,
+    isFetching,
+    isFetchingNextPage,
+    error,
+    hasNextPage,
+    loadMore,
+  } = useAsyncSelectPages({
+    useDataHook,
+    params,
+    getItemKey: commandProps.getItemKey,
+    getItemValue: commandProps.getItemValue,
+  })
 
   return (
     <AsyncMultiSelectCommand
       {...commandProps}
       items={items}
       isFetching={isFetching}
+      isFetchingNextPage={isFetchingNextPage}
       error={error}
+      hasNextPage={hasNextPage}
+      loadMore={loadMore}
     />
   )
 }
@@ -438,7 +485,12 @@ interface AsyncMultiSelectEagerProps<
   state: ReturnType<typeof useAsyncMultiSelectFieldState<TParams>>
   commandProps: Omit<
     AsyncMultiSelectCommandProps<T>,
-    "items" | "isFetching" | "error"
+    | "items"
+    | "isFetching"
+    | "isFetchingNextPage"
+    | "error"
+    | "hasNextPage"
+    | "loadMore"
   >
   onUnselect: (item: T) => void
   onClear: () => void
@@ -463,19 +515,24 @@ function AsyncMultiSelectEager<
   onUnselect,
   onClear,
 }: AsyncMultiSelectEagerProps<T, TParams>) {
-  const { data, isFetching, error } = useDataHook(state.params)
-
-  const listItems = React.useMemo(() => data?.data?.items ?? [], [data])
+  const {
+    items,
+    isFetching,
+    isFetchingNextPage,
+    error,
+    hasNextPage,
+    loadMore,
+  } = useAsyncSelectPages({
+    useDataHook,
+    params: state.params,
+    getItemKey: commandProps.getItemKey,
+    getItemValue: commandProps.getItemValue,
+  })
 
   const selectedItems = React.useMemo(
     () =>
-      buildSelectedItems(
-        listItems,
-        selectedItemsDataItems,
-        value,
-        getItemValue,
-      ),
-    [listItems, selectedItemsDataItems, value, getItemValue],
+      buildSelectedItems(items, selectedItemsDataItems, value, getItemValue),
+    [items, selectedItemsDataItems, value, getItemValue],
   )
 
   return (
@@ -498,9 +555,12 @@ function AsyncMultiSelectEager<
     >
       <AsyncMultiSelectCommand
         {...commandProps}
-        items={listItems}
+        items={items}
         isFetching={isFetching}
+        isFetchingNextPage={isFetchingNextPage}
         error={error}
+        hasNextPage={hasNextPage}
+        loadMore={loadMore}
       />
     </AsyncMultiSelectShell>
   )
@@ -578,7 +638,12 @@ export function AsyncMultiSelectField<
 
   const commandProps: Omit<
     AsyncMultiSelectCommandProps<T>,
-    "items" | "isFetching" | "error"
+    | "items"
+    | "isFetching"
+    | "isFetchingNextPage"
+    | "error"
+    | "hasNextPage"
+    | "loadMore"
   > = {
     search: state.search,
     setSearch: state.setSearch,

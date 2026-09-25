@@ -66,7 +66,6 @@ export function DataTableAsyncFacetedFilter<TData, TValue>({
   const optionsParams = React.useMemo(() => {
     return {
       [searchParamKey]: debouncedSearch || undefined,
-      limit: 50,
       ...asyncOptions.additionalParams,
     } as Record<string, unknown>
   }, [debouncedSearch, searchParamKey, asyncOptions])
@@ -265,7 +264,6 @@ function SelectedItemsLabels({ ids, asyncOptions }: SelectedItemsLabelsProps) {
   const params = React.useMemo(() => {
     return {
       filter_by_ids: ids,
-      limit: 50,
       ...asyncOptions.additionalParams,
     } as Record<string, unknown>
   }, [ids, asyncOptions])

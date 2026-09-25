@@ -55,8 +55,8 @@ const MOCK_CURRENCIES: MockItem[] = [
   { id: "8", code: "CAD", symbol: "C$", name: "Canadian Dollar" },
 ]
 
-interface MockPageData {
-  data: { items: MockItem[] }
+interface MockPageData<T> {
+  data: { items: T[] }
   pagination: {
     totalRecords: number
     totalPages: number
@@ -76,7 +76,7 @@ function useMockDataHook(params: Record<string, unknown>) {
   const requestKey = JSON.stringify([search, page])
   const [result, setResult] = React.useState<{
     key: string
-    pageData: MockPageData
+    pageData: MockPageData<MockItem>
     isFetching: boolean
   }>({
     key: "",
@@ -161,31 +161,73 @@ const MOCK_LABELS: MockLabel[] = [
 
 function useMockLabelsHook(params: Record<string, unknown>) {
   const search = (params.search_by_name as string) ?? ""
-  const [data, setData] = React.useState<{ data: { items: MockLabel[] } }>({
-    data: { items: [] },
+  const page = typeof params.page === "number" ? params.page : 1
+  const pageSize = 4
+  const requestKey = JSON.stringify([search, page])
+  const [result, setResult] = React.useState<{
+    key: string
+    pageData: MockPageData<MockLabel>
+    isFetching: boolean
+  }>({
+    key: "",
+    pageData: {
+      data: { items: [] },
+      pagination: {
+        totalRecords: 0,
+        totalPages: 0,
+        currentPage: 1,
+        previousPage: null,
+        nextPage: null,
+        limit: pageSize,
+        hasPreviousPage: false,
+        hasNextPage: false,
+      },
+    },
+    isFetching: true,
   })
-  const [isFetching, setIsFetching] = React.useState(true)
+  const isFetching = result.key !== requestKey || result.isFetching
 
   React.useEffect(() => {
     let cancelled = false
-    const timer = setTimeout(() => {
+    const timer = window.setTimeout(() => {
       const filtered = search
         ? MOCK_LABELS.filter((label) =>
             label.name.toLowerCase().includes(search.toLowerCase()),
           )
         : MOCK_LABELS
+      const totalPages = Math.ceil(filtered.length / pageSize)
+      const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize)
       if (!cancelled) {
-        setData({ data: { items: filtered } })
-        setIsFetching(false)
+        setResult({
+          key: requestKey,
+          pageData: {
+            data: { items: pageItems },
+            pagination: {
+              totalRecords: filtered.length,
+              totalPages,
+              currentPage: page,
+              previousPage: page > 1 ? page - 1 : null,
+              nextPage: page < totalPages ? page + 1 : null,
+              limit: pageSize,
+              hasPreviousPage: page > 1,
+              hasNextPage: page < totalPages,
+            },
+          },
+          isFetching: false,
+        })
       }
     }, 300)
     return () => {
       cancelled = true
-      clearTimeout(timer)
+      window.clearTimeout(timer)
     }
-  }, [search])
+  }, [page, requestKey, search])
 
-  return { data, isFetching, error: null }
+  return {
+    data: result.key === requestKey ? result.pageData : undefined,
+    isFetching,
+    error: null,
+  }
 }
 
 function mockSubmit(values: PreviewValues): Promise<MockSubmitResult> {
@@ -292,7 +334,7 @@ export function Preview() {
       <div className="flex w-full max-w-sm flex-col gap-6 py-4">
         <div className="flex flex-col gap-2">
           <span className="text-muted-foreground text-xs">
-            Async multi-select badges
+            Paginated async multi-select
           </span>
           <AsyncMultiSelectField
             value={labels}

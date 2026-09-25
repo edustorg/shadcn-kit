@@ -70,6 +70,7 @@ export interface AsyncSelectFieldProps<
   disabled?: boolean
   className?: string
   showSearchIcon?: boolean
+  emptyIndicator?: React.ReactNode
   /**
    * When `true`, the dropdown list is fetched only after the popover is opened
    * instead of on mount. Use this on forms with many async selects to avoid
@@ -171,7 +172,7 @@ interface UseAsyncSelectPagesConfig<
   getItemValue: (item: T) => string
 }
 
-function useAsyncSelectPages<
+export function useAsyncSelectPages<
   T extends SelectFieldItem,
   TParams extends BaseSelectParams,
 >({
@@ -329,6 +330,7 @@ interface AsyncSelectCommandProps<T extends SelectFieldItem> {
   debouncedSetSearch: (value: string) => void
   searchPlaceholder: string
   showSearchIcon: boolean
+  emptyIndicator?: React.ReactNode
   items: T[]
   isFetching: boolean
   isFetchingNextPage: boolean
@@ -348,6 +350,7 @@ function AsyncSelectCommand<T extends SelectFieldItem>({
   debouncedSetSearch,
   searchPlaceholder,
   showSearchIcon,
+  emptyIndicator,
   items,
   isFetching,
   isFetchingNextPage,
@@ -402,7 +405,8 @@ function AsyncSelectCommand<T extends SelectFieldItem>({
           <CommandEmpty>Failed to load items.</CommandEmpty>
         ) : items.length === 0 ? (
           <CommandEmpty>
-            {search ? "No items found." : "No items available."}
+            {emptyIndicator ??
+              (search ? "No items found." : "No items available.")}
           </CommandEmpty>
         ) : (
           <>
@@ -636,6 +640,7 @@ export function AsyncSelectField<
   disabled = false,
   className,
   showSearchIcon = false,
+  emptyIndicator,
   lazy = false,
 }: AsyncSelectFieldProps<T, TParams>) {
   const state = useAsyncSelectFieldState<TParams>({
@@ -666,6 +671,7 @@ export function AsyncSelectField<
     debouncedSetSearch: state.debouncedSetSearch,
     searchPlaceholder,
     showSearchIcon,
+    emptyIndicator,
     getItemKey,
     getItemValue: getValue,
     getItemDisplayValue,
