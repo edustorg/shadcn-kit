@@ -37,6 +37,7 @@ const PhoneField = <TValues extends FieldValues>({
   defaultCountry = "BD",
 }: PhoneFieldProps<TValues>) => {
   const { control } = useFormContext<TValues>()
+  const errorId = `${name}-error`
 
   return (
     <Controller
@@ -47,7 +48,14 @@ const PhoneField = <TValues extends FieldValues>({
           {label && (
             <FieldLabel htmlFor={name}>
               <span>{label}</span>
-              {required && <span className="text-destructive">*</span>}
+              {required && (
+                <>
+                  <span aria-hidden="true" className="text-destructive">
+                    *
+                  </span>
+                  <span className="sr-only"> (required)</span>
+                </>
+              )}
             </FieldLabel>
           )}
           <PhoneInput
@@ -59,8 +67,13 @@ const PhoneField = <TValues extends FieldValues>({
             placeholder={placeholder}
             defaultCountry={defaultCountry}
             onBlur={field.onBlur}
+            aria-invalid={fieldState.invalid || undefined}
+            aria-required={required || undefined}
+            aria-describedby={fieldState.invalid ? errorId : undefined}
           />
-          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          {fieldState.invalid && (
+            <FieldError id={errorId} errors={[fieldState.error]} />
+          )}
         </Field>
       )}
     />

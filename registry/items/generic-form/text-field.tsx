@@ -49,6 +49,7 @@ const TextField = <TValues extends FieldValues>({
   onValueChange,
 }: TextFieldProps<TValues>) => {
   const { control } = useFormContext<TValues>()
+  const errorId = `${name}-error`
 
   return (
     <Controller
@@ -59,7 +60,14 @@ const TextField = <TValues extends FieldValues>({
           {label && (
             <FieldLabel htmlFor={name}>
               <span>{label}</span>
-              {required && <span className="text-destructive">*</span>}
+              {required && (
+                <>
+                  <span aria-hidden="true" className="text-destructive">
+                    *
+                  </span>
+                  <span className="sr-only"> (required)</span>
+                </>
+              )}
             </FieldLabel>
           )}
           <Input
@@ -68,6 +76,9 @@ const TextField = <TValues extends FieldValues>({
             name={field.name}
             type={type}
             value={field.value ?? ""}
+            aria-invalid={fieldState.invalid || undefined}
+            aria-required={required || undefined}
+            aria-describedby={fieldState.invalid ? errorId : undefined}
             onChange={(e) => {
               if (onValueChange) {
                 onValueChange(
@@ -95,7 +106,9 @@ const TextField = <TValues extends FieldValues>({
             autoComplete={autoComplete}
             className={cn(inputClass)}
           />
-          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          {fieldState.invalid && (
+            <FieldError id={errorId} errors={[fieldState.error]} />
+          )}
         </Field>
       )}
     />

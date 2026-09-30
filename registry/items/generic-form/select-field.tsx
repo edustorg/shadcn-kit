@@ -33,6 +33,10 @@ type SelectFieldProps<TValues extends FieldValues> = {
    * field value is set to `emptyValue` (default `""`) so the select can be reset.
    */
   emptyOption?: { value?: string; label?: string }
+  /**
+   * Extra callback fired after the value has been written to form state. It
+   * observes the change; it does not replace it.
+   */
   onValueChange?: (value: string) => void
 }
 
@@ -63,6 +67,9 @@ function normalizeOptions(
  * `options` accepts an array of strings, an array of `{ value, label }`, or a
  * `Record<string, string>` (e.g. an enum map). Pass `emptyOption` to add a
  * "None" item that resets the value, and `placeholder` for the empty state.
+ *
+ * `onValueChange` is additive: the value is always written to form state first,
+ * so validation and submission never depend on the consumer calling it.
  */
 const SelectField = <TValues extends FieldValues>({
   name,
@@ -80,6 +87,7 @@ const SelectField = <TValues extends FieldValues>({
   const { control } = useFormContext<TValues>()
 
   const items = normalizeOptions(options)
+  const errorId = `${name}-error`
 
   return (
     <Controller
@@ -90,23 +98,31 @@ const SelectField = <TValues extends FieldValues>({
           {label && (
             <FieldLabel htmlFor={name}>
               <span>{label}</span>
-              {required && <span className="text-destructive">*</span>}
+              {required && (
+                <>
+                  <span aria-hidden="true" className="text-destructive">
+                    *
+                  </span>
+                  <span className="sr-only"> (required)</span>
+                </>
+              )}
             </FieldLabel>
           )}
           <Select
             value={field.value ?? ""}
             disabled={disabled}
             onValueChange={(value) => {
-              if (onValueChange) {
-                onValueChange(value)
-                return
-              }
               field.onChange(value)
+              onValueChange?.(value)
             }}
           >
             <SelectTrigger
               id={name}
               aria-invalid={fieldState.invalid}
+              aria-required={required || undefined}
+              aria-describedby={
+                fieldState.invalid ? errorId : undefined
+              }
               className={cn("w-full", triggerClass)}
             >
               <SelectValue placeholder={placeholder} />
@@ -127,7 +143,9 @@ const SelectField = <TValues extends FieldValues>({
           {description && (
             <p className="text-muted-foreground text-sm">{description}</p>
           )}
-          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          {fieldState.invalid && (
+            <FieldError id={errorId} errors={[fieldState.error]} />
+          )}
         </Field>
       )}
     />
