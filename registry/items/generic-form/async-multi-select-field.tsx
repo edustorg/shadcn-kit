@@ -58,6 +58,16 @@ export interface AsyncMultiSelectFieldProps<
   showSearchIcon?: boolean
   lazy?: boolean
   emptyIndicator?: React.ReactNode
+  /**
+   * Accessibility attributes forwarded to the `role="combobox"` trigger, so
+   * callers can wire `id`, `aria-invalid`, `aria-describedby`,
+   * `aria-labelledby` and `aria-required` from a surrounding `Field`.
+   * Presentation and combobox semantics are owned by the field itself.
+   */
+  triggerProps?: Omit<
+    React.ComponentProps<"button">,
+    "className" | "ref" | "children" | "role" | "aria-expanded"
+  >
 }
 
 const defaultGetItemValue = (item: SelectFieldItem) => item.id
@@ -279,6 +289,7 @@ interface AsyncMultiSelectShellProps<T extends SelectFieldItem> {
   triggerRef: React.RefObject<HTMLButtonElement | null>
   disabled: boolean
   className?: string
+  triggerProps?: AsyncMultiSelectFieldProps<T, BaseSelectParams>["triggerProps"]
   value: string[]
   selectedItems: T[]
   getItemValue: (item: T) => string
@@ -298,6 +309,7 @@ function AsyncMultiSelectShell<T extends SelectFieldItem>({
   triggerRef,
   disabled,
   className,
+  triggerProps,
   value,
   selectedItems,
   getItemValue,
@@ -316,6 +328,7 @@ function AsyncMultiSelectShell<T extends SelectFieldItem>({
         <Button
           ref={triggerRef}
           variant="outline"
+          {...triggerProps}
           role="combobox"
           aria-expanded={open}
           className={cn(
@@ -480,6 +493,7 @@ interface AsyncMultiSelectEagerProps<
   disabled: boolean
   className?: string
   badgeClassName?: string
+  triggerProps?: AsyncMultiSelectFieldProps<T, TParams>["triggerProps"]
   placeholder: string
   maxBadges: number
   state: ReturnType<typeof useAsyncMultiSelectFieldState<TParams>>
@@ -508,6 +522,7 @@ function AsyncMultiSelectEager<
   disabled,
   className,
   badgeClassName,
+  triggerProps,
   placeholder,
   maxBadges,
   state,
@@ -542,6 +557,7 @@ function AsyncMultiSelectEager<
       triggerRef={state.triggerRef}
       disabled={disabled}
       className={className}
+      triggerProps={triggerProps}
       value={value}
       selectedItems={selectedItems}
       getItemValue={getItemValue}
@@ -591,6 +607,7 @@ export function AsyncMultiSelectField<
   showSearchIcon = false,
   lazy = false,
   emptyIndicator,
+  triggerProps,
 }: AsyncMultiSelectFieldProps<T, TParams>) {
   const state = useAsyncMultiSelectFieldState<TParams>({
     debounceDelay,
@@ -668,6 +685,7 @@ export function AsyncMultiSelectField<
         triggerRef={state.triggerRef}
         disabled={disabled}
         className={className}
+        triggerProps={triggerProps}
         value={value}
         selectedItems={lazySelectedItems}
         getItemValue={getValue}
@@ -700,6 +718,7 @@ export function AsyncMultiSelectField<
       disabled={disabled}
       className={className}
       badgeClassName={badgeClassName}
+      triggerProps={triggerProps}
       placeholder={placeholder}
       maxBadges={maxBadges}
       state={state}

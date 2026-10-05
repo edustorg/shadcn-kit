@@ -72,6 +72,16 @@ export interface AsyncSelectFieldProps<
   showSearchIcon?: boolean
   emptyIndicator?: React.ReactNode
   /**
+   * Accessibility attributes forwarded to the `role="combobox"` trigger, so
+   * callers can wire `id`, `aria-invalid`, `aria-describedby`,
+   * `aria-labelledby` and `aria-required` from a surrounding `Field`.
+   * Presentation and combobox semantics are owned by the field itself.
+   */
+  triggerProps?: Omit<
+    React.ComponentProps<"button">,
+    "className" | "ref" | "children" | "role" | "aria-expanded"
+  >
+  /**
    * When `true`, the dropdown list is fetched only after the popover is opened
    * instead of on mount. Use this on forms with many async selects to avoid
    * firing a burst of requests at page load.
@@ -517,6 +527,7 @@ interface AsyncSelectShellProps<T extends SelectFieldItem> {
   triggerRef: React.RefObject<HTMLButtonElement | null>
   disabled: boolean
   className?: string
+  triggerProps?: AsyncSelectFieldProps<T, BaseSelectParams>["triggerProps"]
   selectedItem?: T
   getItemDisplayValue: (item: T) => string
   placeholder: string
@@ -530,6 +541,7 @@ function AsyncSelectShell<T extends SelectFieldItem>({
   triggerRef,
   disabled,
   className,
+  triggerProps,
   selectedItem,
   getItemDisplayValue,
   placeholder,
@@ -542,6 +554,7 @@ function AsyncSelectShell<T extends SelectFieldItem>({
         <Button
           ref={triggerRef}
           variant="outline"
+          {...triggerProps}
           role="combobox"
           aria-expanded={open}
           className={cn(
@@ -641,6 +654,7 @@ export function AsyncSelectField<
   className,
   showSearchIcon = false,
   emptyIndicator,
+  triggerProps,
   lazy = false,
 }: AsyncSelectFieldProps<T, TParams>) {
   const state = useAsyncSelectFieldState<TParams>({
@@ -687,6 +701,7 @@ export function AsyncSelectField<
         triggerRef={state.triggerRef}
         disabled={disabled}
         className={className}
+        triggerProps={triggerProps}
         selectedItem={selectedItemFromData}
         getItemDisplayValue={getItemDisplayValue}
         placeholder={placeholder}
@@ -711,6 +726,7 @@ export function AsyncSelectField<
       getItemDisplayValue={getItemDisplayValue}
       disabled={disabled}
       className={className}
+      triggerProps={triggerProps}
       placeholder={placeholder}
       state={state}
       getValue={getValue}
@@ -729,6 +745,7 @@ interface AsyncSelectEagerProps<
   getItemDisplayValue: (item: T) => string
   disabled: boolean
   className?: string
+  triggerProps?: AsyncSelectFieldProps<T, TParams>["triggerProps"]
   placeholder: string
   state: ReturnType<typeof useAsyncSelectFieldState<TParams>>
   getValue: (item: T) => string
@@ -753,6 +770,7 @@ function AsyncSelectEager<
   getItemDisplayValue,
   disabled,
   className,
+  triggerProps,
   placeholder,
   state,
   getValue,
@@ -786,6 +804,7 @@ function AsyncSelectEager<
       triggerRef={state.triggerRef}
       disabled={disabled}
       className={className}
+      triggerProps={triggerProps}
       selectedItem={selectedItem}
       getItemDisplayValue={getItemDisplayValue}
       placeholder={placeholder}

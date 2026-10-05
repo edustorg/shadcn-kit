@@ -47,6 +47,8 @@ export type DatePickerProps<
   endMonth?: Date
   /** Matchers forwarded to the calendar to disable specific days. */
   disabledDates?: Matcher | Matcher[]
+  /** Classes for the control wrapper, so a form can size or stretch it. */
+  className?: string
   captionLayout?: React.ComponentProps<typeof Calendar>["captionLayout"]
   /** Locale used for formatting and the calendar. */
   locale?: Locale
@@ -141,6 +143,7 @@ export const DatePicker = <
   startMonth,
   endMonth,
   disabledDates,
+  className,
   captionLayout = "dropdown",
   locale,
   displayFormat = "PPP",
@@ -149,6 +152,7 @@ export const DatePicker = <
   const [editing, setEditing] = React.useState(false)
   const [draft, setDraft] = React.useState("")
   const id = React.useId()
+  const errorId = `${id}-error`
 
   const localeOptions = locale ? { locale } : undefined
 
@@ -243,7 +247,7 @@ export const DatePicker = <
 
       {variant === "input" ? (
         <Popover open={open} onOpenChange={setOpen}>
-          <div className="relative w-70">
+          <div className={cn("relative w-70", className)}>
             <Input
               id={id}
               type="text"
@@ -260,6 +264,7 @@ export const DatePicker = <
               placeholder={editing ? "DDMMYYYY" : placeholder}
               aria-invalid={invalid || undefined}
               aria-required={required || undefined}
+              aria-describedby={invalid ? errorId : undefined}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
@@ -297,6 +302,7 @@ export const DatePicker = <
               disabled={disabled}
               aria-invalid={invalid || undefined}
               aria-required={required || undefined}
+              aria-describedby={invalid ? errorId : undefined}
               aria-label={
                 selected
                   ? `${label}: ${formattedValue}`
@@ -305,6 +311,7 @@ export const DatePicker = <
               className={cn(
                 "w-70 justify-start text-left font-normal",
                 !selected && "text-muted-foreground",
+                className,
               )}
               onKeyDown={handleKeyDown}
             >
@@ -322,7 +329,7 @@ export const DatePicker = <
         </Popover>
       )}
 
-      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+      {invalid && <FieldError id={errorId} errors={[fieldState.error]} />}
     </Field>
   )
 }

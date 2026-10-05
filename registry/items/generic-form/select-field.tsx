@@ -26,6 +26,8 @@ type SelectFieldProps<TValues extends FieldValues> = {
   className?: string
   /** Classes for the trigger. */
   triggerClass?: string
+  /** Trigger height, forwarded to the underlying select trigger. */
+  size?: "sm" | "default"
   /** Static options: strings, `{ value, label }` objects, or a `Record<string, string>`. */
   options: ReadonlyArray<SelectFieldOption> | Record<string, string>
   /**
@@ -80,6 +82,7 @@ const SelectField = <TValues extends FieldValues>({
   disabled = false,
   className,
   triggerClass,
+  size = "default",
   options,
   emptyOption,
   onValueChange,
@@ -118,6 +121,7 @@ const SelectField = <TValues extends FieldValues>({
           >
             <SelectTrigger
               id={name}
+              size={size}
               aria-invalid={fieldState.invalid}
               aria-required={required || undefined}
               aria-describedby={
