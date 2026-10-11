@@ -1,0 +1,45 @@
+---
+name: typography
+type: registry:ui
+title: Typography
+description: >-
+  A typography primitive for headings, body copy, inline code, tables, and other
+  text styles with variant, spacing, prose, and asChild support.
+dependencies:
+  - "@radix-ui/react-slot"
+  - class-variance-authority
+registryDependencies:
+  - utils
+files:
+  - path: typography.tsx
+    type: registry:ui
+    target: "@ui/edust-kit/typography.tsx"
+---
+
+`Typography` provides consistent text styles for headings, paragraphs, labels,
+links, code, lists, and tables.
+
+```tsx
+import { Typography } from "@/components/edust-kit/typography"
+
+;<Typography variant="h1">Page title</Typography>
+<Typography variant="lead">A short introduction.</Typography>
+<Typography variant="muted">Supporting text.</Typography>
+```
+
+Use `asChild` to render the styles on an existing element:
+
+```tsx
+<Typography variant="h2" asChild>
+  <a href="/reports">View reports</a>
+</Typography>
+```
+
+| Prop            | Type                             | Default  | Description                                      |
+| --------------- | -------------------------------- | -------- | ------------------------------------------------ |
+| `variant`       | `TypographyVariant`              | `"p"`    | Visual text style and rendered element.          |
+| `spacing`       | `"none" \| "sm" \| "md" \| "lg"` | `"none"` | Vertical spacing between children.               |
+| `prose`         | `boolean`                        | `false`  | Adds spacing when the component follows content. |
+| `asChild`       | `boolean`                        | `false`  | Renders the styles on the child element.         |
+| `disableSelect` | `boolean`                        | `false`  | Disables text selection.                         |
+| `className`     | `string`                         | —        | Additional classes for the rendered element.     |

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "typography",
+  "type": "registry:ui",
+  "title": "Typography",
+  "description": "A typography primitive for headings, body copy, inline code, tables, and other text styles with variant, spacing, prose, and asChild support.",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/items/typography.tsx",
+      "content": "import { cn } from \"@/lib/utils\"\nimport { Slot } from \"@radix-ui/react-slot\"\nimport { type VariantProps, cva } from \"class-variance-authority\"\n\nimport * as React from \"react\"\n\n/**\n * Typography variants supported by the design system.\n */\nconst typographyVariants = cva(\"text-foreground\", {\n  variants: {\n    variant: {\n      h1: \"scroll-m-20 text-4xl font-bold tracking-tight text-balance lg:text-5xl\",\n      h2: \"scroll-m-20 text-3xl font-semibold tracking-tight\",\n      h3: \"scroll-m-20 text-2xl font-semibold tracking-tight\",\n      h4: \"scroll-m-20 text-xl font-semibold tracking-tight\",\n      h5: \"scroll-m-20 text-lg font-semibold tracking-tight\",\n      h6: \"scroll-m-20 text-base font-semibold tracking-tight\",\n\n      p: \"leading-7\",\n\n      lead: \"text-xl text-muted-foreground\",\n      large: \"text-lg font-semibold\",\n      small: \"text-sm leading-none\",\n      muted: \"text-sm text-muted-foreground\",\n\n      blockquote: \"border-l-2 border-border pl-6 italic text-muted-foreground\",\n\n      list: \"ml-6 list-disc marker:text-muted-foreground [&>li]:mt-2\",\n\n      inlineCode:\n        \"rounded bg-muted px-1.5 py-0.5 font-mono text-sm font-medium\",\n\n      code: \"block overflow-x-auto rounded-lg border bg-muted/40 p-4 font-mono text-sm\",\n\n      table: \"w-full text-sm\",\n\n      thead: \"[&_tr]:border-b\",\n      tbody: \"[&_tr:last-child]:border-0\",\n\n      tr: \"border-b hover:bg-muted/50\",\n      th: \"px-3 py-2 text-left font-medium\",\n      td: \"px-3 py-2\",\n\n      anchor: \"text-primary underline underline-offset-4 hover:text-primary/80\",\n\n      hr: \"border-border\",\n    },\n\n    spacing: {\n      none: \"\",\n      sm: \"space-y-2\",\n      md: \"space-y-4\",\n      lg: \"space-y-6\",\n    },\n\n    prose: {\n      true: \"[&:not(:first-child)]:mt-6\",\n      false: \"\",\n    },\n  },\n\n  defaultVariants: {\n    variant: \"p\",\n    spacing: \"none\",\n    prose: false,\n  },\n})\n\nconst variantMapping = {\n  h1: \"h1\",\n  h2: \"h2\",\n  h3: \"h3\",\n  h4: \"h4\",\n  h5: \"h5\",\n  h6: \"h6\",\n\n  p: \"p\",\n  lead: \"p\",\n  large: \"div\",\n  small: \"small\",\n  muted: \"p\",\n\n  blockquote: \"blockquote\",\n  list: \"ul\",\n\n  inlineCode: \"code\",\n  code: \"pre\",\n\n  table: \"table\",\n  thead: \"thead\",\n  tbody: \"tbody\",\n  tr: \"tr\",\n  th: \"th\",\n  td: \"td\",\n\n  anchor: \"a\",\n  hr: \"hr\",\n} as const\n\nexport type TypographyVariant = keyof typeof variantMapping\n\n/**\n * Typography component props\n */\nexport interface TypographyProps\n  extends\n    React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof typographyVariants> {\n  /**\n   * Visual style variant of typography\n   * @default \"p\"\n   */\n  variant?: TypographyVariant\n\n  /**\n   * Replace root element using Radix Slot\n   */\n  asChild?: boolean\n\n  /**\n   * Disable text selection\n   */\n  disableSelect?: boolean\n\n  /**\n   * Add automatic vertical spacing (useful for prose/articles)\n   */\n  prose?: boolean\n}\n\nconst Typography = React.forwardRef<HTMLElement, TypographyProps>(\n  (\n    {\n      className,\n      variant = \"p\",\n      spacing,\n      prose,\n      asChild = false,\n      disableSelect = false,\n      ...props\n    },\n    ref,\n  ) => {\n    const Comp = asChild ? Slot : (variantMapping[variant] as React.ElementType)\n\n    return (\n      <Comp\n        ref={ref}\n        className={cn(\n          typographyVariants({ variant, spacing, prose }),\n          disableSelect && \"select-none\",\n          className,\n        )}\n        {...props}\n      />\n    )\n  },\n)\n\nTypography.displayName = \"Typography\"\n\nexport { Typography, typographyVariants }\n",
+      "type": "registry:ui",
+      "target": "@ui/edust-kit/typography.tsx"
+    }
+  ]
+}

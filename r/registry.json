@@ -309,6 +309,26 @@
           "target": "@ui/edust-kit/hooks/use-debounced-callback.ts"
         }
       ]
+    },
+    {
+      "name": "typography",
+      "type": "registry:ui",
+      "title": "Typography",
+      "description": "A typography primitive for headings, body copy, inline code, tables, and other text styles with variant, spacing, prose, and asChild support.",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/items/typography.tsx",
+          "type": "registry:ui",
+          "target": "@ui/edust-kit/typography.tsx"
+        }
+      ]
     }
   ]
 }
