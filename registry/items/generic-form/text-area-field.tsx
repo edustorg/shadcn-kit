@@ -1,6 +1,11 @@
 "use client"
 
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form"
@@ -40,6 +45,8 @@ const TextAreaField = <TValues extends FieldValues>({
   autoComplete,
 }: TextAreaFieldProps<TValues>) => {
   const { control } = useFormContext<TValues>()
+  const errorId = `${name}-error`
+  const descriptionId = `${name}-description`
 
   return (
     <Controller
@@ -50,7 +57,14 @@ const TextAreaField = <TValues extends FieldValues>({
           {label && (
             <FieldLabel htmlFor={name}>
               <span>{label}</span>
-              {required && <span className="text-destructive">*</span>}
+              {required && (
+                <>
+                  <span aria-hidden="true" className="text-destructive">
+                    *
+                  </span>
+                  <span className="sr-only"> (required)</span>
+                </>
+              )}
             </FieldLabel>
           )}
           <Textarea
@@ -64,12 +78,26 @@ const TextAreaField = <TValues extends FieldValues>({
             disabled={disabled}
             rows={rows}
             autoComplete={autoComplete}
+            aria-invalid={fieldState.invalid || undefined}
+            aria-required={required || undefined}
+            aria-describedby={
+              [
+                description ? descriptionId : null,
+                fieldState.invalid ? errorId : null,
+              ]
+                .filter(Boolean)
+                .join(" ") || undefined
+            }
             className={cn(textAreaClass)}
           />
           {description && (
-            <p className="text-muted-foreground text-sm">{description}</p>
+            <FieldDescription id={descriptionId}>
+              {description}
+            </FieldDescription>
           )}
-          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          {fieldState.invalid && (
+            <FieldError id={errorId} errors={[fieldState.error]} />
+          )}
         </Field>
       )}
     />

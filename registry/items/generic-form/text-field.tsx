@@ -1,6 +1,11 @@
 "use client"
 
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form"
@@ -38,6 +43,7 @@ const TextField = <TValues extends FieldValues>({
   label,
   type = "text",
   placeholder,
+  description,
   required = false,
   disabled = false,
   className,
@@ -50,6 +56,7 @@ const TextField = <TValues extends FieldValues>({
 }: TextFieldProps<TValues>) => {
   const { control } = useFormContext<TValues>()
   const errorId = `${name}-error`
+  const descriptionId = `${name}-description`
 
   return (
     <Controller
@@ -78,7 +85,14 @@ const TextField = <TValues extends FieldValues>({
             value={field.value ?? ""}
             aria-invalid={fieldState.invalid || undefined}
             aria-required={required || undefined}
-            aria-describedby={fieldState.invalid ? errorId : undefined}
+            aria-describedby={
+              [
+                description ? descriptionId : null,
+                fieldState.invalid ? errorId : null,
+              ]
+                .filter(Boolean)
+                .join(" ") || undefined
+            }
             onChange={(e) => {
               if (onValueChange) {
                 onValueChange(
@@ -106,6 +120,11 @@ const TextField = <TValues extends FieldValues>({
             autoComplete={autoComplete}
             className={cn(inputClass)}
           />
+          {description && (
+            <FieldDescription id={descriptionId}>
+              {description}
+            </FieldDescription>
+          )}
           {fieldState.invalid && (
             <FieldError id={errorId} errors={[fieldState.error]} />
           )}

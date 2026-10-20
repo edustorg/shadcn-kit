@@ -16,6 +16,8 @@ declare module "@tanstack/react-table" {
     range?: [number, number];
     unit?: string;
     icon?: React.ComponentType<React.ComponentProps<"svg">>;
+    /** Renders the filter non-interactive rather than dropping it from the toolbar. */
+    disabled?: boolean;
   }
 }
 

@@ -1,6 +1,11 @@
 "use client"
 
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field"
 import {
   Select,
   SelectContent,
@@ -11,9 +16,7 @@ import {
 import { cn } from "@/lib/utils"
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form"
 
-type SelectFieldOption =
-  | string
-  | { value: string; label?: string }
+type SelectFieldOption = string | { value: string; label?: string }
 
 type SelectFieldProps<TValues extends FieldValues> = {
   name: Path<TValues>
@@ -91,6 +94,7 @@ const SelectField = <TValues extends FieldValues>({
 
   const items = normalizeOptions(options)
   const errorId = `${name}-error`
+  const descriptionId = `${name}-description`
 
   return (
     <Controller
@@ -125,7 +129,12 @@ const SelectField = <TValues extends FieldValues>({
               aria-invalid={fieldState.invalid}
               aria-required={required || undefined}
               aria-describedby={
-                fieldState.invalid ? errorId : undefined
+                [
+                  description ? descriptionId : null,
+                  fieldState.invalid ? errorId : null,
+                ]
+                  .filter(Boolean)
+                  .join(" ") || undefined
               }
               className={cn("w-full", triggerClass)}
             >
@@ -145,7 +154,9 @@ const SelectField = <TValues extends FieldValues>({
             </SelectContent>
           </Select>
           {description && (
-            <p className="text-muted-foreground text-sm">{description}</p>
+            <FieldDescription id={descriptionId}>
+              {description}
+            </FieldDescription>
           )}
           {fieldState.invalid && (
             <FieldError id={errorId} errors={[fieldState.error]} />

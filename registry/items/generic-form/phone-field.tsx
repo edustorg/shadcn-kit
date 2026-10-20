@@ -1,6 +1,11 @@
 "use client"
 
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form"
 
 import { PhoneInput } from "./phone-input"
@@ -30,6 +35,7 @@ type PhoneFieldProps<TValues extends FieldValues> = {
 const PhoneField = <TValues extends FieldValues>({
   name,
   label,
+  description,
   placeholder,
   required = false,
   disabled = false,
@@ -38,6 +44,7 @@ const PhoneField = <TValues extends FieldValues>({
 }: PhoneFieldProps<TValues>) => {
   const { control } = useFormContext<TValues>()
   const errorId = `${name}-error`
+  const descriptionId = `${name}-description`
 
   return (
     <Controller
@@ -69,8 +76,20 @@ const PhoneField = <TValues extends FieldValues>({
             onBlur={field.onBlur}
             aria-invalid={fieldState.invalid || undefined}
             aria-required={required || undefined}
-            aria-describedby={fieldState.invalid ? errorId : undefined}
+            aria-describedby={
+              [
+                description ? descriptionId : null,
+                fieldState.invalid ? errorId : null,
+              ]
+                .filter(Boolean)
+                .join(" ") || undefined
+            }
           />
+          {description && (
+            <FieldDescription id={descriptionId}>
+              {description}
+            </FieldDescription>
+          )}
           {fieldState.invalid && (
             <FieldError id={errorId} errors={[fieldState.error]} />
           )}

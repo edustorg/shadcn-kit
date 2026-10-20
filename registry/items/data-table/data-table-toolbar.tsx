@@ -81,6 +81,22 @@ function DataTableToolbarFilter<TData>({
     const onFilterRender = React.useCallback(() => {
       if (!columnMeta?.variant) return null
 
+      if (columnMeta.disabled) {
+        const Icon = columnMeta.icon
+
+        return (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled
+            className="border-dashed font-normal"
+          >
+            {Icon && <Icon />}
+            {columnMeta.label}
+          </Button>
+        )
+      }
+
       switch (columnMeta.variant) {
         case "text":
           return (
