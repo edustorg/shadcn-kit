@@ -35,6 +35,7 @@ export interface GenericFormProps<
 > extends Omit<React.ComponentProps<"form">, "onSubmit" | "ref"> {
   schema: TSchema
   initialValues: Partial<TValues>
+  initialData?: Partial<TValues>
   onSubmit: SubmitHandler<TValues>
   children: React.ReactNode
   ref?: React.Ref<GenericFormRef<TValues>>
@@ -54,6 +55,7 @@ export const GenericForm = <
 >({
   ref,
   initialValues,
+  initialData,
   schema,
   onSubmit,
   children,
@@ -64,6 +66,10 @@ export const GenericForm = <
     resolver: zodResolver(schema) as Resolver<TValues>,
     defaultValues: initialValues as DefaultValues<TValues>,
   })
+
+  React.useEffect(() => {
+    if (initialData) form.reset({ ...initialValues, ...initialData } as TValues)
+  }, [initialData, form])
 
   React.useImperativeHandle(ref, () => ({
     getValues: form.getValues,
